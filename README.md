@@ -1,5 +1,7 @@
 # AI-TEST — Bộ đề cương ôn tập AI thực chiến
 
+![AI in Action - The nationwide AI talent network](docs/assets/ai-in-action.png)
+
 Web app self-host/local host để luyện đề theo dạng chọn đáp án, xem đúng/sai, xem đáp án đúng, giải thích và thống kê cuối bài.
 
 > **Disclaimer:** Đây chỉ là đề cương ôn tập cộng đồng, không phải đề thi chính thức của VinUni, không cố gắng mô phỏng đề thi thật, không cam kết giống đề thật. Người học cần tự research thêm, tự học thêm và tự phát triển thêm.

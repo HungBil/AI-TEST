@@ -1,6 +1,8 @@
 import type { Exam, QuizMode } from '../types/exam';
 import { Disclaimer } from './Disclaimer';
 
+const COMMUNITY_URL = 'https://www.facebook.com/groups/1450219003271674';
+
 interface Props {
   exams: Exam[];
   selectedExamId: string;
@@ -21,6 +23,10 @@ export function ExamSelector({ exams, selectedExamId, mode, timerEnabled, onExam
         <span className="eyebrow">AI TEST · open source</span>
         <h1>Bộ đề cương ôn tập AI thực chiến</h1>
         <p>Local/self-host web app với {exams.length} bài kiểm tra. Mỗi bài 60 câu, có Practice mode, Exam mode, tự luận self-grade và thống kê cuối bài.</p>
+        <a className="community-cta" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
+          <span aria-hidden="true">-&gt;</span>
+          Đây là nhóm thảo luận AI THỰC CHIẾN - AI startup in Vietnam
+        </a>
         <Disclaimer />
       </section>
 

@@ -27,6 +27,9 @@ textarea { min-height: 180px; resize: vertical; }
 .primary { background: #2858ff; color: white; box-shadow: 0 12px 28px rgba(40,88,255,.25); }
 .secondary { background: #e9eef7; color: #23324a; }
 .link { background: transparent; color: #2858ff; padding-left: 0; }
+.community-cta { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; margin-top: 10px; padding: 13px 18px; border-radius: 999px; background: #111827; color: #fff; text-decoration: none; font-weight: 900; line-height: 1.35; box-shadow: 0 14px 30px rgba(17,24,39,.22); transition: transform .16s ease, box-shadow .16s ease, background .16s ease; }
+.community-cta:hover { transform: translateY(-1px); background: #202b3f; box-shadow: 0 18px 34px rgba(17,24,39,.26); }
+.community-cta span { flex: 0 0 auto; color: #8bd3ff; font-size: 1.1rem; }
 .quiz-layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 24px; max-width: 1360px; margin: 0 auto; padding: 24px; }
 .quiz-sidebar { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow: auto; }
 .timer { display: inline-block; padding: 10px 14px; border-radius: 999px; background: #111827; color: #fff; font-weight: 900; margin: 8px 0 14px; }
@@ -60,4 +63,4 @@ textarea { min-height: 180px; resize: vertical; }
 .review-list button { display: flex; flex-direction: column; gap: 4px; }
 .review-list span { color: #607089; font-size: .9rem; }
 @media (max-width: 980px) { .home, .quiz-layout, .result-hero { grid-template-columns: 1fr; } .quiz-sidebar { position: static; max-height: none; } .module-stats { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 620px) { .mode-grid, .module-stats, .review-list { grid-template-columns: 1fr; } .question-nav { grid-template-columns: repeat(5, 1fr); } .hero, .setup, .question-card, .quiz-sidebar, .result-hero, .review-panel { padding: 20px; border-radius: 18px; } }
+@media (max-width: 620px) { .mode-grid, .module-stats, .review-list { grid-template-columns: 1fr; } .question-nav { grid-template-columns: repeat(5, 1fr); } .hero, .setup, .question-card, .quiz-sidebar, .result-hero, .review-panel { padding: 20px; border-radius: 18px; } .community-cta { width: 100%; justify-content: center; text-align: center; border-radius: 18px; } }
