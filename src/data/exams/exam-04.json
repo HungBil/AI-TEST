@@ -1,0 +1,1815 @@
+{
+  "id": "exam-04",
+  "title": "Bài kiểm tra ôn tập AI thực chiến #04",
+  "description": "60 câu theo 4 module: toán định lượng, Python/NumPy/Pandas, AI/product AI, logic & responsible AI.",
+  "durationMinutes": 90,
+  "totalPoints": 100,
+  "disclaimer": "Đây chỉ là đề cương ôn tập cộng đồng, không phải đề thi chính thức của VinUni, không cố gắng mô phỏng đề thi thật và không cam kết giống đề thật.",
+  "questions": [
+    {
+      "id": "E04-A01",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Một sản phẩm giảm giá từ 120 xuống 96. Tỷ lệ giảm là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "10"
+        },
+        {
+          "key": "B",
+          "text": "15"
+        },
+        {
+          "key": "C",
+          "text": "20"
+        },
+        {
+          "key": "D",
+          "text": "25"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Mức thay đổi là 24; chia cho giá gốc 120 được 20%.",
+      "tags": [
+        "percentage"
+      ]
+    },
+    {
+      "id": "E04-A02",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Tỉ lệ Dev : Tester = 3 : 3. Tổng 48 người. Số Tester là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "16"
+        },
+        {
+          "key": "B",
+          "text": "24"
+        },
+        {
+          "key": "C",
+          "text": "32"
+        },
+        {
+          "key": "D",
+          "text": "40"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Tổng phần = 6; mỗi phần = 48/6 = 8; Tester = 24.",
+      "tags": [
+        "ratio"
+      ]
+    },
+    {
+      "id": "E04-A03",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Giải phương trình: 3x + 8 = 2x + 15. Giá trị x là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "5"
+        },
+        {
+          "key": "B",
+          "text": "6"
+        },
+        {
+          "key": "C",
+          "text": "7"
+        },
+        {
+          "key": "D",
+          "text": "9"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Chuyển vế: (3-2)x = 15-8, nên x = 7.",
+      "tags": [
+        "algebra"
+      ]
+    },
+    {
+      "id": "E04-A04",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Điểm bài 1 = 68 trọng số 40%, bài 2 = 84 trọng số 60%. Điểm cuối là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "73"
+        },
+        {
+          "key": "B",
+          "text": "75"
+        },
+        {
+          "key": "C",
+          "text": "77"
+        },
+        {
+          "key": "D",
+          "text": "79"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Điểm = 0.4×68 + 0.6×84 = 77.",
+      "tags": [
+        "weighted-average"
+      ]
+    },
+    {
+      "id": "E04-A05",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Một túi có 4 bi đỏ và 2 bi xanh. Rút 2 bi không hoàn lại. Xác suất cả 2 bi đều đỏ là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "2/5"
+        },
+        {
+          "key": "B",
+          "text": "4/6"
+        },
+        {
+          "key": "C",
+          "text": "3/5"
+        },
+        {
+          "key": "D",
+          "text": "2/6"
+        }
+      ],
+      "answer": "A",
+      "explanation": "P = 4/6 × 3/5 = 2/5.",
+      "tags": [
+        "probability"
+      ]
+    },
+    {
+      "id": "E04-A06",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Cho P(A ∩ B) = 0.10, P(B) = 0.50. P(A | B) là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "0.2"
+        },
+        {
+          "key": "B",
+          "text": "0.1"
+        },
+        {
+          "key": "C",
+          "text": "0.5"
+        },
+        {
+          "key": "D",
+          "text": "0.4"
+        }
+      ],
+      "answer": "A",
+      "explanation": "P(A|B)=P(A∩B)/P(B)=0.10/0.50=0.2.",
+      "tags": [
+        "conditional-probability"
+      ]
+    },
+    {
+      "id": "E04-A07",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Dữ liệu gồm 6 giá trị: 4, 5, 6, 8, 12, 13. Median là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "5"
+        },
+        {
+          "key": "B",
+          "text": "6"
+        },
+        {
+          "key": "C",
+          "text": "7"
+        },
+        {
+          "key": "D",
+          "text": "8"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Median là trung bình giá trị thứ 3 và thứ 4: (6+8)/2 = 7.",
+      "tags": [
+        "statistics"
+      ]
+    },
+    {
+      "id": "E04-A08",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Đạo hàm của f(x) = 2x^2 là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "4x"
+        },
+        {
+          "key": "B",
+          "text": "2x"
+        },
+        {
+          "key": "C",
+          "text": "2x^2"
+        },
+        {
+          "key": "D",
+          "text": "4"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Dùng quy tắc đạo hàm x^n thành n×x^(n-1).",
+      "tags": [
+        "calculus"
+      ]
+    },
+    {
+      "id": "E04-A09",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Tích vô hướng của u=(2, -1, 2) và v=(2, 0, 3) bằng:",
+      "options": [
+        {
+          "key": "A",
+          "text": "8"
+        },
+        {
+          "key": "B",
+          "text": "10"
+        },
+        {
+          "key": "C",
+          "text": "11"
+        },
+        {
+          "key": "D",
+          "text": "13"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Tính từng cặp rồi cộng: 2×2 + -1×0 + 2×3 = 10.",
+      "tags": [
+        "vector"
+      ]
+    },
+    {
+      "id": "E04-A10",
+      "module": "A",
+      "type": "mcq",
+      "points": 1,
+      "prompt": "Cho ma trận [[2, 2], [0, 1]] và vector (1, 2). Tích ma trận-vector là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "(6, 2)"
+        },
+        {
+          "key": "B",
+          "text": "(3, 4)"
+        },
+        {
+          "key": "C",
+          "text": "(2, 6)"
+        },
+        {
+          "key": "D",
+          "text": "(4, 1)"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Hàng 1: 2×1+2×2=6; hàng 2: 0×1+1×2=2.",
+      "tags": [
+        "matrix"
+      ]
+    },
+    {
+      "id": "E04-B01",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, muốn giữ tất cả dòng bảng trái khi merge theo `id`, dùng `how` nào?",
+      "options": [
+        {
+          "key": "A",
+          "text": "inner"
+        },
+        {
+          "key": "B",
+          "text": "left"
+        },
+        {
+          "key": "C",
+          "text": "right"
+        },
+        {
+          "key": "D",
+          "text": "cross"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Left join giữ mọi dòng của bảng trái, thiếu bên phải thì giá trị là NaN.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B02",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, lệnh nào đếm tần suất từng giá trị trong cột `status`?",
+      "options": [
+        {
+          "key": "A",
+          "text": "df['status'].count_values()"
+        },
+        {
+          "key": "B",
+          "text": "df['status'].value_counts()"
+        },
+        {
+          "key": "C",
+          "text": "df.value_count('status')"
+        },
+        {
+          "key": "D",
+          "text": "df.count('status')"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`value_counts()` là hàm chuẩn để đếm số lần xuất hiện của từng giá trị.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B03",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, chọn các dòng có `age >= 18` đúng nhất là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "df[df['age'] >= 18]"
+        },
+        {
+          "key": "B",
+          "text": "df['age' >= 18]"
+        },
+        {
+          "key": "C",
+          "text": "df.loc['age' >= 18]"
+        },
+        {
+          "key": "D",
+          "text": "df.where(age >= 18)"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Boolean mask `df['age'] >= 18` dùng để lọc dòng.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B04",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong NumPy, với `arr.shape == (3, 4)`, `arr.sum(axis=0)` thường trả về shape nào?",
+      "options": [
+        {
+          "key": "A",
+          "text": "(3,)"
+        },
+        {
+          "key": "B",
+          "text": "(4,)"
+        },
+        {
+          "key": "C",
+          "text": "(12,)"
+        },
+        {
+          "key": "D",
+          "text": "(1,)"
+        }
+      ],
+      "answer": "B",
+      "explanation": "axis=0 cộng theo chiều dòng, còn lại một giá trị cho mỗi cột.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B05",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nimport numpy as np\na = np.array([1, 2, 3])\nprint((a * 2).tolist())\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "[1, 2, 3, 1, 2, 3]"
+        },
+        {
+          "key": "B",
+          "text": "[2, 4, 6]"
+        },
+        {
+          "key": "C",
+          "text": "[1, 4, 9]"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi"
+        }
+      ],
+      "answer": "B",
+      "explanation": "NumPy nhân từng phần tử với 2.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B06",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nimport pandas as pd\ns = pd.Series([10, None, 30])\nprint(s.isna().sum())\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "2"
+        },
+        {
+          "key": "D",
+          "text": "3"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Có một giá trị thiếu là None/NaN.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B07",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, `df.groupby('user')['amount'].sum()` thường dùng để làm gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Sắp xếp amount"
+        },
+        {
+          "key": "B",
+          "text": "Tính tổng amount theo từng user"
+        },
+        {
+          "key": "C",
+          "text": "Xóa user trùng"
+        },
+        {
+          "key": "D",
+          "text": "Đổi kiểu dữ liệu"
+        }
+      ],
+      "answer": "B",
+      "explanation": "groupby theo user rồi cộng amount cho từng nhóm.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B08",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nx = [1, 2]\ny = x\ny.append(3)\nprint(x)\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "[1, 2]"
+        },
+        {
+          "key": "B",
+          "text": "[1, 2, 3]"
+        },
+        {
+          "key": "C",
+          "text": "[3]"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi"
+        }
+      ],
+      "answer": "B",
+      "explanation": "x và y cùng trỏ tới một list, append qua y làm x thay đổi theo.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B09",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Python, `dict.get(key, default)` có ý nghĩa gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Xóa key khỏi dict"
+        },
+        {
+          "key": "B",
+          "text": "Lấy value nếu có key, nếu không trả default"
+        },
+        {
+          "key": "C",
+          "text": "Sắp xếp dict"
+        },
+        {
+          "key": "D",
+          "text": "Đổi key thành default"
+        }
+      ],
+      "answer": "B",
+      "explanation": "get giúp lấy giá trị an toàn khi key có thể chưa tồn tại.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B10",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nwords = ['AI', 'ai', 'Data']\nprint([w.lower() for w in words])\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "['AI','ai','Data']"
+        },
+        {
+          "key": "B",
+          "text": "['ai','ai','data']"
+        },
+        {
+          "key": "C",
+          "text": "['AI','AI','DATA']"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi"
+        }
+      ],
+      "answer": "B",
+      "explanation": "List comprehension áp dụng lower cho từng chuỗi.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B11",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, `df.drop_duplicates(subset=['user_id'])` làm gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Xóa cột user_id"
+        },
+        {
+          "key": "B",
+          "text": "Giữ mỗi user_id một dòng đầu tiên"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ giữ các dòng trùng"
+        },
+        {
+          "key": "D",
+          "text": "Sắp xếp user_id"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Mặc định giữ bản ghi đầu tiên của mỗi khóa user_id.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B12",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nimport numpy as np\na = np.array([[1, 2], [3, 4]])\nprint(a[:, 0].tolist())\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "[1, 2]"
+        },
+        {
+          "key": "B",
+          "text": "[1, 3]"
+        },
+        {
+          "key": "C",
+          "text": "[2, 4]"
+        },
+        {
+          "key": "D",
+          "text": "[[1], [3]]"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`:` lấy mọi dòng, `0` lấy cột đầu tiên.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B13",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, dùng gì để đổi cột `price` sang số nguyên?",
+      "options": [
+        {
+          "key": "A",
+          "text": "df['price'].astype(int)"
+        },
+        {
+          "key": "B",
+          "text": "df['price'].to_int()"
+        },
+        {
+          "key": "C",
+          "text": "int(df['price'])"
+        },
+        {
+          "key": "D",
+          "text": "df.astype('price', int)"
+        }
+      ],
+      "answer": "A",
+      "explanation": "`astype(int)` đổi kiểu Series/cột sang integer nếu dữ liệu hợp lệ.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B14",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\na = {'u1': 2, 'u2': 5}\nprint(list(a.keys()))\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "[2, 5]"
+        },
+        {
+          "key": "B",
+          "text": "['u1', 'u2']"
+        },
+        {
+          "key": "C",
+          "text": "[('u1',2),('u2',5)]"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi"
+        }
+      ],
+      "answer": "B",
+      "explanation": "`keys()` trả về các key trong dict.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B15",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong NumPy, broadcasting phù hợp nhất với tình huống nào?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Cộng một scalar vào từng phần tử array"
+        },
+        {
+          "key": "B",
+          "text": "Đọc file CSV"
+        },
+        {
+          "key": "C",
+          "text": "Xóa dòng trùng"
+        },
+        {
+          "key": "D",
+          "text": "Merge hai bảng"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Broadcasting cho phép áp dụng phép toán giữa array và scalar/array tương thích shape.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B16",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, `df.sort_values('score', ascending=False)` làm gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Lọc score thiếu"
+        },
+        {
+          "key": "B",
+          "text": "Sắp xếp score giảm dần"
+        },
+        {
+          "key": "C",
+          "text": "Đếm score"
+        },
+        {
+          "key": "D",
+          "text": "Đổi tên cột score"
+        }
+      ],
+      "answer": "B",
+      "explanation": "ascending=False nghĩa là giảm dần.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B17",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nprint('  AI Test  '.strip().lower())\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "'  ai test  '"
+        },
+        {
+          "key": "B",
+          "text": "'ai test'"
+        },
+        {
+          "key": "C",
+          "text": "'AI Test'"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi"
+        }
+      ],
+      "answer": "B",
+      "explanation": "strip bỏ khoảng trắng hai đầu, lower chuyển thành chữ thường.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B18",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong Pandas, `df.iloc[0]` chọn gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Dòng đầu theo vị trí"
+        },
+        {
+          "key": "B",
+          "text": "Cột tên 0"
+        },
+        {
+          "key": "C",
+          "text": "Dòng có index label 0 luôn luôn"
+        },
+        {
+          "key": "D",
+          "text": "Toàn bộ DataFrame"
+        }
+      ],
+      "answer": "A",
+      "explanation": "iloc chọn theo vị trí số nguyên.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B19",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Kết quả của code là gì?\n```python\nnums = [1, 2, 3, 4]\nprint(sum(x for x in nums if x % 2 == 0))\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "4"
+        },
+        {
+          "key": "B",
+          "text": "5"
+        },
+        {
+          "key": "C",
+          "text": "6"
+        },
+        {
+          "key": "D",
+          "text": "10"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Các số chẵn là 2 và 4, tổng bằng 6.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B20",
+      "module": "B",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Đoạn code sau in ra gì?\n```python\ntotal = 0\nfor i in range(5):\n    if i == 3:\n        continue\n    total += i\nprint(total)\n```",
+      "options": [
+        {
+          "key": "A",
+          "text": "6"
+        },
+        {
+          "key": "B",
+          "text": "7"
+        },
+        {
+          "key": "C",
+          "text": "8"
+        },
+        {
+          "key": "D",
+          "text": "9"
+        }
+      ],
+      "answer": "B",
+      "explanation": "range(5) là 0..4; bỏ qua 3 nên tổng = 0+1+2+4 = 7.",
+      "tags": [
+        "python",
+        "pandas",
+        "numpy"
+      ]
+    },
+    {
+      "id": "E04-B21",
+      "module": "B",
+      "type": "code",
+      "points": 2.5,
+      "prompt": "Viết hàm `min_max_scale(arr)` scale list số về khoảng 0..1. Nếu mọi giá trị bằng nhau, trả về list toàn 0.",
+      "modelAnswer": "def min_max_scale(arr):\n    mn = min(arr)\n    mx = max(arr)\n    if mx == mn:\n        return [0 for _ in arr]\n    return [(x - mn) / (mx - mn) for x in arr]",
+      "rubric": [
+        "Tính min/max đúng.",
+        "Xử lý trường hợp max bằng min.",
+        "Áp dụng công thức `(x-min)/(max-min)`.",
+        "Return list cùng độ dài."
+      ],
+      "tags": [
+        "preprocessing"
+      ]
+    },
+    {
+      "id": "E04-B22",
+      "module": "B",
+      "type": "code",
+      "points": 2.5,
+      "prompt": "Viết hàm `filter_non_empty(strings)` trả về các chuỗi không rỗng sau khi strip khoảng trắng.",
+      "modelAnswer": "def filter_non_empty(strings):\n    result = []\n    for s in strings:\n        cleaned = s.strip()\n        if cleaned:\n            result.append(cleaned)\n    return result",
+      "rubric": [
+        "Dùng `strip()`.",
+        "Bỏ chuỗi rỗng sau strip.",
+        "Giữ chuỗi đã làm sạch.",
+        "Return list."
+      ],
+      "tags": [
+        "string"
+      ]
+    },
+    {
+      "id": "E04-C01",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Concept drift là khi:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Model chạy chậm hơn"
+        },
+        {
+          "key": "B",
+          "text": "Phân phối dữ liệu hoặc quan hệ input-output thay đổi theo thời gian"
+        },
+        {
+          "key": "C",
+          "text": "Dữ liệu có nhiều cột"
+        },
+        {
+          "key": "D",
+          "text": "Feature bị trùng tên"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Drift nói về dữ liệu/thực tế thay đổi khiến model cũ kém dần.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C02",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "RAG chủ yếu giúp LLM:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Tăng tốc GPU"
+        },
+        {
+          "key": "B",
+          "text": "Truy xuất tài liệu liên quan để trả lời bám nguồn hơn"
+        },
+        {
+          "key": "C",
+          "text": "Xóa mọi bias"
+        },
+        {
+          "key": "D",
+          "text": "Không cần đánh giá nữa"
+        }
+      ],
+      "answer": "B",
+      "explanation": "RAG kéo ngữ cảnh từ tài liệu bên ngoài trước khi sinh câu trả lời.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C03",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Embedding là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Một lỗi của model"
+        },
+        {
+          "key": "B",
+          "text": "Biểu diễn đối tượng như văn bản/sản phẩm/người dùng thành vector số"
+        },
+        {
+          "key": "C",
+          "text": "Một loại database duy nhất"
+        },
+        {
+          "key": "D",
+          "text": "Một metric"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Embedding biến nội dung thành vector để tính gần nhau/xa nhau về nghĩa.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C04",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Context window trong LLM là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Số user dùng cùng lúc"
+        },
+        {
+          "key": "B",
+          "text": "Lượng thông tin model xử lý trong một lượt"
+        },
+        {
+          "key": "C",
+          "text": "Số tham số train"
+        },
+        {
+          "key": "D",
+          "text": "Tốc độ mạng"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Context window giới hạn lượng prompt/history/tài liệu model nhìn thấy.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C05",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Hallucination là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Model trả lời nghe hợp lý nhưng sai hoặc không có nguồn"
+        },
+        {
+          "key": "B",
+          "text": "Model bị thiếu RAM"
+        },
+        {
+          "key": "C",
+          "text": "Dữ liệu bị duplicate"
+        },
+        {
+          "key": "D",
+          "text": "Model dùng quá ít token"
+        }
+      ],
+      "answer": "A",
+      "explanation": "LLM có thể tạo câu trả lời trôi chảy nhưng không đúng sự thật.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C06",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Few-shot prompting nghĩa là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Không đưa ví dụ"
+        },
+        {
+          "key": "B",
+          "text": "Đưa một vài ví dụ mẫu trong prompt"
+        },
+        {
+          "key": "C",
+          "text": "Huấn luyện lại toàn bộ model"
+        },
+        {
+          "key": "D",
+          "text": "Xóa context"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Few-shot dùng ví dụ để hướng dẫn định dạng/cách suy luận mong muốn.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C07",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Khi so sánh model 6B và 8B cho chatbot nội bộ, trade-off hợp lý nhất là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "8B luôn tốt hơn mọi mặt"
+        },
+        {
+          "key": "B",
+          "text": "6B có thể rẻ/nhanh hơn, 8B có thể mạnh hơn nhưng tốn tài nguyên hơn"
+        },
+        {
+          "key": "C",
+          "text": "6B không thể chạy được"
+        },
+        {
+          "key": "D",
+          "text": "Kích thước model không ảnh hưởng gì"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Model lớn hơn thường tăng năng lực nhưng có thể tăng chi phí và latency.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C08",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Temperature trong sinh văn bản thường điều khiển:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Độ ngẫu nhiên/sáng tạo của output"
+        },
+        {
+          "key": "B",
+          "text": "Số dòng dữ liệu train"
+        },
+        {
+          "key": "C",
+          "text": "Kích thước file CSV"
+        },
+        {
+          "key": "D",
+          "text": "Quyền truy cập database"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Temperature cao thường làm output đa dạng hơn, nhưng cũng dễ lệch hơn.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C09",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Fine-tuning phù hợp hơn RAG khi:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Cần cập nhật tài liệu mỗi giờ"
+        },
+        {
+          "key": "B",
+          "text": "Muốn model học phong cách/nhiệm vụ lặp lại từ nhiều ví dụ chất lượng"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ cần tra cứu chính sách mới"
+        },
+        {
+          "key": "D",
+          "text": "Không có dữ liệu huấn luyện"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Fine-tuning thay đổi hành vi/kỹ năng model; RAG tốt cho tri thức ngoài và cập nhật.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C10",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Trong pipeline RAG, bước retrieve làm gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Huấn luyện lại model"
+        },
+        {
+          "key": "B",
+          "text": "Tìm các đoạn tài liệu liên quan với câu hỏi"
+        },
+        {
+          "key": "C",
+          "text": "Xóa toàn bộ prompt"
+        },
+        {
+          "key": "D",
+          "text": "Tạo account user"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Retrieve lấy context phù hợp trước khi LLM trả lời.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C11",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Reranking trong RAG thường dùng để:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Sắp lại các đoạn truy xuất theo mức liên quan"
+        },
+        {
+          "key": "B",
+          "text": "Nén model về 4-bit"
+        },
+        {
+          "key": "C",
+          "text": "Tạo nhãn thủ công"
+        },
+        {
+          "key": "D",
+          "text": "Xóa log"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Reranker giúp chọn/chấm lại các đoạn context tốt nhất.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C12",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Guardrail trong sản phẩm AI là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Cơ chế giới hạn/kiểm soát output hoặc hành động rủi ro"
+        },
+        {
+          "key": "B",
+          "text": "Một loại GPU"
+        },
+        {
+          "key": "C",
+          "text": "Một file CSV"
+        },
+        {
+          "key": "D",
+          "text": "Một thuật toán sort"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Guardrail giúp giảm output sai, nguy hiểm hoặc vượt quyền.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C13",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Baseline không-AI thường là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Rule-based/quy trình thủ công để so sánh"
+        },
+        {
+          "key": "B",
+          "text": "Model lớn nhất"
+        },
+        {
+          "key": "C",
+          "text": "Không đánh giá"
+        },
+        {
+          "key": "D",
+          "text": "Tăng batch size"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Baseline giúp biết AI có thật sự tốt hơn cách đơn giản/cũ không.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C14",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "A/B test trong sản phẩm AI nên tránh điều gì?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Có nhóm đối chứng"
+        },
+        {
+          "key": "B",
+          "text": "Phân nhóm hợp lý"
+        },
+        {
+          "key": "C",
+          "text": "Đổi nhiều yếu tố cùng lúc khiến khó kết luận"
+        },
+        {
+          "key": "D",
+          "text": "Đo metric business"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Đổi quá nhiều thứ cùng lúc làm khó biết yếu tố nào gây tác động.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C15",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Dữ liệu đưa vào train/validation/test nên xử lý thế nào để tránh đánh giá ảo?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Để test tham gia chọn model nhiều lần"
+        },
+        {
+          "key": "B",
+          "text": "Tách dữ liệu rõ ràng và chỉ dùng test cho đánh giá cuối"
+        },
+        {
+          "key": "C",
+          "text": "Train trên test cho nhanh"
+        },
+        {
+          "key": "D",
+          "text": "Bỏ validation"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Test cần giữ khách quan để ước lượng khả năng tổng quát hóa.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C16",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Model monitoring sau khi lên production cần theo dõi:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Chỉ tên model"
+        },
+        {
+          "key": "B",
+          "text": "Chất lượng, latency, chi phí, drift và lỗi người dùng gặp"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ logo sản phẩm"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ số dòng code"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Production cần theo dõi cả kỹ thuật lẫn tác động sản phẩm.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C17",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Khi model confidence thấp trong luồng rủi ro cao, hành động phù hợp là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Tự động quyết định như bình thường"
+        },
+        {
+          "key": "B",
+          "text": "Chuyển sang luồng an toàn hoặc người review"
+        },
+        {
+          "key": "C",
+          "text": "Xóa log"
+        },
+        {
+          "key": "D",
+          "text": "Tăng temperature"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Ca không chắc chắn nên có cơ chế fallback/human review.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C18",
+      "module": "C",
+      "type": "mcq",
+      "points": 1.5,
+      "prompt": "Prompt injection trong hệ thống LLM thường là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Dụ model bỏ qua chỉ dẫn hệ thống hoặc tiết lộ dữ liệu"
+        },
+        {
+          "key": "B",
+          "text": "Tấn công vật lý máy chủ"
+        },
+        {
+          "key": "C",
+          "text": "Lỗi chia train/test"
+        },
+        {
+          "key": "D",
+          "text": "Lỗi gõ sai biến Python"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Prompt injection cố khiến model làm theo chỉ dẫn độc hại trong input.",
+      "tags": [
+        "ai",
+        "product"
+      ]
+    },
+    {
+      "id": "E04-C19",
+      "module": "C",
+      "type": "essay",
+      "points": 4,
+      "prompt": "Xây AI trích xuất thông tin từ hồ sơ PDF. Nêu pipeline, kiểm tra chất lượng và human review.",
+      "modelAnswer": "Pipeline gồm OCR/parse, tách trường cần trích xuất, LLM hoặc model extraction, kiểm tra định dạng/ràng buộc, trả confidence, lưu log. Quality kiểm bằng bộ hồ sơ gắn nhãn, so sánh từng field, đo lỗi nghiêm trọng. Human review cho field quan trọng, confidence thấp hoặc dữ liệu mâu thuẫn.",
+      "rubric": [
+        "Có parse/OCR.",
+        "Có extraction và validation.",
+        "Có confidence.",
+        "Có đánh giá theo field.",
+        "Có human review."
+      ],
+      "tags": [
+        "document-ai"
+      ]
+    },
+    {
+      "id": "E04-C20",
+      "module": "C",
+      "type": "essay",
+      "points": 4,
+      "prompt": "Bạn cần xây AI phân loại và ưu tiên ticket hỗ trợ khách hàng. Trình bày output, dữ liệu đầu vào, metric chính, rủi ro và baseline không-AI.",
+      "modelAnswer": "Output nên là label loại ticket + priority/risk score + ranking. Dữ liệu gồm nội dung ticket, lịch sử khách hàng, SLA, sản phẩm liên quan. Metric nên kết hợp chất lượng phân loại với thời gian xử lý hoặc tỷ lệ ticket quan trọng được đẩy lên. Rủi ro gồm bias, privacy, leakage, tự động ưu tiên sai; cần human review cho ca quan trọng. Baseline là rule-based theo keyword/SLA.",
+      "rubric": [
+        "Nêu output rõ: label/score/ranking.",
+        "Nêu ít nhất 2 nguồn dữ liệu hợp lý.",
+        "Chọn metric gắn với mục tiêu sản phẩm.",
+        "Nêu rủi ro và cách giảm.",
+        "Có baseline không-AI."
+      ],
+      "tags": [
+        "product-ai"
+      ]
+    },
+    {
+      "id": "E04-D01",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "Data minimization nghĩa là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Thu thập càng nhiều càng tốt"
+        },
+        {
+          "key": "B",
+          "text": "Chỉ thu thập dữ liệu cần thiết cho mục tiêu rõ ràng"
+        },
+        {
+          "key": "C",
+          "text": "Không cần consent"
+        },
+        {
+          "key": "D",
+          "text": "Luôn chia sẻ dữ liệu cho đối tác"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Nguyên tắc này giảm thu thập dư thừa và giảm rủi ro privacy.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D02",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "Khi model không chắc chắn trong quyết định ảnh hưởng quyền lợi người dùng, hành vi đúng hơn là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Vẫn tự động quyết định để nhanh"
+        },
+        {
+          "key": "B",
+          "text": "Chuyển sang review/luồng an toàn"
+        },
+        {
+          "key": "C",
+          "text": "Không lưu log"
+        },
+        {
+          "key": "D",
+          "text": "Ẩn kết quả khỏi mọi người"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Ca không chắc chắn cần cơ chế giám sát và fallback.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D03",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "Transparency trong sản phẩm AI nghĩa là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Không cần giải thích gì"
+        },
+        {
+          "key": "B",
+          "text": "Người dùng/vận hành biết AI được dùng ở đâu, giới hạn gì, và có đường khiếu nại phù hợp"
+        },
+        {
+          "key": "C",
+          "text": "Chỉ cần log nội bộ"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ cần accuracy cao"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Minh bạch giúp người bị ảnh hưởng hiểu và kiểm tra quyết định.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D04",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "Accountability nghĩa là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "AI tự chịu trách nhiệm"
+        },
+        {
+          "key": "B",
+          "text": "Không ai chịu trách nhiệm nếu model sai"
+        },
+        {
+          "key": "C",
+          "text": "Rõ ai chịu trách nhiệm, quy trình sửa sai/khiếu nại"
+        },
+        {
+          "key": "D",
+          "text": "Chỉ cần mã hóa dữ liệu"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Không được đổ lỗi mơ hồ cho AI; cần người/bộ phận chịu trách nhiệm.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D05",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "Nếu phát hiện model có thiên lệch bất lợi với một nhóm người dùng, nên:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Bỏ qua nếu điểm tổng thể cao"
+        },
+        {
+          "key": "B",
+          "text": "Che thông tin đó"
+        },
+        {
+          "key": "C",
+          "text": "Đo tác động, tìm nguyên nhân, sửa dữ liệu/model/ngưỡng và giám sát lại"
+        },
+        {
+          "key": "D",
+          "text": "Đổi tên model"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Bias cần được đo, xử lý và theo dõi lại có hệ thống.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D06",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "'Bạn muốn kiểm soát nội dung độc hại, vậy là bạn muốn cấm toàn bộ tự do ngôn luận.' Đây là:",
+      "options": [
+        {
+          "key": "A",
+          "text": "Strawman"
+        },
+        {
+          "key": "B",
+          "text": "Lập luận vòng tròn"
+        },
+        {
+          "key": "C",
+          "text": "Dữ liệu thiếu"
+        },
+        {
+          "key": "D",
+          "text": "Chuẩn hóa"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Người nói bóp méo quan điểm ban đầu thành phiên bản cực đoan hơn.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D07",
+      "module": "D",
+      "type": "mcq",
+      "points": 2,
+      "prompt": "Dữ liệu nào cần kiểm soát chặt hơn trong hệ thống AI?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Màu yêu thích"
+        },
+        {
+          "key": "B",
+          "text": "Số căn cước/định danh cá nhân"
+        },
+        {
+          "key": "C",
+          "text": "Loại font UI"
+        },
+        {
+          "key": "D",
+          "text": "Số lượng tab đang mở"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Thông tin định danh cá nhân có rủi ro lạm dụng cao.",
+      "tags": [
+        "logic",
+        "responsible-ai"
+      ]
+    },
+    {
+      "id": "E04-D08",
+      "module": "D",
+      "type": "essay",
+      "points": 6,
+      "prompt": "Triển khai AI gợi ý chẩn đoán sơ bộ trong y tế cần đảm bảo gì?",
+      "modelAnswer": "AI chỉ hỗ trợ bác sĩ, không thay quyết định chuyên môn. Cần kiểm định chất lượng, bảo mật dữ liệu sức khỏe, giải thích/cảnh báo giới hạn, xử lý ca không chắc chắn, lưu audit, theo dõi sai sót và quy định rõ trách nhiệm.",
+      "rubric": [
+        "Nêu privacy/data minimization.",
+        "Nêu fairness/bias.",
+        "Nêu transparency/giải thích.",
+        "Nêu security/audit/logging.",
+        "Nêu human oversight.",
+        "Nêu accountability/khiếu nại/sửa sai."
+      ],
+      "tags": [
+        "healthcare",
+        "safety"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+name: Auto-merge safe exam contributions
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  classify-and-enable-auto-merge:
+    name: Classify exam-only PR and enable auto-merge
+    if: >-
+      github.event.pull_request.draft == false &&
+      !contains(github.event.pull_request.labels.*.name, 'needs-review') &&
+      !contains(github.event.pull_request.labels.*.name, 'do-not-merge')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      # Safe: with pull_request_target, checkout only the base branch workflow/scripts.
+      # Do not checkout or execute untrusted PR code in this privileged workflow.
+      - name: Checkout base branch only
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Ensure labels exist
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/labels" -f name='exam-contribution' -f color='0E8A16' -f description='PR chỉ thêm/sửa file đề JSON, đủ điều kiện auto-merge sau khi check pass' >/dev/null 2>&1 || true
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/labels" -f name='needs-review' -f color='FBCA04' -f description='Cần maintainer xem thủ công' >/dev/null 2>&1 || true
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/labels" -f name='do-not-merge' -f color='B60205' -f description='Không tự động merge' >/dev/null 2>&1 || true
+
+      - name: Check changed files are safe for auto-merge
+        id: files
+        run: |
+          set -euo pipefail
+          files="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename')"
+          echo "Changed files:"
+          echo "$files"
+
+          allowed="yes"
+          count=0
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            count=$((count + 1))
+            case "$file" in
+              src/data/exams/*.json|docs/EXAM_SCHEMA.md|docs/exam-template.json|CONTRIBUTING.md)
+                ;;
+              *)
+                allowed="no"
+                ;;
+            esac
+          done <<< "$files"
+
+          if [ "$count" -eq 0 ]; then
+            allowed="no"
+          fi
+
+          echo "allowed=$allowed" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Label as exam contribution
+        if: steps.files.outputs.allowed == 'yes'
+        run: |
+          gh pr edit "$PR_URL" --add-label "exam-contribution"
+          gh pr comment "$PR_URL" --body "✅ PR này chỉ thay đổi file đề/tài liệu đóng góp được phép. Bot đã bật auto-merge; PR sẽ tự merge khi check validate/build pass. Maintainer có thể thêm label \`needs-review\` hoặc \`do-not-merge\` để chặn."
+
+      - name: Enable auto-merge after required checks pass
+        if: steps.files.outputs.allowed == 'yes'
+        run: gh pr merge --auto --squash --delete-branch "$PR_URL"
+
+      - name: Mark PR for manual review
+        if: steps.files.outputs.allowed != 'yes'
+        run: |
+          gh pr edit "$PR_URL" --add-label "needs-review"
+          gh pr comment "$PR_URL" --body "ℹ️ PR này thay đổi ngoài phạm vi auto-merge an toàn. Maintainer cần xem thủ công. Auto-merge chỉ áp dụng cho file JSON trong \`src/data/exams/*.json\` và một số tài liệu đóng góp."
