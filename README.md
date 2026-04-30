@@ -1,3 +1,5 @@
+![Uploading image.png…]()
+
 # AI-TEST — Bộ đề cương ôn tập AI thực chiến
 
 Web app self-host/local host để luyện đề theo dạng chọn đáp án, xem đúng/sai, xem đáp án đúng, giải thích và thống kê cuối bài.
