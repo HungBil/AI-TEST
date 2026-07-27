@@ -20,12 +20,12 @@ export function ResultSummary({ exam, answers, onReview, onRestart, onHome }: Pr
           <span className="eyebrow">Kết quả</span>
           <h1>{exam.title}</h1>
           <p>Đúng {summary.correct}/{summary.totalQuestions} câu · {summary.earned.toFixed(1)}/{summary.total} điểm</p>
-          <Disclaimer />
+          <Disclaimer text={exam.disclaimer} />
         </div>
         <div className="score-circle"><strong>{summary.percent}%</strong><span>{summary.earned.toFixed(1)} điểm</span></div>
       </section>
 
-      <ModuleStats scores={summary.moduleScores} />
+      <ModuleStats scores={summary.moduleScores} labels={exam.moduleLabels} />
 
       <section className="card review-panel">
         <h2>Câu cần ôn lại</h2>
