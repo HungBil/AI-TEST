@@ -59,7 +59,7 @@ export function QuizRunner({ exam, mode, timerEnabled, onHome }: Props) {
         <div className="question-nav">
           {exam.questions.map((question, idx) => <button key={question.id} className={`${idx === current ? 'active' : ''} ${answers[question.id] ? 'answered' : ''}`} onClick={() => setCurrent(idx)}>{idx + 1}</button>)}
         </div>
-        <Disclaimer />
+        <Disclaimer text={exam.disclaimer} />
       </aside>
 
       <section className="quiz-main">
