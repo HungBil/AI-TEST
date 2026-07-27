@@ -38,6 +38,8 @@ export interface Exam {
   durationMinutes: number;
   totalPoints: number;
   disclaimer: string;
+  moduleOverview?: string[];
+  moduleLabels?: Partial<Record<ModuleId, string>>;
   questions: Question[];
 }
 
@@ -49,7 +51,7 @@ export interface AnswerState {
 
 export const MODULE_LABELS: Record<ModuleId, string> = {
   A: 'Toán học & tư duy định lượng',
-  B: 'Python / NumPy / Pandas',
-  C: 'AI & tư duy sản phẩm AI',
-  D: 'Logic / đạo đức / hành vi'
+  B: 'Thuật toán / Python / API / NumPy / Pandas',
+  C: 'AI / RAG / tư duy sản phẩm và hệ thống',
+  D: 'Logic / privacy / Responsible AI'
 };
