@@ -1,24 +1,48 @@
 # Exam JSON schema
 
-Mỗi đề nằm trong `src/data/exams/*.json`. App tự load tất cả file JSON trong thư mục này, nên contributor có thể thêm `exam-11.json`, `exam-12.json`, ... mà không cần sửa code TypeScript.
+Repo có hai nhóm đề:
 
-## Cấu trúc bắt buộc
+- `src/data/exams/*.json`: bộ cũ, hiển thị công khai.
+- `src/data/new-exams/*.json`: bộ mô phỏng khóa mới, chỉ đi vào giao diện sau cổng vương miện.
+
+Cả hai thư mục đều được Vite tự load bằng `import.meta.glob`, nên thêm file JSON không cần import thủ công từng đề.
+
+## Cấu trúc đề
 
 ```json
 {
-  "id": "exam-11",
-  "title": "Bài kiểm tra ôn tập AI thực chiến #11",
+  "id": "new-2026-02",
+  "title": "Bộ mô phỏng khóa mới 2026 · Đề 02",
   "description": "...",
   "durationMinutes": 90,
   "totalPoints": 100,
   "disclaimer": "...",
+  "moduleLabels": {
+    "A": "Xác suất & đại số tuyến tính",
+    "B": "Euclid, Python API & NumPy",
+    "C": "AI, RAG & thiết kế hệ thống",
+    "D": "Privacy, banking & Responsible AI"
+  },
+  "moduleOverview": [
+    "Module 1 · A: ...",
+    "Module 2 · B: ...",
+    "Module 3 · C: ...",
+    "Module 4 · D: ..."
+  ],
   "questions": []
 }
 ```
 
+Các trường bắt buộc:
+
+- `id`, `title`, `description`, `durationMinutes`, `totalPoints`, `disclaimer`, `questions`.
+- `moduleLabels` và `moduleOverview` là tùy chọn. Nếu có, `moduleLabels` phải đủ A/B/C/D; `moduleOverview` phải có đúng 4 dòng.
+
 ## Số lượng câu
 
-Mỗi đề cần đúng 60 câu:
+Mỗi đề cần đúng 60 câu và 100 điểm.
+
+### Bộ cũ
 
 | Module | Số câu | Nội dung |
 |---|---:|---|
@@ -27,16 +51,23 @@ Mỗi đề cần đúng 60 câu:
 | C | 20 | AI & tư duy sản phẩm AI, gồm 2 tự luận |
 | D | 8 | Logic / đạo đức / hành vi, gồm 1 tự luận tình huống |
 
-Tổng điểm phải là 100.
+### Bộ mô phỏng khóa mới
+
+| Module | Số câu | Nội dung |
+|---|---:|---|
+| A | 20 | Xác suất và đại số tuyến tính, trọng tâm ma trận |
+| B | 20 | Euclid, Python gọi API và NumPy; khuyến nghị 2 câu code |
+| C | 12 | AI/RAG/triển khai; đúng 3 câu tự luận theo ràng buộc |
+| D | 8 | Privacy, banking và Responsible AI |
 
 ## MCQ
 
 ```json
 {
-  "id": "E11-B01",
-  "module": "B",
+  "id": "N26-A01",
+  "module": "A",
   "type": "mcq",
-  "points": 1.5,
+  "points": 1,
   "prompt": "...",
   "options": [
     { "key": "A", "text": "..." },
@@ -46,18 +77,24 @@ Tổng điểm phải là 100.
   ],
   "answer": "B",
   "explanation": "...",
-  "tags": ["python"]
+  "tags": ["probability"]
 }
 ```
+
+Yêu cầu:
+
+- Đúng 4 lựa chọn theo thứ tự A/B/C/D.
+- `answer` phải trỏ tới một lựa chọn tồn tại.
+- `explanation` giải thích được vì sao đáp án đúng, không chỉ lặp lại đáp án.
 
 ## Code/tự luận
 
 ```json
 {
-  "id": "E11-C19",
+  "id": "N26-C10",
   "module": "C",
   "type": "essay",
-  "points": 4,
+  "points": 12,
   "prompt": "...",
   "modelAnswer": "...",
   "rubric": ["Ý 1", "Ý 2", "Ý 3"],
@@ -65,8 +102,16 @@ Tổng điểm phải là 100.
 }
 ```
 
-Kiểm tra local:
+Yêu cầu:
+
+- `type` là `code` hoặc `essay`.
+- Có `modelAnswer`.
+- Có ít nhất 3 tiêu chí trong `rubric`.
+- Với bộ mới, cả 3 câu `essay` nằm ở Module C và prompt cần nêu ràng buộc để người làm lập luận, đưa ví dụ và mô tả cách triển khai.
+
+## Kiểm tra local
 
 ```bash
 npm run validate
+npm run build
 ```
