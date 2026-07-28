@@ -43,10 +43,10 @@ Nội dung được đối chiếu với các tài liệu kỹ thuật và quả
 - [Requests Quickstart](https://requests.readthedocs.io/en/stable/user/quickstart/): timeout, JSON và `raise_for_status()`.
 - [NumPy User Guide](https://numpy.org/doc/stable/user/): shape, axis, broadcasting và indexing.
 - [NIST AI RMF Generative AI Profile](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence): quản trị rủi ro, đánh giá và giám sát AI.
-- [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/): prompt injection, sensitive information disclosure, excessive agency và rủi ro RAG.
-- [Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15](https://vanban.chinhphu.vn/?docid=214590&pageid=27160&typegroupid=3) và [Nghị định 356/2025/NĐ-CP](https://vanban.chinhphu.vn/?classid=1&docid=216387&pageid=27160): bối cảnh bảo vệ dữ liệu tại Việt Nam từ năm 2026.
+- [OWASP GenAI Security Project / LLM Top 10](https://genai.owasp.org/llm-top-10/): prompt injection, sensitive information disclosure, excessive agency và rủi ro RAG.
+- [Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15](https://vanban.chinhphu.vn/?classid=1&docid=214590&pageid=27160&typegroup=) và [Nghị định 356/2025/NĐ-CP](https://vanban.chinhphu.vn/?classid=1&docid=216387&pageid=27160): bối cảnh bảo vệ dữ liệu tại Việt Nam từ năm 2026.
 
-Bộ câu hỏi không kiểm tra số điều luật cụ thể và không thay thế tư vấn pháp lý. Các tình huống tập trung vào nguyên tắc thiết kế an toàn như least privilege, data minimization, server-side authorization, audit và human approval.
+Bộ câu hỏi không kiểm tra số điều luật cụ thể và không thay thế tư vấn pháp lý. Các tình huống tập trung vào nguyên tắc thiết kế an toàn như least privilege, data minimization, server-side authorization, audit, abstention và human approval.
 
 ## Chạy local
 
@@ -72,6 +72,8 @@ Validator kiểm tra:
 - Mỗi đề đúng 60 câu và 100 điểm.
 - Bộ cũ có phân bố A/B/C/D là 10/22/20/8.
 - Bộ mới có phân bố A/B/C/D là 20/20/12/8.
+- Bộ mới có đúng 2 câu code ở Module B và đúng 3 câu tự luận ở Module C.
+- Từng file `module-a.json` đến `module-d.json` chỉ chứa câu của module tương ứng.
 - MCQ có đủ A/B/C/D, đáp án hợp lệ và giải thích.
 - Câu code/tự luận có `modelAnswer` và ít nhất 3 tiêu chí rubric.
 - `moduleOverview` và `moduleLabels` hợp lệ nếu được khai báo.
@@ -95,10 +97,12 @@ Thư mục build nằm ở `dist/`.
 
 ### Bộ mới
 
-1. Thêm file JSON vào `src/data/new-exams/`.
-2. Dùng phân bố module 20/20/12/8.
-3. App tự load file qua `src/data/new-exams/index.ts`.
-4. Chạy `npm run validate` và `npm run build`.
+1. Tạo thư mục mới, ví dụ `src/data/new-exams/new-2026-02/`.
+2. Tạo `exam.json` chỉ chứa metadata của đề, không chứa `questions`.
+3. Tạo bốn file mảng câu hỏi: `module-a.json`, `module-b.json`, `module-c.json`, `module-d.json`.
+4. Dùng phân bố module 20/20/12/8; đặt đúng 2 câu code ở B và đúng 3 câu tự luận ở C.
+5. App tự ghép metadata với bốn module qua `src/data/new-exams/index.ts`.
+6. Chạy `npm run validate` và `npm run build`.
 
 ## Về khóa bằng mật khẩu
 
