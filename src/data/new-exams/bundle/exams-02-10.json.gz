@@ -1,0 +1,96 @@
+# Ma tráº­n phá»§ ná»™i dung â€” Bá»™ mÃ´ phá»ng khÃ³a má»›i 2026
+
+> ÄÃ¢y lÃ  bá»™ Ã´n táº­p cá»™ng Ä‘á»“ng, khÃ´ng pháº£i Ä‘á» chÃ­nh thá»©c hoáº·c Ä‘á» bá»‹ lá»™. Má»¥c tiÃªu cá»§a 10 Ä‘á» lÃ  phá»§ rá»™ng cÃ¡c biáº¿n thá»ƒ há»£p lÃ½ cá»§a cáº¥u trÃºc Ä‘Æ°á»£c ngÆ°á»i thi gáº§n Ä‘Ã¢y mÃ´ táº£, Ä‘á»“ng thá»i bÃ¡m cÃ¡c nhÃ³m nÄƒng lá»±c VinUni cÃ´ng khai: tÆ° duy logic, láº­p trÃ¬nh vÃ  dá»¯ liá»‡u cÆ¡ báº£n, xá»­ lÃ½ tÃ¬nh huá»‘ng thá»±c tiá»…n.
+
+## Quy mÃ´ vÃ  cáº¥u trÃºc cá»‘ Ä‘á»‹nh
+
+- **10 Ä‘á» Ã— 60 cÃ¢u = 600 cÃ¢u** trong collection khÃ³a má»›i.
+- Má»—i Ä‘á» **100 Ä‘iá»ƒm, 90 phÃºt**.
+- Module A: 20 cÃ¢u xÃ¡c suáº¥t vÃ  Ä‘áº¡i sá»‘ tuyáº¿n tÃ­nh.
+- Module B: 18 MCQ Euclid/Python API/NumPy + 2 cÃ¢u code/giáº£i thÃ­ch.
+- Module C: 9 MCQ AI/RAG/MLOps + Ä‘Ãºng 3 cÃ¢u tá»± luáº­n theo rÃ ng buá»™c.
+- Module D: 8 tÃ¬nh huá»‘ng privacy, banking vÃ  Responsible AI.
+- ToÃ¡n Ä‘Æ°á»£c chá»n sá»‘ Ä‘á»ƒ giáº£i báº±ng giáº¥y nhÃ¡p, khÃ´ng cáº§n mÃ¡y tÃ­nh cáº§m tay.
+
+## Vai trÃ² cá»§a tá»«ng Ä‘á»
+
+| Äá» | Trá»ng tÃ¢m toÃ¡n | Trá»ng tÃ¢m code/API/data | Ba tÃ¬nh huá»‘ng tá»± luáº­n chÃ­nh | Má»©c Ä‘á»™ |
+|---:|---|---|---|---|
+| 01 | Bayes ná»n táº£ng, ma tráº­n cÆ¡ báº£n | Euclid, Requests, NumPy cÆ¡ báº£n | RAG ngÃ¢n hÃ ng, fraud ranking, trá»£ lÃ½ ngÃ¢n hÃ ng | Ná»n táº£ng |
+| 02 | Bayes tá»« báº£ng Ä‘áº¿m, xÃ¡c suáº¥t toÃ n pháº§n, tá»• há»£p vÃ  ká»³ vá»ng; nhÃ¢n ma tráº­n, Ä‘á»‹nh thá»©c, há»‡ tuyáº¿n tÃ­nh. | Euclid/extended GCD; GET/POST, status, retry, pagination; NumPy axis, reshape, broadcasting. | RAG cÃ³ ACL, xáº¿p háº¡ng case rá»§i ro, OCR hÃ³a Ä‘Æ¡n; evaluation, citation vÃ  rollout. | Ná»n táº£ngâ€“á»©ng dá»¥ng |
+| 03 | Hai phÃ©p thá»­ Bayes, xÃ¡c suáº¥t Ä‘iá»u kiá»‡n, nhá»‹ thá»©c, chá»‰nh há»£p; nghá»‹ch Ä‘áº£o, rank, eigen vÃ  vector. | GCD/lcm, modular inverse; HTTP/auth/session; slicing, boolean indexing, matrix solve. | Chatbot Ä‘a ngÃ´n ngá»¯, computer vision phÃ¡t hiá»‡n lá»—i, gia sÆ° áº£o quyáº¿t Ä‘á»‹nh phá»©c táº¡p. | Ná»n táº£ngâ€“á»©ng dá»¥ng |
+| 04 | XÃ¡c suáº¥t cÃ³ Ä‘iá»u kiá»‡n/báº£ng Ä‘áº¿m, expectation; rank, basis, nullspace vÃ  linear transformation. | Euclid Ä‘á»‡ quy, API status/secret/TLS/authorization; NumPy transpose, axis vÃ  matmul. | PhÃ²ng ngá»«a lá»«a Ä‘áº£o chuyá»ƒn tiá»n, recommendation cÃ³ privacy, agent triage ticket IT. | Ná»n táº£ngâ€“á»©ng dá»¥ng |
+| 05 | Hypergeometric, complement, inclusionâ€“exclusion; projection, trace, determinant property vÃ  symmetry. | Extended Euclid, idempotency, pagination, validation/logging; NumPy stack/where/view-copy. | RAG multi-tenant, trá»£ lÃ½ lÃ¢m sÃ ng, versioned knowledge ingestion. | Trung cáº¥pâ€“tÃ­ch há»£p |
+| 06 | Expected loss, Bernoulli variance, union probability; projection, basis, nullspace vÃ  Markov. | GCD complexity/invariants, retries vÃ  secure logging; NumPy NaN, clip, linalg. | Voice bot cáº£nh bÃ¡o lá»«a Ä‘áº£o, AI há»— trá»£ tÃ­n dá»¥ng, phÃ¡t hiá»‡n rá»­a tiá»n báº±ng Ä‘á»“ thá»‹. | Trung cáº¥pâ€“tÃ­ch há»£p |
+| 07 | Binomial, expectation vÃ  independence; eigenvector, norm, linear transform vÃ  row operations. | Euclid/coprime, polling/backoff, session/TLS; NumPy broadcasting, argmax vÃ  one-hot. | Gia sÆ° Go thÃ­ch nghi, code-review agent trong sandbox, cÃ¡ nhÃ¢n hÃ³a há»c táº­p. | Trung cáº¥pâ€“tÃ­ch há»£p |
+| 08 | Bayes/table, nhá»‹ thá»©c, chá»‰nh há»£p; determinant, inverse, transformation vÃ  matrix properties. | Euclid/modular inverse, cursor pagination, authorization; NumPy stack, where, distance. | KYC multimodal, chatbot dá»‹ch vá»¥ cÃ´ng, báº£o trÃ¬ dá»± Ä‘oÃ¡n. | Tá»•ng há»£pâ€“thá»±c chiáº¿n |
+| 09 | Conditional tables, expected value vÃ  union; trace, determinant property, symmetry, Markov. | GCD/lcm, safe lookup, schema validation; NumPy slicing, broadcasting, moving average. | GraphSAGE/EvolveGCN fraud intelligence, demand forecasting, multi-agent research. | Tá»•ng há»£pâ€“thá»±c chiáº¿n |
+| 10 | Bayes, total probability, expected risk; matrix product, rank, eigen, nullspace vÃ  Markov. | Euclid nÃ¢ng cao, RAG API validation, idempotency/retry; NumPy linalg vÃ  vector distance. | Pilot AI 6 tuáº§n, dÃ¹ng LLM ngoÃ i an toÃ n, incident response/rollback. | Tá»•ng há»£pâ€“thá»±c chiáº¿n |
+
+## Module A â€” XÃ¡c suáº¥t vÃ  Ä‘áº¡i sá»‘ tuyáº¿n tÃ­nh
+
+### XÃ¡c suáº¥t
+
+- Bayes tá»« tá»· lá»‡ ná»n, báº£ng Ä‘áº¿m vÃ  hai phÃ©p kiá»ƒm tra Ä‘á»™c láº­p cÃ³ Ä‘iá»u kiá»‡n.
+- XÃ¡c suáº¥t toÃ n pháº§n, xÃ¡c suáº¥t cÃ³ Ä‘iá»u kiá»‡n, há»£p/giao, biáº¿n cá»‘ Ä‘á»‘i vÃ  Ä‘á»™c láº­p.
+- Láº¥y máº«u khÃ´ng hoÃ n láº¡i, hypergeometric, tá»• há»£p, chá»‰nh há»£p, inclusionâ€“exclusion.
+- PhÃ¢n phá»‘i nhá»‹ thá»©c, ká»³ vá»ng, phÆ°Æ¡ng sai Bernoulli vÃ  expected loss.
+- Báº£ng contingency, capacity/risk contexts vÃ  chuá»—i Markov hai tráº¡ng thÃ¡i.
+
+### Äáº¡i sá»‘ tuyáº¿n tÃ­nh
+
+- KÃ­ch thÆ°á»›c, nhÃ¢n ma tráº­nâ€“vector, chuyá»ƒn vá»‹, trace vÃ  determinant.
+- Nghá»‹ch Ä‘áº£o 2Ã—2, há»‡ phÆ°Æ¡ng trÃ¬nh, rank, basis, phá»¥ thuá»™c tuyáº¿n tÃ­nh vÃ  nullspace.
+- Dot product, chuáº©n, trá»±c giao, projection, linear transformation.
+- Eigenvalue/eigenvector cá»§a ma tráº­n Ä‘Æ¡n giáº£n, symmetric matrix vÃ  row operations.
+- Táº¥t cáº£ phÃ©p tÃ­nh dÃ¹ng sá»‘ nhá», phÃ¢n sá»‘ gá»n hoáº·c cáº¥u trÃºc tam giÃ¡c/Ä‘Æ°á»ng chÃ©o.
+
+## Module B â€” Euclid, Python API vÃ  NumPy
+
+### Thuáº­t toÃ¡n/Python
+
+- GCD báº±ng vÃ²ng láº·p vÃ  Ä‘á»‡ quy, lcm, báº¥t biáº¿n Euclid vÃ  Ä‘á»™ phá»©c táº¡p.
+- Extended Euclid, há»‡ sá»‘ BÃ©zout, sá»‘ nguyÃªn tá»‘ cÃ¹ng nhau vÃ  modular inverse.
+- Äá»c code, Ä‘iá»u kiá»‡n dá»«ng, edge case vÃ  giáº£i thÃ­ch thay vÃ¬ chá»‰ Ä‘Æ°a output.
+
+### API engineering
+
+- GET/POST/PATCH, params, JSON body, header auth, timeout vÃ  `raise_for_status()`.
+- HTTP 401/403/404/409/422/429/5xx; retry cÃ³ backoff/jitter vÃ  `Retry-After`.
+- Idempotency, pagination/cursor, schema validation, session, TLS vÃ  logging redaction.
+- Server-side authorization/tenant isolation; khÃ´ng coi frontend hoáº·c prompt lÃ  ranh giá»›i báº£o máº­t.
+- CÃ¢u code yÃªu cáº§u error handling, kiá»ƒu dá»¯ liá»‡u, Ä‘iá»u kiá»‡n dá»«ng vÃ  khÃ´ng log secret/PII.
+
+### NumPy
+
+- `shape`, `ndim`, reshape, transpose, slicing, boolean indexing vÃ  broadcasting.
+- `sum/mean(axis=...)`, stack/concatenate, `where`, `argmax`, copy/view.
+- Matrix multiplication, `np.linalg.solve`, NaN, clip, vectorization vÃ  distance.
+- CÃ¢u code bao gá»“m standardization, cosine similarity, confusion matrix, one-hot, moving average vÃ  batch operations.
+
+## Module C â€” AI, RAG, agent vÃ  triá»ƒn khai
+
+### MCQ
+
+- Problem framing: classification/regression/clustering, baseline vÃ  non-AI alternative.
+- Group/time split, leakage, imbalance, PR-AUC, recall/precision@capacity, threshold vÃ  calibration.
+- Overfitting, distribution shift, evaluation slices vÃ  rollout theo giai Ä‘oáº¡n.
+- RAG: chunking, hybrid retrieval, reranking, version/ACL, groundedness vÃ  citation.
+- Prompt injection, tool allowlist, excessive agency, max steps/budget vÃ  human approval.
+- Monitoring: drift, latency, token cost, tool errors, human correction vÃ  kill switch.
+
+### 30 tÃ¬nh huá»‘ng tá»± luáº­n trong 10 Ä‘á»
+
+- Banking: fraud/risk ranking, scam prevention, credit support, voice bot, graph AML.
+- RAG: policy search cÃ³ ACL, multi-tenant isolation, versioned knowledge, external LLM privacy.
+- Product AI: multilingual support, recommendation, OCR, KYC, virtual tutor vÃ  personalization.
+- MLOps: pilot 6 tuáº§n, shadow mode, canary, incident response, rollback vÃ  audit.
+- Agent: IT triage, code review sandbox, research assistant vÃ  tool governance.
+- Má»—i cÃ¢u báº¯t buá»™c cÃ³: **láº­p luáº­n + baseline**, **vÃ­ dá»¥ end-to-end**, **triá»ƒn khai/evaluation/governance**.
+
+## Module D â€” Privacy, banking vÃ  Responsible AI
+
+- Least privilege, purpose limitation, data minimization vÃ  retention.
+- Group/tenant isolation á»Ÿ server/data layer, ká»ƒ cáº£ cache, metadata, logs vÃ  backup.
+- Audit: actor, evidence, data/model/prompt/tool version, ngÆ°á»i phÃª duyá»‡t vÃ  outcome.
+- Human gate cho Ä‘Ã³ng bÄƒng tÃ i khoáº£n, hoÃ n tiá»n, Ä‘á»•i há»“ sÆ¡, xÃ³a dá»¯ liá»‡u, kÃª Ä‘¨[ˆ°èX›\Ú‚‹H˜Z\›™\ÜËÜİX™Ü›İ\]˜[X][Û‹›ŞH™X]\™KTÔ‹ĞÕ‹ÓĞÔˆ]X[]HÛXÙ\Ë‚‹H[˜ÚY[ÛÛZ[›Y[¸n¨ÛÈğèˆ˜XÙK™]›ÚÙHÙXÜ™]˜[˜XÚÈ˜\Ù[[™H°è›Û˜XÚË‚‹HğèH8nãÚH8n«\[™È°èÈ™İ^pê›ˆ8n«ØÈxn¯İøn¯ËÚ0í™ÈÚxnàÛH˜HønäH1$Zxnà]Hxn«]°èÚ0í™È^H1¬¸n©[ˆ0è\0ïK‚‚ˆÈÈ]^H8n«ØÈÚ8nä[™È8nãXÈ8néÂ‚‹HÚ0í™È0î[™È8n¨ZH™İ^pê›ˆ± Ûˆ›Û\ÚxnëØHH1$xnàH¸nåHİ[™Ë‚‹HQğèH8nãÚH^Hš8n©]È1$pè\0è[ˆKĞ‹ĞËÑ1$q¬8nèØÈ0è›ˆ¸nåH1¬1¨[™È1$xnäZHğè›ˆ¸n¬[™È[È[Ù[K‚‹Hğî[™Èxnæ]Ú0èZHšxnáÛHxn©]xnáÛˆ›Û™È¸näZHøn¨ÛšÚ0èXÈš]Nˆ˜[šÚ[™ËX[Ø\™KYXØ][Û‹UX[Y˜Xİ\š[™È°èX›XÈÙ\šXÙK‚‹H\İ˜XİÜˆ1$q¬8nèØÈxn¯İøn¯È8nêÈ8nåÚH1¬8nç[™Èøn­Üˆ¸nãÈ˜\ÙH˜]Kš8n©ÛH^\Ø0î[™È\İÙ]1$xnàÈÚ8nã[ˆ™\ÚÛ8nãXÈ]^xnà[ˆ8nçÈœ›Û[™™]H°í8n¨[ˆøn­ØÈÚÈH8nìH]^xn¯İ1$xnâÛš]^xnà[‹‚‚ˆÈÈ™İxnäÛˆ[HÚxn¯İHğí™ÈÚZB‚‹Hš[•[šK0í™È[ˆ^xnàÛˆÚ[šÚ0ìØHñ¨H¸n¨Ûˆ°èH1$pè[šÚpèHønäÛH1¬^HÙÚXË8n«\°ëš°è8nëÈxnáİHñ¨H¸n¨Û‹8nëH0ïH0ëšxnä[™È8nìXÈxná[‹‚‹H™\]Y\İÈ]ZXÚÜİ\°è[TH\Ù\ˆİZYK‚‹H’TÕRH“QˆÙ[™\˜]]™HRH›Ùš[K‚‹HÕĞTÔÙ[RHÙXİ\š]H›Ú™XİÈHÜL‚‹Hxn«]¸n¨ÛÈ¸náÈ8nëÈxnáİHğèHš0è›ˆLKÌŒKÔRMH°è™Ú8nâÈ1$xnâÛšÍM‹ÌŒKÓ±$PÔÚÈ¸näZHøn¨Ûššxnáİ˜[HŒ‹‚‚
