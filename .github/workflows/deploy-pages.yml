@@ -42,8 +42,9 @@ jobs:
       - name: Test Crown Worker
         run: node workers/crown-auth/test.mjs
 
-      - name: Require Crown Worker URL
-        run: test -n "$VITE_CROWN_AUTH_URL"
+      - name: Warn when Crown Worker is not configured
+        if: env.VITE_CROWN_AUTH_URL == ''
+        run: echo "::warning::CROWN_AUTH_URL is empty. GitHub Pages will deploy, but Crown unlock stays disabled until the repository variable is configured."
 
       - name: Build app
         run: npm run build

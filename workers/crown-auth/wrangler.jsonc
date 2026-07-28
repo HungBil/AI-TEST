@@ -8,9 +8,6 @@
     "ALLOWED_ORIGINS": "https://hungbil.github.io,http://localhost:5173,http://127.0.0.1:5173",
     "TOKEN_TTL_SECONDS": "21600"
   },
-  "secrets": {
-    "required": ["CROWN_PASSWORD", "CROWN_TOKEN_SECRET"]
-  },
   "ratelimits": [
     {
       "name": "CROWN_CLIENT_LIMITER",

@@ -2,12 +2,10 @@
 
 Repo có hai collection:
 
-- `src/data/exams/*.json`: bộ cũ, hiển thị công khai.
-- `src/data/new-exams/`: bộ mô phỏng khóa mới, mở qua cổng vương miện.
+- `src/data/exams/*.json`: 10 đề cũ.
+- `src/data/new-exams/`: 10 đề Crown 2026.
 
-## Cấu trúc bắt buộc
-
-Mỗi đề phải có:
+## Cấu trúc đề
 
 ```json
 {
@@ -28,21 +26,15 @@ Mỗi đề phải có:
 }
 ```
 
-`moduleLabels` và `moduleOverview` là tùy chọn, nhưng nếu khai báo phải đủ bốn module.
+`moduleLabels` và `moduleOverview` là tùy chọn. Nếu có, `moduleLabels` phải đủ A/B/C/D và `moduleOverview` phải có đúng bốn dòng.
 
-## Hai layout của bộ mới
+## Hai layout của collection Crown
 
-### Một file hoàn chỉnh
+### Layout module hóa
 
-```txt
-src/data/new-exams/new-2026-02.json
-```
+Đề 01 dùng:
 
-File chứa metadata và toàn bộ `questions`. Đề 02–10 được materialize từ bundle nén bằng `npm run materialize:new-exams`; các file tạo ra nằm trong `.gitignore`, không chỉnh tay. Nguồn đóng gói nằm tại `src/data/new-exams/bundle/`.
-
-### Module hóa
-
-```txt
+```text
 src/data/new-exams/new-2026-01/
 ├── exam.json
 ├── module-a.json
@@ -51,23 +43,40 @@ src/data/new-exams/new-2026-01/
 └── module-d.json
 ```
 
-`exam.json` chỉ chứa metadata, không chứa `questions`; bốn file còn lại là các mảng câu hỏi và chỉ được chứa đúng module tương ứng.
+`exam.json` chỉ chứa metadata. Mỗi file module là một mảng câu hỏi và chỉ được chứa module tương ứng.
+
+### Layout file hoàn chỉnh
+
+Đề 02 đến Đề 10 được materialize thành:
+
+```text
+src/data/new-exams/new-2026-02.json
+...
+src/data/new-exams/new-2026-10.json
+```
+
+Các file này được sinh xác định bởi `scripts/materialize-new-exams.mjs` từ bộ sinh trong `scripts/exam-generator/`. File đầu ra nằm trong `.gitignore`, không chỉnh tay.
+
+```bash
+npm run materialize:new-exams
+```
 
 ## Số lượng câu
 
-Mỗi đề đúng 60 câu và 100 điểm.
+Mỗi đề có đúng 60 câu và 100 điểm.
 
 | Collection | A | B | C | D |
 |---|---:|---:|---:|---:|
 | Bộ cũ | 10 | 22 | 20 | 8 |
-| Bộ mới | 20 | 20 | 12 | 8 |
+| Crown 2026 | 20 | 20 | 12 | 8 |
 
-Với bộ mới:
+Mỗi đề Crown còn phải có:
 
 - Đúng 2 câu `code`, đều ở Module B.
 - Đúng 3 câu `essay`, đều ở Module C.
-- Không trùng `question.id` trong toàn repo.
-- Không trùng nguyên văn prompt giữa các đề mới.
+- ID câu hỏi không trùng trong toàn repo.
+- Prompt không trùng nguyên văn giữa các đề Crown.
+- Tổng collection đúng 10 đề, 600 câu, 20 câu code và 30 câu tự luận.
 
 ## MCQ
 
@@ -90,7 +99,7 @@ Với bộ mới:
 }
 ```
 
-MCQ phải có đúng A/B/C/D, không trùng nội dung lựa chọn, đáp án hợp lệ và giải thích đủ rõ.
+MCQ Crown phải có đúng A/B/C/D, không trùng nội dung lựa chọn, đáp án hợp lệ và giải thích đủ rõ. Validator không áp quy tắc lựa chọn không trùng hồi tố lên bộ cũ để tránh thay đổi dữ liệu legacy.
 
 ## Code và tự luận
 
@@ -107,11 +116,12 @@ MCQ phải có đúng A/B/C/D, không trùng nội dung lựa chọn, đáp án 
 }
 ```
 
-Câu mở phải có đáp án mẫu và ít nhất ba tiêu chí rubric không rỗng. Ba câu tự luận Module C nên bắt buộc người làm nêu lập luận, ví dụ end-to-end, cách triển khai, đánh giá, giám sát, bảo mật và rollback.
+Câu mở phải có `modelAnswer` và ít nhất ba tiêu chí rubric không rỗng. Ba câu tự luận Module C cần buộc người làm nêu lập luận, ví dụ end-to-end, cách triển khai, đánh giá, giám sát, bảo mật, human gate và rollback khi phù hợp.
 
 ## Kiểm tra local
 
 ```bash
 npm run validate
+npm run test:crown-worker
 npm run build
 ```
