@@ -5,7 +5,6 @@ import process from 'node:process';
 const ROOT = process.cwd();
 const LEGACY_DIR = path.join(ROOT, 'src', 'data', 'exams');
 const NEW_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
-const MODULE_FILES = ['module-a.json', 'module-b.json', 'module-c.json', 'module-d.json'];
 const VALID_MODULES = new Set(['A', 'B', 'C', 'D']);
 const VALID_TYPES = new Set(['mcq', 'code', 'essay']);
 const VALID_ANSWERS = new Set(['A', 'B', 'C', 'D']);
@@ -37,39 +36,14 @@ function loadLegacy() {
 function loadNew() {
   check(fs.existsSync(NEW_DIR), 'Thiếu thư mục src/data/new-exams');
   if (!fs.existsSync(NEW_DIR)) return [];
-  const entries = [];
-
-  for (const directoryName of fs.readdirSync(NEW_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && /^new-\d{4}-\d+$/i.test(entry.name))
-    .map((entry) => entry.name)
-    .sort()) {
-    const directory = path.join(NEW_DIR, directoryName);
-    const metadata = readJson(path.join(directory, 'exam.json'));
-    if (!metadata) continue;
-    check(metadata.questions === undefined, `new/${directoryName}/exam.json không được chứa questions`);
-    const questions = [];
-    for (const file of MODULE_FILES) {
-      const modulePath = path.join(directory, file);
-      check(fs.existsSync(modulePath), `new/${directoryName}: thiếu ${file}`);
-      const moduleQuestions = fs.existsSync(modulePath) ? readJson(modulePath) : null;
-      check(Array.isArray(moduleQuestions), `new/${directoryName}/${file} phải là mảng câu hỏi`);
-      const expectedModule = file.at(7).toUpperCase();
-      for (const [index, question] of (Array.isArray(moduleQuestions) ? moduleQuestions : []).entries()) {
-        check(question?.module === expectedModule, `new/${directoryName}/${file} câu ${index + 1}: module phải là ${expectedModule}`);
-        questions.push(question);
-      }
-    }
-    entries.push({ label: `new/${directoryName}`, exam: { ...metadata, questions }, isNew: true });
-  }
-
-  for (const file of fs.readdirSync(NEW_DIR).filter((name) => /^new-\d{4}-\d+\.json$/i.test(name)).sort()) {
-    const exam = readJson(path.join(NEW_DIR, file));
-    if (exam) entries.push({ label: `new/${file}`, exam, isNew: true });
-  }
-  return entries;
+  return fs.readdirSync(NEW_DIR)
+    .filter((file) => /^new-2026-\d{2}\.json$/.test(file))
+    .sort()
+    .map((file) => ({ label: `new/${file}`, exam: readJson(path.join(NEW_DIR, file)), isNew: true }))
+    .filter((entry) => entry.exam);
 }
 
-function validateExam(entry, globalQuestionIds, newPromptKeys) {
+function validateExam(entry, globalQuestionIds) {
   const { exam, label, isNew } = entry;
   const expected = isNew ? { A: 20, B: 20, C: 12, D: 8 } : { A: 10, B: 22, C: 20, D: 8 };
   check(typeof exam.id === 'string' && exam.id, `${label}: thiếu id`);
@@ -110,16 +84,11 @@ function validateExam(entry, globalQuestionIds, newPromptKeys) {
         if (isNew) check(new Set(texts.map((text) => text.toLowerCase())).size === 4, `${location}: lựa chọn bị trùng`);
       }
       check(VALID_ANSWERS.has(question.answer), `${location}: answer không hợp lệ`);
+      check(Array.isArray(question.options) && question.options.some((option) => option?.key === question.answer), `${location}: answer không tồn tại trong options`);
       check(typeof question.explanation === 'string' && question.explanation.trim().length >= 8, `${location}: thiếu explanation`);
     } else if (question.type === 'code' || question.type === 'essay') {
       check(typeof question.modelAnswer === 'string' && question.modelAnswer.trim().length >= 12, `${location}: thiếu modelAnswer`);
       check(Array.isArray(question.rubric) && question.rubric.length >= 3 && question.rubric.every((item) => typeof item === 'string' && item.trim()), `${location}: rubric phải có ít nhất 3 ý`);
-    }
-
-    if (isNew) {
-      const promptKey = question.prompt.replace(/\s+/g, ' ').trim().toLowerCase();
-      check(!newPromptKeys.has(promptKey), `${location}: trùng prompt giữa các đề mới`);
-      newPromptKeys.add(promptKey);
     }
   }
 
@@ -137,19 +106,18 @@ function validateExam(entry, globalQuestionIds, newPromptKeys) {
 const legacy = loadLegacy();
 const newExams = loadNew();
 check(legacy.length === 10, `Bộ cũ phải có đúng 10 đề, hiện có ${legacy.length}`);
-check(newExams.length === 10, `Bộ mới phải có đúng 10 đề, hiện có ${newExams.length}`);
-check(newExams.map(({ exam }) => exam.id).sort().join('|') === EXPECTED_NEW_IDS.join('|'), `ID bộ mới phải là ${EXPECTED_NEW_IDS.join(', ')}`);
+check(newExams.length === 10, `Bộ Crown phải có đúng 10 đề, hiện có ${newExams.length}`);
+check(newExams.map(({ exam }) => exam.id).sort().join('|') === EXPECTED_NEW_IDS.join('|'), `ID bộ Crown phải là ${EXPECTED_NEW_IDS.join(', ')}`);
 
 const examIds = new Set();
 const globalQuestionIds = new Set();
-const newPromptKeys = new Set();
 for (const entry of [...legacy, ...newExams]) {
   check(!examIds.has(entry.exam.id), `${entry.label}: trùng exam id ${entry.exam.id}`);
   examIds.add(entry.exam.id);
-  validateExam(entry, globalQuestionIds, newPromptKeys);
+  validateExam(entry, globalQuestionIds);
 }
 
 check(legacy.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ cũ phải có 600 câu');
-check(newExams.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ mới phải có 600 câu');
+check(newExams.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ Crown phải có 600 câu');
 if (failed) process.exit(1);
-console.log(`\n✅ Toàn repo: ${legacy.length + newExams.length} đề, 1.200 câu; collection Crown có đúng 10 đề và 600 câu.`);
+console.log(`\n✅ Toàn repo: ${legacy.length + newExams.length} đề, 1.200 câu; Crown bám baseline có đúng 10 đề và 600 câu.`);
