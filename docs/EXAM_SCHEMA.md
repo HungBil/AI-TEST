@@ -2,64 +2,52 @@
 
 Repo có hai collection:
 
-- `src/data/exams/*.json`: 10 đề cũ.
-- `src/data/new-exams/`: 10 đề Crown 2026.
+- `src/data/exams/*.json`: 10 đề legacy.
+- `src/data/new-exams/new-2026-01.json` đến `new-2026-10.json`: 10 đề Crown được sinh tự động.
 
 ## Cấu trúc đề
 
 ```json
 {
-  "id": "new-2026-02",
-  "title": "Bộ mô phỏng khóa mới 2026 · Đề 02",
+  "id": "new-2026-01",
+  "title": "Bộ mô phỏng khóa mới 2026 · Đề 01",
   "description": "...",
   "durationMinutes": 90,
   "totalPoints": 100,
   "disclaimer": "...",
   "moduleLabels": {
-    "A": "Xác suất & đại số tuyến tính",
-    "B": "Euclid, Python API & NumPy",
-    "C": "AI, RAG & thiết kế hệ thống",
-    "D": "Privacy, banking & Responsible AI"
+    "A": "Xác suất & đại số tuyến tính phần ma trận",
+    "B": "Euclid, Python gọi API & NumPy",
+    "C": "AI cơ bản, RAG & triển khai",
+    "D": "Đạo đức AI, banking & privacy"
   },
   "moduleOverview": ["...", "...", "...", "..."],
   "questions": []
 }
 ```
 
-`moduleLabels` và `moduleOverview` là tùy chọn. Nếu có, `moduleLabels` phải đủ A/B/C/D và `moduleOverview` phải có đúng bốn dòng.
+`moduleLabels` và `moduleOverview` là tùy chọn. Nếu khai báo, `moduleLabels` phải đủ A/B/C/D và `moduleOverview` phải có đúng bốn dòng.
 
-## Hai layout của collection Crown
+## Cách tạo bộ Crown
 
-### Layout module hóa
-
-Đề 01 dùng:
+Nguồn dễ đọc nằm trong:
 
 ```text
-src/data/new-exams/new-2026-01/
-├── exam.json
-├── module-a.json
-├── module-b.json
-├── module-c.json
-└── module-d.json
+scripts/exam-generator/
+├── shared.mjs
+├── module-a.mjs
+├── module-b.mjs
+├── module-cd.mjs
+└── baseline-generator.mjs
 ```
 
-`exam.json` chỉ chứa metadata. Mỗi file module là một mảng câu hỏi và chỉ được chứa module tương ứng.
-
-### Layout file hoàn chỉnh
-
-Đề 02 đến Đề 10 được materialize thành:
-
-```text
-src/data/new-exams/new-2026-02.json
-...
-src/data/new-exams/new-2026-10.json
-```
-
-Các file này được sinh xác định bởi `scripts/materialize-new-exams.mjs` từ bộ sinh trong `scripts/exam-generator/`. File đầu ra nằm trong `.gitignore`, không chỉnh tay.
+Chạy:
 
 ```bash
 npm run materialize:new-exams
 ```
+
+để sinh 10 file JSON. Không chỉnh tay các file đầu ra vì chúng nằm trong `.gitignore` và sẽ bị materializer ghi lại.
 
 ## Số lượng câu
 
@@ -67,22 +55,23 @@ Mỗi đề có đúng 60 câu và 100 điểm.
 
 | Collection | A | B | C | D |
 |---|---:|---:|---:|---:|
-| Bộ cũ | 10 | 22 | 20 | 8 |
-| Crown 2026 | 20 | 20 | 12 | 8 |
+| Legacy | 10 | 22 | 20 | 8 |
+| Crown | 20 | 20 | 12 | 8 |
 
-Mỗi đề Crown còn phải có:
+Mỗi đề Crown phải có:
 
 - Đúng 2 câu `code`, đều ở Module B.
 - Đúng 3 câu `essay`, đều ở Module C.
+- Tổng 10 đề Crown là 600 câu, 20 câu code và 30 câu tự luận.
 - ID câu hỏi không trùng trong toàn repo.
-- Prompt không trùng nguyên văn giữa các đề Crown.
-- Tổng collection đúng 10 đề, 600 câu, 20 câu code và 30 câu tự luận.
+
+Không bắt buộc prompt giữa các đề Crown phải khác tuyệt đối. Các câu nền tảng có thể lặp cấu trúc và thay số liệu/bối cảnh vừa phải để bám baseline.
 
 ## MCQ
 
 ```json
 {
-  "id": "N26E02-A01",
+  "id": "N26E01-A01",
   "module": "A",
   "type": "mcq",
   "points": 1,
@@ -99,13 +88,13 @@ Mỗi đề Crown còn phải có:
 }
 ```
 
-MCQ Crown phải có đúng A/B/C/D, không trùng nội dung lựa chọn, đáp án hợp lệ và giải thích đủ rõ. Validator không áp quy tắc lựa chọn không trùng hồi tố lên bộ cũ để tránh thay đổi dữ liệu legacy.
+MCQ Crown phải có đúng A/B/C/D, nội dung lựa chọn không trùng, đáp án hợp lệ và giải thích đủ rõ.
 
 ## Code và tự luận
 
 ```json
 {
-  "id": "N26E02-C10",
+  "id": "N26E01-C10",
   "module": "C",
   "type": "essay",
   "points": 8,
@@ -116,7 +105,13 @@ MCQ Crown phải có đúng A/B/C/D, không trùng nội dung lựa chọn, đá
 }
 ```
 
-Câu mở phải có `modelAnswer` và ít nhất ba tiêu chí rubric không rỗng. Ba câu tự luận Module C cần buộc người làm nêu lập luận, ví dụ end-to-end, cách triển khai, đánh giá, giám sát, bảo mật, human gate và rollback khi phù hợp.
+Câu mở phải có `modelAnswer` và ít nhất ba tiêu chí rubric. Ba câu tự luận Module C phải yêu cầu:
+
+1. Lập luận lựa chọn giải pháp.
+2. Một ví dụ cụ thể hoặc flow end-to-end.
+3. Cách triển khai và đánh giá theo các ràng buộc được cho.
+
+Độ khó và phạm vi phải theo [`NEW_EXAM_COVERAGE.md`](NEW_EXAM_COVERAGE.md). Không thêm chủ đề chỉ vì chúng xuất hiện trong dự án cá nhân của maintainer.
 
 ## Kiểm tra local
 
