@@ -13,7 +13,6 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  VITE_CROWN_AUTH_URL: ${{ vars.CROWN_AUTH_URL }}
 
 concurrency:
   group: pages
@@ -23,6 +22,8 @@ jobs:
   build:
     name: Build Vite app
     runs-on: ubuntu-latest
+    env:
+      CROWN_PASSWORD: ${{ secrets.CROWN_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,21 +34,25 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Require Crown password secret
+        shell: bash
+        run: |
+          if [ -z "${CROWN_PASSWORD:-}" ]; then
+            echo "::error::Required repository secret CROWN_PASSWORD is not configured."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Generate Crown lock
+        run: npm run generate:crown-lock
 
       - name: Validate exams
         run: npm run validate
 
-      - name: Test Crown Worker
-        run: node workers/crown-auth/test.mjs
-
-      - name: Warn when Crown Worker is not configured
-        if: env.VITE_CROWN_AUTH_URL == ''
-        run: echo "::warning::CROWN_AUTH_URL is empty. GitHub Pages will deploy, but Crown unlock stays disabled until the repository variable is configured."
-
       - name: Build app
-        run: npm run build
+        run: npm --ignore-scripts run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

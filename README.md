@@ -76,6 +76,8 @@ npm install
 npm run dev
 ```
 
+Trước khi chạy `dev`, đặt `CROWN_PASSWORD` trong biến môi trường của shell hiện tại. Generator không có mật khẩu mặc định và sẽ dừng với lỗi nếu biến này trống.
+
 Thường mở tại:
 
 ```text
@@ -85,8 +87,8 @@ http://localhost:5173
 ## Validate và build
 
 ```bash
+npm run generate:crown-lock
 npm run validate
-npm run test:crown-worker
 npm run build
 ```
 
@@ -101,37 +103,18 @@ Validator kiểm tra:
 
 ## Truy cập Crown và bảo vệ mật khẩu
 
-Nhấn biểu tượng vương miện ở góc dưới bên phải. Frontend gửi mật khẩu qua HTTPS tới Cloudflare Worker; mật khẩu và verifier không nằm trong bundle trình duyệt hiện tại.
+Nhấn biểu tượng vương miện ở góc dưới bên phải. Crown là **client-side access gate** chỉ chạy trên GitHub Pages, không phải authentication. Mật khẩu không được commit; workflow build đọc `CROWN_PASSWORD`, tạo verifier PBKDF2 + AES-GCM ngẫu nhiên rồi đưa verifier vào bundle.
 
-Cơ chế này bảo vệ **mật khẩu**, không bảo vệ nội dung đề. Câu hỏi và đáp án vẫn public theo chủ ý của dự án, nên người có kỹ thuật có thể đọc dữ liệu hoặc sửa frontend để bỏ qua màn hình Crown. Việc đó không giúp suy ra mật khẩu mới vì xác minh diễn ra phía máy chủ.
+Cơ chế này chỉ tăng độ khó vừa phải cho việc đoán mật khẩu. Câu hỏi và đáp án vẫn public; người có kỹ thuật có thể đọc dữ liệu, sửa frontend để bỏ qua cổng, thay đổi `sessionStorage` hoặc brute-force offline.
 
-Tài liệu triển khai:
+Chi tiết và giới hạn: [`docs/CROWN_SECURITY.md`](docs/CROWN_SECURITY.md).
 
-- [`docs/CROWN_SECURITY.md`](docs/CROWN_SECURITY.md)
-- [`workers/crown-auth/README.md`](workers/crown-auth/README.md)
-
-Cần đặt các repository secrets:
-
-```text
-CLOUDFLARE_API_TOKEN
-CLOUDFLARE_ACCOUNT_ID
-CROWN_PASSWORD
-CROWN_TOKEN_SECRET
-```
-
-Sau khi deploy Worker, đặt repository variable:
-
-```text
-CROWN_AUTH_URL=https://ai-test-crown-auth.<subdomain>.workers.dev
-```
-
-Không tái sử dụng mật khẩu Crown cũ từng có verifier trong lịch sử Git.
+Mọi mật khẩu Crown từng xuất hiện trong lịch sử repo phải được coi là đã lộ. Maintainer cần tạo passphrase mới gồm khoảng năm từ không liên quan hoặc ít nhất 20 ký tự, rồi thêm repository secret tên `CROWN_PASSWORD` tại `Settings → Secrets and variables → Actions`.
 
 ## GitHub Actions
 
-- `validate-exams.yml`: materialize, validate 1.200 câu, test Crown Worker và build app.
-- `deploy-crown-worker.yml`: deploy Worker và cấu hình secret phía máy chủ.
-- `deploy-pages.yml`: build và deploy GitHub Pages.
+- `validate-exams.yml`: materialize, sinh verifier bằng password test công khai, validate 1.200 câu, test Crown và build app.
+- `deploy-pages.yml`: sinh verifier từ repository secret, build và deploy duy nhất thư mục `dist/` lên GitHub Pages.
 
 ## Đóng góp
 

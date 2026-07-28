@@ -1,46 +1,25 @@
-# Bảo vệ mật khẩu Crown
+# Cổng truy cập Crown trên GitHub Pages
 
-## Mục tiêu
+## Phạm vi
 
-Repo và GitHub Pages đều công khai. Mục tiêu của cơ chế này là **không để mật khẩu Crown hoặc một verifier có thể dùng để dò offline xuất hiện trong source frontend**. Nội dung câu hỏi và đáp án vẫn công khai theo chủ ý của dự án.
+Crown là **client-side access gate**, không phải authentication. Repo, GitHub Pages, câu hỏi và đáp án đều công khai. Người có kỹ thuật vẫn có thể sửa frontend để bỏ qua cổng, thay đổi `sessionStorage` hoặc brute-force verifier offline.
 
-## Kiến trúc
+Mục tiêu giới hạn là không commit mật khẩu dạng rõ, không để người dùng chỉ mở source rồi copy mật khẩu, và làm việc dò mật khẩu tốn chi phí vừa phải.
 
-```text
-Người dùng nhập mật khẩu
-        ↓ HTTPS
-Cloudflare Worker /unlock
-        ├─ kiểm tra Origin allowlist
-        ├─ rate limit theo device và toàn cục
-        ├─ so sánh digest theo thời gian cố định
-        └─ đúng → token HMAC có hạn dùng
-                ↓
-Frontend lưu token trong sessionStorage
-                ↓
-/verify khi tải lại trang
-```
+## Cơ chế build-time
 
-Mật khẩu thật chỉ nằm trong Cloudflare Worker secret `CROWN_PASSWORD`. Khóa ký token nằm trong `CROWN_TOKEN_SECRET`. Hai giá trị này không được commit và không được đưa vào biến Vite.
+`scripts/generate-crown-lock.mjs` đọc `CROWN_PASSWORD` từ môi trường build, sinh salt 16 byte, IV 12 byte và nonce 32 byte, rồi dùng PBKDF2-SHA-256 với 600.000 vòng để derive khóa AES-GCM 256 bit. Khóa này mã hóa payload marker và nonce.
 
-## Bắt buộc xoay mật khẩu cũ
+File `src/generated/crown-lock.ts` chỉ chứa version, iterations, salt, IV và ciphertext. File được `.gitignore`, không được commit hoặc upload riêng. Vite đưa verifier vào bundle GitHub Pages; vì vậy brute-force offline vẫn khả thi và được chấp nhận trong mô hình này.
 
-Không tái sử dụng bất kỳ mật khẩu nào từng có chuỗi rõ hoặc hash trong lịch sử Git của repo. Xóa hash khỏi nhánh hiện tại không thể bảo đảm hash biến mất khỏi commit cũ, pull request, fork hoặc cache. Khi chuyển sang Worker, hãy đặt một mật khẩu Crown mới trong GitHub secret và chỉ chia sẻ ngoài repo.
+Frontend derive lại khóa từ mật khẩu người dùng và chỉ mở Crown khi AES-GCM giải mã thành công, payload hợp lệ và marker đúng. Sau năm lần sai liên tiếp, form bị khóa 60 giây. Trạng thái khóa và cờ mở Crown chỉ dùng `sessionStorage`, nên tab mới vẫn yêu cầu mật khẩu.
 
-## Giới hạn cố ý
+## Mật khẩu production
 
-Câu hỏi và đáp án được đóng trong bundle public. Người có kỹ thuật có thể đọc dữ liệu hoặc sửa frontend để bỏ qua màn hình Crown. Điều đó không làm lộ mật khẩu vì frontend không giữ verifier. Đây là bảo vệ **password**, không phải DRM cho đề thi.
+Mọi mật khẩu từng xuất hiện trong lịch sử repo phải được coi là đã lộ và không được tái sử dụng. Maintainer cần tạo passphrase Crown mới gồm khoảng năm từ không liên quan hoặc ít nhất 20 ký tự, rồi lưu duy nhất tại:
 
-## Cấu hình bắt buộc
+`Settings → Secrets and variables → Actions → New repository secret`
 
-Repository secrets:
+Tên secret: `CROWN_PASSWORD`
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CROWN_PASSWORD`, phải là mật khẩu mới chưa từng xuất hiện trong lịch sử repo
-- `CROWN_TOKEN_SECRET`, tối thiểu 32 ký tự ngẫu nhiên
-
-Repository variable:
-
-- `CROWN_AUTH_URL`, URL Worker sau khi deploy
-
-Quy trình chi tiết nằm trong [`workers/crown-auth/README.md`](../workers/crown-auth/README.md).
+Không đặt giá trị vào source, file mẫu môi trường, README, pull request, commit message hoặc log. Workflow GitHub Pages dừng với lỗi nếu secret chưa tồn tại, chạy generator trong job build và chỉ upload `dist/`.
