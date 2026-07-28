@@ -1,52 +1,89 @@
-# AI-TEST — Bộ đề cương ôn tập AI thực chiến
+# AI-TEST - Bộ đề cương ôn tập AI thực chiến
 
 ![AI in Action - The nationwide AI talent network](docs/assets/ai-in-action.png)
 
-Web app self-host/local host để luyện đề theo dạng chọn đáp án, xem đúng/sai, xem đáp án đúng, giải thích và thống kê cuối bài.
+Web app tự host để luyện đề theo dạng trắc nghiệm, code tay và tự luận. App hỗ trợ Practice mode, Exam mode, timer, lưu tiến độ, tự chấm câu mở và thống kê theo module.
 
-> **Disclaimer:** Đây là tài liệu ôn tập cộng đồng, không phải đề thi chính thức hoặc đề bị lộ. Bộ khóa mới chỉ tái cấu trúc nội dung từ phản hồi không chính thức của người học và các chủ đề kỹ thuật phổ biến; không cam kết giống đề thật.
+> **Lưu ý:** Đây là tài liệu ôn tập cộng đồng, không phải đề thi chính thức hoặc đề bị lộ. Bộ khóa mới được xây dựng từ phản hồi không chính thức của người học, thông tin công khai và các chủ đề kỹ thuật phổ biến. Không cam kết giống đề thật.
 
-## Tính năng
+## Quy mô
 
-- Giữ nguyên 10 bài kiểm tra cũ, mỗi bài 60 câu.
-- Thêm bộ mô phỏng khóa mới trong `src/data/new-exams/`.
-- Bộ mới không xuất hiện trong danh sách mặc định. Nút vương miện cố định ở góc dưới màn hình mở cổng nhập mật khẩu.
-- Sau khi mở khóa, bộ mới dùng nguyên cơ chế Practice mode, Exam mode, timer, localStorage, self-grade và thống kê cuối bài.
-- Mỗi bài 100 điểm, thời lượng gợi ý 90 phút.
-- Câu code/tự luận dùng đáp án mẫu, rubric và self-grade.
-- GitHub Actions chạy validator và build khi có PR/push.
+- Bộ cũ: **10 đề × 60 câu = 600 câu**, giữ nguyên collection công khai.
+- Bộ Crown 2026: **10 đề × 60 câu = 600 câu**.
+- Toàn repo: **20 đề, 1.200 câu**.
+- Mỗi đề 100 điểm, thời lượng gợi ý 90 phút.
+- Bộ Crown có tổng cộng **30 câu tự luận** và **20 câu code**.
 
-## Cấu trúc bộ cũ
+Xem ma trận phủ nội dung tại [`docs/NEW_EXAM_COVERAGE.md`](docs/NEW_EXAM_COVERAGE.md).
 
-| Module | Số câu | Nội dung |
-|---|---:|---|
-| A | 10 | Toán học & tư duy định lượng |
-| B | 22 | Python / NumPy / Pandas, gồm code tay |
-| C | 20 | AI & tư duy sản phẩm AI |
-| D | 8 | Logic / đạo đức / hành vi |
+## Truy cập bộ Crown
 
-## Cấu trúc bộ mô phỏng khóa mới 2026
+Ở collection mặc định, nhấn biểu tượng vương miện ở góc dưới bên phải. Frontend gửi mật khẩu qua HTTPS tới Cloudflare Worker. Mật khẩu và hash dùng để kiểm tra không nằm trong repo hoặc bundle trình duyệt.
+
+Cơ chế này bảo vệ **mật khẩu** khỏi việc đọc source và dò offline. Câu hỏi, đáp án và code frontend vẫn là dữ liệu public theo chủ ý của dự án, nên người có kỹ thuật có thể sửa giao diện để bỏ qua màn hình Crown. Việc đó không làm lộ mật khẩu vì xác minh diễn ra phía máy chủ.
+
+Tài liệu triển khai chi tiết:
+
+- [`docs/CROWN_SECURITY.md`](docs/CROWN_SECURITY.md)
+- [`workers/crown-auth/README.md`](workers/crown-auth/README.md)
+
+## Cấu trúc mỗi đề Crown 2026
 
 | Module | Số câu | Nội dung |
 |---|---:|---|
 | A | 20 | Xác suất, Bayes, đại số tuyến tính và ma trận |
-| B | 20 | Thuật toán Euclid, Python gọi API, đọc và giải thích NumPy; gồm 2 câu code |
-| C | 12 | AI/ML, RAG, triển khai hệ thống; gồm đúng 3 câu tự luận theo ràng buộc |
-| D | 8 | Privacy, phân quyền dữ liệu, banking và Responsible AI |
+| B | 20 | 18 MCQ Euclid, Python API, NumPy và 2 câu code |
+| C | 12 | 9 MCQ AI, RAG, MLOps và đúng 3 câu tự luận |
+| D | 8 | Privacy, phân quyền, banking và Responsible AI |
 
-Các câu toán được thiết kế để giải bằng giấy nháp, không cần máy tính cầm tay.
+Các câu toán dùng số nhỏ, phân số gọn hoặc ma trận đơn giản để có thể giải bằng giấy nháp, không cần máy tính cầm tay.
 
-## Căn cứ biên soạn bộ mới
+## Phạm vi 10 đề Crown
 
-Nội dung được đối chiếu với các tài liệu kỹ thuật và quản trị công khai:
+| Đề | Trọng tâm |
+|---:|---|
+| 01 | Bayes, ma trận, Requests, NumPy, RAG ngân hàng và fraud |
+| 02 | Xác suất điều kiện, API bền vững, RAG phân quyền, risk ranking và OCR |
+| 03 | Tổ hợp, vector, chatbot đa ngôn ngữ, computer vision và virtual tutor |
+| 04 | Hệ tuyến tính, API security, chống lừa đảo và IT operations agent |
+| 05 | Sampling, idempotency, RAG đa tenant, clinical AI và rollback |
+| 06 | Expected risk, NumPy linalg, voice bot, credit fairness và graph AML |
+| 07 | Trị riêng, polling, agent sandbox, Go tutor và personalization |
+| 08 | Bayesian table, cursor API, KYC multimodal, legal assistant và maintenance |
+| 09 | Markov, temporal graph, forecasting, provenance và research agent |
+| 10 | Đề tổng hợp khó, pilot 6 tuần, privacy-preserving RAG và incident response |
 
-- [Requests Quickstart](https://requests.readthedocs.io/en/stable/user/quickstart/): timeout, JSON và `raise_for_status()`.
-- [NumPy User Guide](https://numpy.org/doc/stable/user/): shape, axis, broadcasting và indexing.
-- [NIST AI RMF Generative AI Profile](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence): quản trị rủi ro, đánh giá và giám sát AI.
-- [OWASP GenAI Security Project / LLM Top 10](https://genai.owasp.org/llm-top-10/): prompt injection, sensitive information disclosure, excessive agency và rủi ro RAG.
-- [Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15](https://vanban.chinhphu.vn/?classid=1&docid=214590&pageid=27160&typegroup=) và [Nghị định 356/2025/NĐ-CP](https://vanban.chinhphu.vn/?classid=1&docid=216387&pageid=27160): bối cảnh bảo vệ dữ liệu tại Việt Nam từ năm 2026.
+## Dữ liệu đề và bộ sinh
 
-Bộ câu hỏi không kiểm tra số điều luật cụ thể và không thay thế tư vấn pháp lý. Các tình huống tập trung vào nguyên tắc thiết kế an toàn như least privilege, data minimization, server-side authorization, audit, abstention và human approval.
+Đề 01 dùng layout module hóa:
+
+```text
+src/data/new-exams/new-2026-01/
+├── exam.json
+├── module-a.json
+├── module-b.json
+├── module-c.json
+└── module-d.json
+```
+
+Đề 02 đến Đề 10 được sinh xác định từ bộ sinh trong:
+
+```text
+scripts/exam-generator/generator.mjs.gz.b64.part-00
+scripts/exam-generator/generator.mjs.gz.b64.part-01
+...
+scripts/materialize-new-exams.mjs
+```
+
+Chạy:
+
+```bash
+npm run materialize:new-exams
+```
+
+để tạo `src/data/new-exams/new-2026-02.json` đến `new-2026-10.json`. Các file đầu ra được đưa vào `.gitignore`. `predev`, `prevalidate` và `prebuild` tự chạy materializer, nên người dùng bình thường không cần gọi riêng.
+
+Loader tại `src/data/new-exams/index.ts` hỗ trợ đồng thời layout module hóa và file JSON hoàn chỉnh.
 
 ## Chạy local
 
@@ -55,73 +92,79 @@ npm install
 npm run dev
 ```
 
-Mở URL Vite hiện trong terminal, thường là:
+Mặc định Vite thường chạy tại:
 
-```txt
+```text
 http://localhost:5173
 ```
 
-## Kiểm tra dữ liệu đề
+Để thử Crown Worker local:
+
+```bash
+cd workers/crown-auth
+cp .dev.vars.example .dev.vars
+npx wrangler dev
+```
+
+Ở terminal khác:
+
+```bash
+VITE_CROWN_AUTH_URL=http://localhost:8787 npm run dev
+```
+
+## Validate và build
 
 ```bash
 npm run validate
+npm run test:crown-worker
+npm run build
 ```
 
 Validator kiểm tra:
 
-- Mỗi đề đúng 60 câu và 100 điểm.
-- Bộ cũ có phân bố A/B/C/D là 10/22/20/8.
-- Bộ mới có phân bố A/B/C/D là 20/20/12/8.
-- Bộ mới có đúng 2 câu code ở Module B và đúng 3 câu tự luận ở Module C.
-- Từng file `module-a.json` đến `module-d.json` chỉ chứa câu của module tương ứng.
-- MCQ có đủ A/B/C/D, đáp án hợp lệ và giải thích.
-- Câu code/tự luận có `modelAnswer` và ít nhất 3 tiêu chí rubric.
-- `moduleOverview` và `moduleLabels` hợp lệ nếu được khai báo.
+- Đúng 10 đề cũ, 10 đề Crown và tổng cộng 1.200 câu.
+- Collection Crown có đúng 600 câu, 30 essay và 20 câu code.
+- Mỗi đề Crown có phân bố A/B/C/D là 20/20/12/8.
+- Mỗi đề Crown có đúng 2 câu code ở B và 3 câu tự luận ở C.
+- Không trùng `exam.id`, `question.id` hoặc nguyên văn prompt giữa các đề Crown.
+- MCQ Crown có đủ A/B/C/D, lựa chọn không trùng, đáp án và giải thích hợp lệ.
+- Câu code và tự luận có đáp án mẫu cùng rubric tối thiểu 3 ý.
+- Bộ cũ vẫn được kiểm tra theo schema cũ mà không ép các quy tắc mới hồi tố.
 
-## Build self-host
+## Kích hoạt bảo mật Crown trên production
 
-```bash
-npm run build
-npm run preview
+Tạo GitHub repository secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CROWN_PASSWORD`
+- `CROWN_TOKEN_SECRET`, tối thiểu 32 ký tự ngẫu nhiên
+
+Chạy workflow **Deploy Crown authentication Worker**. Sau khi có URL Worker, tạo repository variable:
+
+```text
+CROWN_AUTH_URL=https://ai-test-crown-auth.<subdomain>.workers.dev
 ```
 
-Thư mục build nằm ở `dist/`.
+Sau đó chạy lại workflow GitHub Pages. Không đưa mật khẩu hoặc token signing secret vào biến `VITE_*`, source code, `.env` đã commit hoặc log CI.
 
-## Cách thêm đề
+## GitHub Actions
 
-### Bộ cũ
+- `.github/workflows/validate-exams.yml`: materialize, validate 1.200 câu, test Crown Worker và build app trên pull request.
+- `.github/workflows/deploy-crown-worker.yml`: deploy Worker và upload hai secret phía máy chủ.
+- `.github/workflows/deploy-pages.yml`: build và deploy GitHub Pages. Nếu chưa có `CROWN_AUTH_URL`, app vẫn deploy nhưng Crown báo chưa được cấu hình.
 
-1. Copy `docs/exam-template.json` thành `src/data/exams/exam-11.json`.
-2. Điền đủ 60 câu theo schema trong `docs/EXAM_SCHEMA.md`.
-3. Chạy `npm run validate` và `npm run build`.
+## Căn cứ biên soạn
 
-### Bộ mới
+- [VinUni - Thông tin tuyển sinh Chương trình Đào tạo Nhân tài AI Thực chiến](https://vinuni.edu.vn/vi/thong-tin-tuyen-sinh-chuong-trinh-dao-tao-nhan-tai-ai-thuc-chien-khoa-co-ban/)
+- [Requests Quickstart](https://requests.readthedocs.io/en/stable/user/quickstart/)
+- [NumPy User Guide](https://numpy.org/doc/stable/user/)
+- [NIST AI RMF Generative AI Profile](https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence)
+- [OWASP GenAI Security Project](https://genai.owasp.org/llm-top-10/)
+- [Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15](https://vanban.chinhphu.vn/?classid=1&docid=214590&pageid=27160&typegroup=)
 
-1. Tạo thư mục mới, ví dụ `src/data/new-exams/new-2026-02/`.
-2. Tạo `exam.json` chỉ chứa metadata của đề, không chứa `questions`.
-3. Tạo bốn file mảng câu hỏi: `module-a.json`, `module-b.json`, `module-c.json`, `module-d.json`.
-4. Dùng phân bố module 20/20/12/8; đặt đúng 2 câu code ở B và đúng 3 câu tự luận ở C.
-5. App tự ghép metadata với bốn module qua `src/data/new-exams/index.ts`.
-6. Chạy `npm run validate` và `npm run build`.
-
-## Về khóa bằng mật khẩu
-
-Đây là web app tĩnh và repo công khai, nên cổng mật khẩu chỉ nhằm ẩn bộ mới khỏi luồng sử dụng thông thường. Mật khẩu được so sánh bằng SHA-256 phía trình duyệt để không lưu chuỗi rõ trong source, nhưng đây không phải cơ chế bảo mật thực sự. Muốn bảo vệ nội dung nghiêm túc cần xác thực phía server và chỉ tải file đề sau khi người dùng được cấp quyền.
-
-## GitHub Actions / Auto-merge PR đóng góp đề
-
-Repo có 2 workflow:
-
-1. `.github/workflows/validate-exams.yml`
-   - Chạy khi có PR/push.
-   - `npm ci`, `npm run validate`, `npm run build`.
-
-2. `.github/workflows/auto-merge-exam-pr.yml`
-   - Chỉ tự bật auto-merge cho thay đổi thuộc phạm vi đóng góp đề/tài liệu được cho phép.
-   - PR có thay đổi code giao diện hoặc validator vẫn cần maintainer review.
+Bộ câu hỏi không thay thế tư vấn pháp lý. Các tình huống tập trung vào least privilege, data minimization, server-side authorization, audit, abstention, human approval và rollback.
 
 ## Đóng góp
 
-Xem `CONTRIBUTING.md` và `docs/EXAM_SCHEMA.md`.
-
-Dự án mở miễn phí. Có thể đóng góp thêm đề, sửa đáp án, cải thiện giải thích và UI/UX.
+Xem `CONTRIBUTING.md`, `docs/EXAM_SCHEMA.md` và `docs/NEW_EXAM_COVERAGE.md`. Mọi nội dung nên giữ disclaimer rõ ràng và không tự nhận là đề chính thức.

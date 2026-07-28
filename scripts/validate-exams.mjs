@@ -44,16 +44,11 @@ function loadLegacyExams() {
     .filter(({ exam }) => Boolean(exam));
 }
 
-function loadNewExams() {
-  assert(fs.existsSync(NEW_DIR), `Missing exam directory: ${path.relative(ROOT, NEW_DIR)}`);
-  if (!fs.existsSync(NEW_DIR)) return [];
-
+function loadModularNewExams() {
   const directories = fs.readdirSync(NEW_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
+    .filter((entry) => entry.isDirectory() && /^new-\d{4}-\d+$/i.test(entry.name))
     .map((entry) => entry.name)
     .sort();
-
-  assert(directories.length >= 1, `new: expected at least 1 exam directory, found ${directories.length}`);
 
   return directories.flatMap((directoryName) => {
     const directory = path.join(NEW_DIR, directoryName);
@@ -65,7 +60,6 @@ function loadNewExams() {
 
     const metadata = readJson(manifestPath);
     if (!metadata) return [];
-
     assert(metadata.questions === undefined, `new/${directoryName}/exam.json: metadata must not contain questions`);
 
     const moduleFiles = fs.readdirSync(directory)
@@ -98,15 +92,29 @@ function loadNewExams() {
           `new/${directoryName}/${file} question #${index + 1}: expected module ${expectedModule}`
         );
       }
-
       return parsed;
     });
 
-    return [{
-      displayFile: `new/${directoryName}`,
-      exam: { ...metadata, questions }
-    }];
+    return [{ displayFile: `new/${directoryName}`, exam: { ...metadata, questions } }];
   });
+}
+
+function loadFullNewExams() {
+  const files = fs.readdirSync(NEW_DIR)
+    .filter((file) => /^new-\d{4}-\d+\.json$/i.test(file))
+    .sort();
+
+  return files
+    .map((file) => ({ displayFile: `new/${file}`, exam: readJson(path.join(NEW_DIR, file)) }))
+    .filter(({ exam }) => Boolean(exam));
+}
+
+function loadNewExams() {
+  assert(fs.existsSync(NEW_DIR), `Missing exam directory: ${path.relative(ROOT, NEW_DIR)}`);
+  if (!fs.existsSync(NEW_DIR)) return [];
+  const exams = [...loadModularNewExams(), ...loadFullNewExams()];
+  assert(exams.length >= 10, `new: expected at least 10 exams, found ${exams.length}`);
+  return exams;
 }
 
 function validateExam({ exam, displayFile }, expectedCounts, extraChecks) {
@@ -117,7 +125,6 @@ function validateExam({ exam, displayFile }, expectedCounts, extraChecks) {
   assert(typeof exam.totalPoints === 'number' && Math.abs(exam.totalPoints - EXPECTED_POINTS) < 0.001, `${displayFile}: totalPoints must be ${EXPECTED_POINTS}`);
   assert(typeof exam.disclaimer === 'string' && exam.disclaimer.trim().length > 0, `${displayFile}: missing disclaimer`);
   assert(Array.isArray(exam.questions), `${displayFile}: questions must be an array`);
-
   if (!Array.isArray(exam.questions)) return;
 
   assert(exam.questions.length === EXPECTED_QUESTIONS, `${displayFile}: expected ${EXPECTED_QUESTIONS} questions, found ${exam.questions.length}`);
@@ -163,6 +170,8 @@ function validateExam({ exam, displayFile }, expectedCounts, extraChecks) {
       if (Array.isArray(question.options)) {
         const keys = question.options.map((option) => option?.key);
         assert(keys.join('') === 'ABCD', `${location}: option keys must be A/B/C/D`);
+        const normalizedTexts = question.options.map((option) => String(option?.text ?? '').trim().toLowerCase());
+        assert(new Set(normalizedTexts).size === normalizedTexts.length, `${location}: duplicate option text`);
         for (const option of question.options) {
           assert(option && typeof option.text === 'string' && option.text.trim().length > 0, `${location}: option text missing`);
         }
@@ -186,19 +195,24 @@ function validateExam({ exam, displayFile }, expectedCounts, extraChecks) {
   }
   assert(Math.abs(points - EXPECTED_POINTS) < 0.001, `${displayFile}: expected ${EXPECTED_POINTS} points, found ${points}`);
   extraChecks?.(exam, displayFile);
-
   console.log(`✅ ${displayFile}: ${exam.questions.length} questions, ${points} points`);
 }
 
 const legacyExams = loadLegacyExams();
 const newExams = loadNewExams();
 const examIds = new Set();
+const allQuestionIds = new Set();
+const newPromptKeys = new Set();
 let totalQuestions = 0;
 
 for (const entry of [...legacyExams, ...newExams]) {
   const id = entry.exam.id;
   assert(!examIds.has(id), `${entry.displayFile}: duplicate exam id ${id}`);
   examIds.add(id);
+  for (const question of Array.isArray(entry.exam.questions) ? entry.exam.questions : []) {
+    assert(!allQuestionIds.has(question.id), `${entry.displayFile}: globally duplicate question id ${question.id}`);
+    allQuestionIds.add(question.id);
+  }
 }
 
 for (const entry of legacyExams) {
@@ -214,6 +228,12 @@ for (const entry of newExams) {
     assert(essays.every((question) => question.module === 'C'), `${displayFile}: all essay questions must be in module C`);
     assert(codeQuestions.length === 2, `${displayFile}: expected exactly 2 code questions, found ${codeQuestions.length}`);
     assert(codeQuestions.every((question) => question.module === 'B'), `${displayFile}: all code questions must be in module B`);
+
+    for (const question of exam.questions) {
+      const promptKey = question.prompt.replace(/\s+/g, ' ').trim().toLowerCase();
+      assert(!newPromptKeys.has(promptKey), `${displayFile}: duplicate prompt across new exams: ${question.id}`);
+      newPromptKeys.add(promptKey);
+    }
   });
   totalQuestions += Array.isArray(entry.exam.questions) ? entry.exam.questions.length : 0;
 }

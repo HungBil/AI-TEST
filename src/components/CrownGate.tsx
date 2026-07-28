@@ -1,16 +1,83 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent, MouseEvent } from 'react';
 
-const PASSWORD_HASH = '25d8f633a763a77cdef452a6f479d4c4ddecba0df41518cfca02bddf916418d3';
+const AUTH_BASE_URL = import.meta.env.VITE_CROWN_AUTH_URL?.trim().replace(/\/$/, '') ?? '';
+const TOKEN_KEY = 'ai-test:crown-token';
+const DEVICE_KEY = 'ai-test:crown-device';
 
 interface Props {
   onUnlock: () => void;
 }
 
-async function sha256(value: string): Promise<string> {
-  const payload = new TextEncoder().encode(value);
-  const digest = await window.crypto.subtle.digest('SHA-256', payload);
-  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+interface AuthPayload {
+  ok?: boolean;
+  token?: string;
+  expiresAt?: number;
+  error?: string;
+}
+
+function readSessionToken(): string {
+  try {
+    return window.sessionStorage.getItem(TOKEN_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+function saveSessionToken(token: string) {
+  try {
+    window.sessionStorage.setItem(TOKEN_KEY, token);
+  } catch {
+    // Session persistence is optional; successful unlock still works for this page.
+  }
+}
+
+function clearSessionToken() {
+  try {
+    window.sessionStorage.removeItem(TOKEN_KEY);
+  } catch {
+    // Ignore storage restrictions.
+  }
+}
+
+function createDeviceId(): string {
+  const bytes = new Uint8Array(16);
+  window.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (value) => value.toString(16).padStart(2, '0')).join('');
+}
+
+function getDeviceId(): string {
+  try {
+    const existing = window.localStorage.getItem(DEVICE_KEY);
+    if (existing) return existing;
+    const created = createDeviceId();
+    window.localStorage.setItem(DEVICE_KEY, created);
+    return created;
+  } catch {
+    return createDeviceId();
+  }
+}
+
+async function postAuth(path: '/unlock' | '/verify', body: Record<string, string>): Promise<{ response: Response; payload: AuthPayload }> {
+  const response = await fetch(`${AUTH_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Crown-Device': getDeviceId()
+    },
+    body: JSON.stringify(body),
+    credentials: 'omit',
+    cache: 'no-store',
+    referrerPolicy: 'no-referrer'
+  });
+
+  let payload: AuthPayload = {};
+  try {
+    payload = await response.json() as AuthPayload;
+  } catch {
+    // Keep a generic error below; never expose backend internals to the UI.
+  }
+  return { response, payload };
 }
 
 export function CrownGate({ onUnlock }: Props) {
@@ -18,6 +85,45 @@ export function CrownGate({ onUnlock }: Props) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
+  const [verifyingSession, setVerifyingSession] = useState(false);
+
+  useEffect(() => {
+    if (!AUTH_BASE_URL) return;
+    const token = readSessionToken();
+    if (!token) return;
+
+    let cancelled = false;
+    setVerifyingSession(true);
+    void postAuth('/verify', { token })
+      .then(({ response, payload }) => {
+        if (cancelled) return;
+        if (response.ok && payload.ok) {
+          setAuthorized(true);
+          return;
+        }
+        clearSessionToken();
+        setAuthorized(false);
+      })
+      .catch(() => {
+        // A temporary network failure should not erase a token that may still be valid.
+      })
+      .finally(() => {
+        if (!cancelled) setVerifyingSession(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const openGate = () => {
+    if (authorized) {
+      onUnlock();
+      return;
+    }
+    setOpen(true);
+  };
 
   const close = () => {
     if (checking) return;
@@ -29,33 +135,43 @@ export function CrownGate({ onUnlock }: Props) {
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const candidate = password.trim();
+
     if (!candidate) {
       setError('Hãy nhập mật khẩu.');
       return;
     }
-    if (!window.crypto?.subtle) {
-      setError('Trình duyệt này không hỗ trợ kiểm tra mật khẩu.');
+    if (!AUTH_BASE_URL) {
+      setError('Cổng bảo mật chưa được cấu hình trên bản triển khai này.');
       return;
     }
 
     setChecking(true);
     setError('');
     try {
-      const digest = await sha256(candidate);
-      if (digest !== PASSWORD_HASH) {
+      const { response, payload } = await postAuth('/unlock', { password: candidate });
+
+      if (response.status === 429) {
+        setError('Thử quá nhiều lần. Hãy đợi khoảng một phút rồi thử lại.');
+        return;
+      }
+      if (response.status === 403) {
+        setError('Tên miền hiện tại chưa được phép dùng cổng Crown.');
+        return;
+      }
+      if (!response.ok || !payload.ok || typeof payload.token !== 'string') {
         setError('Mật khẩu không đúng.');
-        setChecking(false);
         return;
       }
 
-      setChecking(false);
+      saveSessionToken(payload.token);
+      setAuthorized(true);
       setOpen(false);
       setPassword('');
-      setError('');
       onUnlock();
     } catch {
+      setError('Không kết nối được cổng bảo mật. Hãy thử lại.');
+    } finally {
       setChecking(false);
-      setError('Không thể kiểm tra mật khẩu. Hãy thử lại.');
     }
   };
 
@@ -66,9 +182,10 @@ export function CrownGate({ onUnlock }: Props) {
         type="button"
         aria-label="Mở bộ đề khóa mới"
         title="Bộ đề khóa mới"
-        onClick={() => setOpen(true)}
+        onClick={openGate}
+        disabled={verifyingSession}
       >
-        <span aria-hidden="true">👑</span>
+        <span aria-hidden="true">{verifyingSession ? '…' : '👑'}</span>
       </button>
 
       {open && (
@@ -79,7 +196,7 @@ export function CrownGate({ onUnlock }: Props) {
             <button className="gate-close" type="button" aria-label="Đóng" onClick={close}>×</button>
             <span className="eyebrow">Khu vực giới hạn</span>
             <h2>Mở bộ mô phỏng khóa mới</h2>
-            <p>Nhập mật khẩu để truy cập. Bộ đề cũ vẫn được giữ nguyên ở trang chính.</p>
+            <p>Mật khẩu được kiểm tra ở máy chủ bảo mật, không được nhúng trong mã frontend công khai.</p>
             <label htmlFor="new-exam-password">
               <span>Mật khẩu</span>
               <input
@@ -87,7 +204,8 @@ export function CrownGate({ onUnlock }: Props) {
                 type="password"
                 value={password}
                 autoFocus
-                autoComplete="off"
+                autoComplete="current-password"
+                maxLength={256}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   setPassword(event.target.value);
                   setError('');
