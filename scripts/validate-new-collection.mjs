@@ -5,7 +5,6 @@ import process from 'node:process';
 const ROOT = process.cwd();
 const NEW_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
 const EXPECTED_IDS = Array.from({ length: 10 }, (_, index) => `new-2026-${String(index + 1).padStart(2, '0')}`);
-const MODULE_FILES = ['module-a.json', 'module-b.json', 'module-c.json', 'module-d.json'];
 
 function fail(message) {
   console.error(`❌ ${message}`);
@@ -21,30 +20,13 @@ function readJson(file) {
   }
 }
 
-function loadExam01() {
-  const directory = path.join(NEW_DIR, 'new-2026-01');
-  const metadata = readJson(path.join(directory, 'exam.json'));
-  if (!metadata) return null;
-  const questions = MODULE_FILES.flatMap((file) => {
-    const parsed = readJson(path.join(directory, file));
-    return Array.isArray(parsed) ? parsed : [];
-  });
-  return { ...metadata, questions };
-}
-
-const exams = [];
-const exam01 = loadExam01();
-if (exam01) exams.push(exam01);
-
-for (let number = 2; number <= 10; number += 1) {
-  const id = `new-2026-${String(number).padStart(2, '0')}`;
-  const exam = readJson(path.join(NEW_DIR, `${id}.json`));
-  if (exam) exams.push(exam);
-}
+const exams = EXPECTED_IDS
+  .map((id) => readJson(path.join(NEW_DIR, `${id}.json`)))
+  .filter(Boolean);
 
 const ids = exams.map((exam) => exam.id).sort();
 if (ids.join('|') !== EXPECTED_IDS.join('|')) {
-  fail(`Bộ mới phải có đúng các ID ${EXPECTED_IDS.join(', ')}; hiện có ${ids.join(', ') || 'không có'}`);
+  fail(`Bộ Crown phải có đúng các ID ${EXPECTED_IDS.join(', ')}; hiện có ${ids.join(', ') || 'không có'}`);
 }
 
 let totalQuestions = 0;
@@ -80,10 +62,10 @@ for (const exam of exams) {
   totalCodeQuestions += codeQuestions.length;
 }
 
-if (exams.length !== 10) fail(`Bộ mới phải có đúng 10 đề, hiện có ${exams.length}`);
-if (totalQuestions !== 600) fail(`Bộ mới phải có đúng 600 câu, hiện có ${totalQuestions}`);
-if (totalEssays !== 30) fail(`Bộ mới phải có đúng 30 câu tự luận, hiện có ${totalEssays}`);
-if (totalCodeQuestions !== 20) fail(`Bộ mới phải có đúng 20 câu code, hiện có ${totalCodeQuestions}`);
+if (exams.length !== 10) fail(`Bộ Crown phải có đúng 10 đề, hiện có ${exams.length}`);
+if (totalQuestions !== 600) fail(`Bộ Crown phải có đúng 600 câu, hiện có ${totalQuestions}`);
+if (totalEssays !== 30) fail(`Bộ Crown phải có đúng 30 câu tự luận, hiện có ${totalEssays}`);
+if (totalCodeQuestions !== 20) fail(`Bộ Crown phải có đúng 20 câu code, hiện có ${totalCodeQuestions}`);
 
 if (process.exitCode) process.exit(process.exitCode);
-console.log(`✅ New collection: ${exams.length} exams, ${totalQuestions} questions, ${totalEssays} essays, ${totalCodeQuestions} code questions.`);
+console.log(`✅ Crown baseline: ${exams.length} đề, ${totalQuestions} câu, ${totalEssays} tự luận, ${totalCodeQuestions} câu code.`);
