@@ -1,60 +1,45 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const NEW_EXAMS_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
-const BUNDLE_DIR = path.join(NEW_EXAMS_DIR, 'bundle');
-const BINARY_BUNDLE = path.join(BUNDLE_DIR, 'exams-02-10.json.gz');
-const EXPECTED_FILES = Array.from({ length: 9 }, (_, index) => `new-2026-${String(index + 2).padStart(2, '0')}.json`);
+const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(SCRIPTS_DIR, '..');
+const GENERATOR_DIR = path.join(SCRIPTS_DIR, 'exam-generator');
+const TEMP_GENERATOR = path.join(SCRIPTS_DIR, '.expanded-exam-generator.tmp.mjs');
+const OUTPUT_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
 
 function fail(message) {
   console.error(`❌ ${message}`);
   process.exit(1);
 }
 
-function readCompressedArchive() {
-  if (fs.existsSync(BINARY_BUNDLE)) return fs.readFileSync(BINARY_BUNDLE);
+const parts = fs.readdirSync(GENERATOR_DIR)
+  .filter((file) => /^generator\.mjs\.gz\.b64\.part-\d+$/.test(file))
+  .sort();
 
-  const partFiles = fs.readdirSync(BUNDLE_DIR)
-    .filter((file) => /^exams-02-10\.json\.gz\.b64\.part-\d+$/i.test(file))
-    .sort();
-  if (partFiles.length === 0) fail('Không tìm thấy bundle câu hỏi khóa mới.');
+if (parts.length === 0) fail('Không tìm thấy các phần của bộ sinh đề khóa mới.');
 
-  const encoded = partFiles
-    .map((file) => fs.readFileSync(path.join(BUNDLE_DIR, file), 'utf8'))
+let source;
+try {
+  const encoded = parts
+    .map((file) => fs.readFileSync(path.join(GENERATOR_DIR, file), 'utf8'))
     .join('')
     .replace(/\s+/g, '');
-  return Buffer.from(encoded, 'base64');
-}
-
-let archive;
-try {
-  archive = JSON.parse(gunzipSync(readCompressedArchive()).toString('utf8'));
+  source = gunzipSync(Buffer.from(encoded, 'base64')).toString('utf8');
 } catch (error) {
-  fail(`Bundle đề không hợp lệ: ${error.message}`);
+  fail(`Không thể giải nén bộ sinh đề: ${error.message}`);
 }
 
-const archiveFiles = Object.keys(archive).sort();
-if (archiveFiles.join('|') !== EXPECTED_FILES.join('|')) {
-  fail(`Bundle phải chứa đúng ${EXPECTED_FILES.join(', ')}`);
-}
-
-let changed = 0;
-for (const file of EXPECTED_FILES) {
-  const exam = archive[file];
-  if (!exam || typeof exam !== 'object' || !Array.isArray(exam.questions)) {
-    fail(`${file}: dữ liệu đề không hợp lệ`);
+try {
+  fs.writeFileSync(TEMP_GENERATOR, source, 'utf8');
+  const moduleUrl = `${pathToFileURL(TEMP_GENERATOR).href}?v=${Date.now()}`;
+  const generator = await import(moduleUrl);
+  if (typeof generator.materializeExpandedExams !== 'function') {
+    fail('Bộ sinh đề không export materializeExpandedExams().');
   }
-
-  const target = path.join(NEW_EXAMS_DIR, file);
-  const content = `${JSON.stringify(exam, null, 2)}\n`;
-  const current = fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : null;
-  if (current !== content) {
-    fs.writeFileSync(target, content, 'utf8');
-    changed += 1;
-  }
+  const { exams, changed } = generator.materializeExpandedExams(OUTPUT_DIR);
+  console.log(`✅ Materialized ${exams.length} expanded exams (${changed} file(s) changed).`);
+} finally {
+  fs.rmSync(TEMP_GENERATOR, { force: true });
 }
-
-console.log(`✅ Materialized ${EXPECTED_FILES.length} expanded exams (${changed} file(s) changed).`);
