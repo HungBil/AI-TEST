@@ -5,6 +5,7 @@ import process from 'node:process';
 const ROOT = process.cwd();
 const LEGACY_DIR = path.join(ROOT, 'src', 'data', 'exams');
 const NEW_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
+const NEW_MODULE_FILES = ['module-a.json', 'module-b.json', 'module-c.json', 'module-d.json'];
 const EXPECTED_QUESTIONS = 60;
 const EXPECTED_POINTS = 100;
 const VALID_MODULES = new Set(['A', 'B', 'C', 'D']);
@@ -65,17 +66,39 @@ function loadNewExams() {
     const metadata = readJson(manifestPath);
     if (!metadata) return [];
 
+    assert(metadata.questions === undefined, `new/${directoryName}/exam.json: metadata must not contain questions`);
+
     const moduleFiles = fs.readdirSync(directory)
       .filter((file) => /^module-[a-d]\.json$/i.test(file))
       .sort();
 
-    assert(moduleFiles.length === 4, `new/${directoryName}: expected module-a.json through module-d.json`);
-    const questions = moduleFiles.flatMap((file) => {
-      const parsed = readJson(path.join(directory, file));
+    assert(
+      moduleFiles.length === NEW_MODULE_FILES.length &&
+        NEW_MODULE_FILES.every((file) => moduleFiles.includes(file)),
+      `new/${directoryName}: expected exactly ${NEW_MODULE_FILES.join(', ')}`
+    );
+
+    const questions = NEW_MODULE_FILES.flatMap((file) => {
+      const modulePath = path.join(directory, file);
+      if (!fs.existsSync(modulePath)) {
+        fail(`new/${directoryName}: missing ${file}`);
+        return [];
+      }
+
+      const parsed = readJson(modulePath);
       if (!Array.isArray(parsed)) {
         fail(`new/${directoryName}/${file}: module file must contain a question array`);
         return [];
       }
+
+      const expectedModule = file.match(/^module-([a-d])\.json$/i)[1].toUpperCase();
+      for (const [index, question] of parsed.entries()) {
+        assert(
+          question && question.module === expectedModule,
+          `new/${directoryName}/${file} question #${index + 1}: expected module ${expectedModule}`
+        );
+      }
+
       return parsed;
     });
 
@@ -90,8 +113,13 @@ function validateExam({ exam, displayFile }, expectedCounts, extraChecks) {
   assert(typeof exam.id === 'string' && exam.id.length > 0, `${displayFile}: missing id`);
   assert(typeof exam.title === 'string' && exam.title.length > 0, `${displayFile}: missing title`);
   assert(typeof exam.description === 'string' && exam.description.trim().length > 0, `${displayFile}: missing description`);
+  assert(typeof exam.durationMinutes === 'number' && Number.isFinite(exam.durationMinutes) && exam.durationMinutes > 0, `${displayFile}: durationMinutes must be a positive number`);
+  assert(typeof exam.totalPoints === 'number' && Math.abs(exam.totalPoints - EXPECTED_POINTS) < 0.001, `${displayFile}: totalPoints must be ${EXPECTED_POINTS}`);
   assert(typeof exam.disclaimer === 'string' && exam.disclaimer.trim().length > 0, `${displayFile}: missing disclaimer`);
   assert(Array.isArray(exam.questions), `${displayFile}: questions must be an array`);
+
+  if (!Array.isArray(exam.questions)) return;
+
   assert(exam.questions.length === EXPECTED_QUESTIONS, `${displayFile}: expected ${EXPECTED_QUESTIONS} questions, found ${exam.questions.length}`);
 
   if (exam.moduleOverview !== undefined) {
@@ -116,30 +144,40 @@ function validateExam({ exam, displayFile }, expectedCounts, extraChecks) {
 
   for (const [idx, question] of exam.questions.entries()) {
     const location = `${displayFile} question #${idx + 1}`;
+    assert(question && typeof question === 'object' && !Array.isArray(question), `${location}: question must be an object`);
+    if (!question || typeof question !== 'object' || Array.isArray(question)) continue;
+
     assert(typeof question.id === 'string' && question.id.length > 0, `${location}: missing id`);
     assert(!questionIds.has(question.id), `${location}: duplicate question id ${question.id}`);
     questionIds.add(question.id);
     assert(VALID_MODULES.has(question.module), `${location}: invalid module ${question.module}`);
     assert(VALID_TYPES.has(question.type), `${location}: invalid type ${question.type}`);
-    assert(typeof question.points === 'number' && question.points > 0, `${location}: points must be positive number`);
+    assert(typeof question.points === 'number' && Number.isFinite(question.points) && question.points > 0, `${location}: points must be positive number`);
     assert(typeof question.prompt === 'string' && question.prompt.trim().length >= 8, `${location}: prompt too short`);
 
-    counts[question.module] += 1;
-    points += question.points;
+    if (VALID_MODULES.has(question.module)) counts[question.module] += 1;
+    if (typeof question.points === 'number' && Number.isFinite(question.points)) points += question.points;
 
     if (question.type === 'mcq') {
       assert(Array.isArray(question.options) && question.options.length === 4, `${location}: MCQ must have exactly 4 options`);
-      const keys = question.options.map((option) => option.key);
-      assert(keys.join('') === 'ABCD', `${location}: option keys must be A/B/C/D`);
-      assert(VALID_ANSWERS.has(question.answer), `${location}: answer must be A/B/C/D`);
-      assert(question.options.some((option) => option.key === question.answer), `${location}: answer key not found in options`);
-      assert(typeof question.explanation === 'string' && question.explanation.trim().length >= 8, `${location}: explanation too short`);
-      for (const option of question.options) {
-        assert(typeof option.text === 'string' && option.text.trim().length > 0, `${location}: option text missing`);
+      if (Array.isArray(question.options)) {
+        const keys = question.options.map((option) => option?.key);
+        assert(keys.join('') === 'ABCD', `${location}: option keys must be A/B/C/D`);
+        for (const option of question.options) {
+          assert(option && typeof option.text === 'string' && option.text.trim().length > 0, `${location}: option text missing`);
+        }
       }
-    } else {
+      assert(VALID_ANSWERS.has(question.answer), `${location}: answer must be A/B/C/D`);
+      assert(Array.isArray(question.options) && question.options.some((option) => option?.key === question.answer), `${location}: answer key not found in options`);
+      assert(typeof question.explanation === 'string' && question.explanation.trim().length >= 8, `${location}: explanation too short`);
+    } else if (question.type === 'code' || question.type === 'essay') {
       assert(typeof question.modelAnswer === 'string' && question.modelAnswer.trim().length >= 12, `${location}: open question needs modelAnswer`);
-      assert(Array.isArray(question.rubric) && question.rubric.length >= 3, `${location}: open question needs at least 3 rubric items`);
+      assert(
+        Array.isArray(question.rubric) &&
+          question.rubric.length >= 3 &&
+          question.rubric.every((item) => typeof item === 'string' && item.trim().length > 0),
+        `${location}: open question needs at least 3 non-empty rubric items`
+      );
     }
   }
 
@@ -165,7 +203,7 @@ for (const entry of [...legacyExams, ...newExams]) {
 
 for (const entry of legacyExams) {
   validateExam(entry, { A: 10, B: 22, C: 20, D: 8 });
-  totalQuestions += entry.exam.questions.length;
+  totalQuestions += Array.isArray(entry.exam.questions) ? entry.exam.questions.length : 0;
 }
 
 for (const entry of newExams) {
@@ -177,7 +215,7 @@ for (const entry of newExams) {
     assert(codeQuestions.length === 2, `${displayFile}: expected exactly 2 code questions, found ${codeQuestions.length}`);
     assert(codeQuestions.every((question) => question.module === 'B'), `${displayFile}: all code questions must be in module B`);
   });
-  totalQuestions += entry.exam.questions.length;
+  totalQuestions += Array.isArray(entry.exam.questions) ? entry.exam.questions.length : 0;
 }
 
 if (process.exitCode) {
