@@ -1,6 +1,6 @@
 {
   "name": "ai-test",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": false,
   "description": "Bộ web app ôn tập AI thực chiến self-host/local host, có GitHub Actions validate và auto-merge PR đề bổ sung.",
   "type": "module",
@@ -12,7 +12,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "prevalidate": "npm run materialize:new-exams",
-    "validate": "node scripts/validate-exams.mjs"
+    "validate": "node scripts/validate-exams.mjs && node scripts/validate-new-collection.mjs",
+    "test:crown-worker": "node workers/crown-auth/test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.0",

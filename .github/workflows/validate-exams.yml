@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'src/**'
+      - 'workers/**'
       - 'docs/**'
       - 'CONTRIBUTING.md'
       - 'scripts/**'
@@ -12,21 +13,21 @@ on:
       - 'package-lock.json'
       - 'tsconfig.json'
       - 'vite.config.ts'
-      - '.github/workflows/validate-exams.yml'
+      - '.github/workflows/**'
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   validate:
-    name: Validate schema and build
+    name: Validate schema, Crown Worker and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,7 +43,31 @@ jobs:
         run: npm ci
 
       - name: Validate exam JSON files
-        run: npm run validate
+        id: validate-exams
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run validate 2>&1 | tee validation.log
+
+      - name: Test Crown Worker
+        run: node workers/crown-auth/test.mjs
 
       - name: Build app
+        env:
+          VITE_CROWN_AUTH_URL: https://crown.example.invalid
         run: npm run build
+
+      - name: Comment validation failure
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          {
+            echo '### CI validation failed'
+            echo
+            echo '```text'
+            tail -n 120 validation.log 2>/dev/null || echo 'No validation log was produced.'
+            echo '```'
+          } > validation-comment.md
+          gh pr comment "$PR_NUMBER" --body-file validation-comment.md
