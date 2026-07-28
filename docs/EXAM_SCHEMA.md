@@ -116,7 +116,7 @@ Câu mở phải có `modelAnswer` và ít nhất ba tiêu chí rubric. Ba câu 
 ## Kiểm tra local
 
 ```bash
+npm run generate:crown-lock
 npm run validate
-npm run test:crown-worker
 npm run build
 ```

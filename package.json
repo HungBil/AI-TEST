@@ -5,15 +5,16 @@
   "description": "Bộ web app ôn tập AI thực chiến self-host/local host, có GitHub Actions validate và auto-merge PR đề bổ sung.",
   "type": "module",
   "scripts": {
+    "generate:crown-lock": "node scripts/generate-crown-lock.mjs",
     "materialize:new-exams": "node scripts/materialize-new-exams.mjs",
-    "predev": "npm run materialize:new-exams",
+    "predev": "npm run materialize:new-exams && npm run generate:crown-lock",
     "dev": "vite",
-    "prebuild": "npm run materialize:new-exams",
+    "prebuild": "npm run materialize:new-exams && npm run generate:crown-lock",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "prevalidate": "npm run materialize:new-exams",
-    "validate": "node scripts/validate-all-exams.mjs && node scripts/validate-new-collection.mjs",
-    "test:crown-worker": "node workers/crown-auth/test.mjs"
+    "validate": "node scripts/validate-all-exams.mjs && node scripts/validate-new-collection.mjs && npm run test:crown",
+    "test:crown": "node --test scripts/generate-crown-lock.test.mjs && vitest run src"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.0",
@@ -24,6 +25,8 @@
   },
   "devDependencies": {
     "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0"
+    "@types/react-dom": "^18.3.0",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
   }
 }
