@@ -1,22 +1,5 @@
-import type { Exam, Question } from '../../types/exam';
+import type { Exam } from '../../types/exam';
 
-type ExamMetadata = Omit<Exam, 'questions'>;
+const modules = import.meta.glob('./new-*.json', { eager: true, import: 'default' }) as Record<string, Exam>;
 
-const manifests = import.meta.glob('./*/exam.json', { eager: true, import: 'default' }) as Record<string, ExamMetadata>;
-const questionModules = import.meta.glob('./*/module-*.json', { eager: true, import: 'default' }) as Record<string, Question[]>;
-const fullExamModules = import.meta.glob('./new-*.json', { eager: true, import: 'default' }) as Record<string, Exam>;
-
-const modularExams: Exam[] = Object.entries(manifests).map(([manifestPath, metadata]) => {
-  const directory = manifestPath.slice(0, manifestPath.lastIndexOf('/'));
-  const questions = Object.entries(questionModules)
-    .filter(([questionPath]) => questionPath.startsWith(`${directory}/module-`))
-    .sort(([left], [right]) => left.localeCompare(right))
-    .flatMap(([, moduleQuestions]) => moduleQuestions);
-
-  return { ...metadata, questions };
-});
-
-export const newExams: Exam[] = [
-  ...modularExams,
-  ...Object.values(fullExamModules)
-].sort((a, b) => a.id.localeCompare(b.id));
+export const newExams: Exam[] = Object.values(modules).sort((a, b) => a.id.localeCompare(b.id));
