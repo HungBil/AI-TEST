@@ -1,42 +1,13 @@
 # Exam JSON schema
 
-Repo có hai nhóm đề:
+Repo có hai collection:
 
 - `src/data/exams/*.json`: bộ cũ, hiển thị công khai.
-- `src/data/new-exams/<exam-id>/`: bộ mô phỏng khóa mới, chỉ đi vào giao diện sau cổng vương miện.
+- `src/data/new-exams/`: bộ mô phỏng khóa mới, mở qua cổng vương miện.
 
-Cả hai nhóm được Vite tự load bằng `import.meta.glob`, nên không cần import thủ công từng đề.
+## Cấu trúc bắt buộc
 
-## 1. Bộ cũ: một file cho toàn bộ đề
-
-Mỗi đề cũ là một file JSON hoàn chỉnh, ví dụ `src/data/exams/exam-11.json`:
-
-```json
-{
-  "id": "exam-11",
-  "title": "Bài kiểm tra ôn tập AI thực chiến #11",
-  "description": "...",
-  "durationMinutes": 90,
-  "totalPoints": 100,
-  "disclaimer": "...",
-  "questions": []
-}
-```
-
-## 2. Bộ mới: một manifest và bốn file module
-
-Ví dụ cấu trúc:
-
-```txt
-src/data/new-exams/new-2026-02/
-├── exam.json
-├── module-a.json
-├── module-b.json
-├── module-c.json
-└── module-d.json
-```
-
-`exam.json` chỉ chứa metadata, không chứa `questions`:
+Mỗi đề phải có:
 
 ```json
 {
@@ -52,52 +23,57 @@ src/data/new-exams/new-2026-02/
     "C": "AI, RAG & thiết kế hệ thống",
     "D": "Privacy, banking & Responsible AI"
   },
-  "moduleOverview": [
-    "Module 1 · A: ...",
-    "Module 2 · B: ...",
-    "Module 3 · C: ...",
-    "Module 4 · D: ..."
-  ]
+  "moduleOverview": ["...", "...", "...", "..."],
+  "questions": []
 }
 ```
 
-Mỗi `module-*.json` là một mảng câu hỏi. App ghép metadata với bốn mảng theo thứ tự A → B → C → D.
+`moduleLabels` và `moduleOverview` là tùy chọn, nhưng nếu khai báo phải đủ bốn module.
 
-Các trường bắt buộc của đề:
+## Hai layout của bộ mới
 
-- `id`, `title`, `description`, `durationMinutes`, `totalPoints`, `disclaimer`.
-- Bộ cũ cần thêm `questions`.
-- `moduleLabels` và `moduleOverview` là tùy chọn. Nếu có, `moduleLabels` phải đủ A/B/C/D; `moduleOverview` phải có đúng 4 dòng.
+### Một file hoàn chỉnh
+
+```txt
+src/data/new-exams/new-2026-02.json
+```
+
+File chứa metadata và toàn bộ `questions`. Đề 02–10 được materialize từ bundle nén bằng `npm run materialize:new-exams`; các file tạo ra nằm trong `.gitignore`, không chỉnh tay. Nguồn đóng gói nằm tại `src/data/new-exams/bundle/`.
+
+### Module hóa
+
+```txt
+src/data/new-exams/new-2026-01/
+├── exam.json
+├── module-a.json
+├── module-b.json
+├── module-c.json
+└── module-d.json
+```
+
+`exam.json` chỉ chứa metadata, không chứa `questions`; bốn file còn lại là các mảng câu hỏi và chỉ được chứa đúng module tương ứng.
 
 ## Số lượng câu
 
-Mỗi đề cần đúng 60 câu và 100 điểm.
+Mỗi đề đúng 60 câu và 100 điểm.
 
-### Bộ cũ
+| Collection | A | B | C | D |
+|---|---:|---:|---:|---:|
+| Bộ cũ | 10 | 22 | 20 | 8 |
+| Bộ mới | 20 | 20 | 12 | 8 |
 
-| Module | Số câu | Nội dung |
-|---|---:|---|
-| A | 10 | Toán học & tư duy định lượng |
-| B | 22 | Python / NumPy / Pandas, gồm 2 câu code tay |
-| C | 20 | AI & tư duy sản phẩm AI, gồm 2 tự luận |
-| D | 8 | Logic / đạo đức / hành vi, gồm 1 tự luận tình huống |
+Với bộ mới:
 
-### Bộ mô phỏng khóa mới
-
-| Module | Số câu | Nội dung |
-|---|---:|---|
-| A | 20 | Xác suất và đại số tuyến tính, trọng tâm ma trận |
-| B | 20 | Euclid, Python gọi API và NumPy; đúng 2 câu code |
-| C | 12 | AI/RAG/triển khai; đúng 3 câu tự luận theo ràng buộc |
-| D | 8 | Privacy, banking và Responsible AI |
-
-Mỗi file module chỉ được chứa câu có trường `module` tương ứng với tên file.
+- Đúng 2 câu `code`, đều ở Module B.
+- Đúng 3 câu `essay`, đều ở Module C.
+- Không trùng `question.id` trong toàn repo.
+- Không trùng nguyên văn prompt giữa các đề mới.
 
 ## MCQ
 
 ```json
 {
-  "id": "N26-A01",
+  "id": "N26E02-A01",
   "module": "A",
   "type": "mcq",
   "points": 1,
@@ -114,18 +90,13 @@ Mỗi file module chỉ được chứa câu có trường `module` tương ứn
 }
 ```
 
-Yêu cầu:
+MCQ phải có đúng A/B/C/D, không trùng nội dung lựa chọn, đáp án hợp lệ và giải thích đủ rõ.
 
-- Đúng 4 lựa chọn theo thứ tự A/B/C/D.
-- `answer` phải trỏ tới một lựa chọn tồn tại.
-- `explanation` giải thích được vì sao đáp án đúng, không chỉ lặp lại đáp án.
-- `points` là số dương, có thể là số thập phân.
-
-## Code/tự luận
+## Code và tự luận
 
 ```json
 {
-  "id": "N26-C10",
+  "id": "N26E02-C10",
   "module": "C",
   "type": "essay",
   "points": 8,
@@ -136,13 +107,7 @@ Yêu cầu:
 }
 ```
 
-Yêu cầu:
-
-- `type` là `code` hoặc `essay`.
-- Có `modelAnswer`.
-- Có ít nhất 3 tiêu chí trong `rubric`.
-- Với bộ mới, cả 3 câu `essay` nằm ở Module C. Prompt cần nêu ràng buộc và yêu cầu người làm lập luận, đưa ví dụ, mô tả cách triển khai/đánh giá/giám sát.
-- Với bộ mới, cả 2 câu `code` nằm ở Module B.
+Câu mở phải có đáp án mẫu và ít nhất ba tiêu chí rubric không rỗng. Ba câu tự luận Module C nên bắt buộc người làm nêu lập luận, ví dụ end-to-end, cách triển khai, đánh giá, giám sát, bảo mật và rollback.
 
 ## Kiểm tra local
 

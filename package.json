@@ -5,9 +5,13 @@
   "description": "Bộ web app ôn tập AI thực chiến self-host/local host, có GitHub Actions validate và auto-merge PR đề bổ sung.",
   "type": "module",
   "scripts": {
+    "materialize:new-exams": "node scripts/materialize-new-exams.mjs",
+    "predev": "npm run materialize:new-exams",
     "dev": "vite",
+    "prebuild": "npm run materialize:new-exams",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "prevalidate": "npm run materialize:new-exams",
     "validate": "node scripts/validate-exams.mjs"
   },
   "dependencies": {

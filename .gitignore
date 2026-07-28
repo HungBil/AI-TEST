@@ -10,3 +10,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 tsconfig.tsbuildinfo
+
+# Generated from src/data/new-exams/bundle by scripts/materialize-new-exams.mjs
+src/data/new-exams/new-2026-02.json
+src/data/new-exams/new-2026-03.json
+src/data/new-exams/new-2026-04.json
+src/data/new-exams/new-2026-05.json
+src/data/new-exams/new-2026-06.json
+src/data/new-exams/new-2026-07.json
+src/data/new-exams/new-2026-08.json
+src/data/new-exams/new-2026-09.json
+src/data/new-exams/new-2026-10.json
