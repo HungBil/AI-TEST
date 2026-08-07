@@ -2,84 +2,24 @@
 
 ![AI in Action - The nationwide AI talent network](docs/assets/ai-in-action.png)
 
-Web app tự host để luyện đề trắc nghiệm, code tay và tự luận. App có Practice mode, Exam mode, timer, lưu tiến độ, tự chấm câu mở và thống kê theo module.
+Web app self-host/local host để luyện đề theo dạng chọn đáp án, xem đúng/sai, xem đáp án đúng, giải thích và thống kê cuối bài.
 
-> **Lưu ý:** Đây là tài liệu ôn tập cộng đồng, không phải đề thi chính thức hoặc đề bị lộ. Bộ Crown được biên soạn bám theo phản hồi không chính thức của người thi các khóa gần đây và chỉ mở rộng nhẹ quanh các chủ đề đã được ghi nhận.
+> **Disclaimer:** Đây chỉ là đề cương ôn tập cộng đồng, không phải đề thi chính thức của VinUni, không cố gắng mô phỏng đề thi thật, không cam kết giống đề thật. Người học cần tự research thêm, tự học thêm và tự phát triển thêm.
 
-## Baseline dùng để biên soạn bộ Crown
+## Tính năng
 
-- 60 câu, chia 4 module.
-- Module 1: xác suất, xác suất có điều kiện/phụ thuộc và đại số tuyến tính phần ma trận; có nhân ma trận và inverse matrix; không có giải tích.
-- Câu toán cần giấy nháp nhưng không cần máy tính cầm tay.
-- Module 2: thuật toán Euclid, Python gọi API và đọc/giải thích code NumPy.
-- Module 3: confusion matrix, accuracy, precision, recall, F1, SVM và backpropagation cơ bản.
-- Module 3 có đúng 3 câu tự luận; cả ba yêu cầu lập luận, ví dụ và cách triển khai theo ràng buộc.
-- Module 4: dữ liệu nhạy cảm, banking, privacy, quyền truy cập giữa nhóm A/B và trách nhiệm khi AI trả lời sai.
-
-Không mở rộng sang graph AML, temporal graph, KYC đa phương thức, voice agent, research agent hoặc các chủ đề lấy từ dự án cá nhân của maintainer.
-
-## Quy mô
-
-- Bộ cũ: **10 đề × 60 câu = 600 câu**.
-- Bộ Crown: **10 đề × 60 câu = 600 câu**.
-- Toàn repo: **20 đề, 1.200 câu**.
-- Mỗi đề Crown có 20 câu Module A, 20 câu Module B, 12 câu Module C và 8 câu Module D.
-- Mỗi đề Crown có đúng 2 câu code ở B và 3 câu tự luận ở C.
-
-## Mức độ khác nhau giữa các đề
-
-Mười đề không phải mười syllabus độc lập. Chúng dùng chung một lõi kiến thức để phù hợp với người học có năng lực đầu vào khác nhau.
-
-- Phần lớn câu hỏi vẫn kiểm tra cùng nhóm nền tảng.
-- Mỗi đề thay đổi vừa phải ở dữ kiện, cách hỏi và khoảng 4–8 câu trắc nghiệm.
-- Khác biệt rõ hơn nằm ở ba câu tự luận của Module C.
-- SVM và backpropagation chỉ ở mức trực quan, phép tính nhỏ và ứng dụng cơ bản.
-- Không tạo độ khó giả bằng cách đưa thêm kiến thức ngoài baseline.
-
-Định hướng năng lực là **Level 3 Apply → Level 4 Enable**. Mỗi đề giữ 55 câu ở mức `L3`; 2 câu code và 3 câu tự luận được gắn `L3-L4`. Đây không phải bài đánh giá SFIA chính thức.
-
-Xem chi tiết tại [`docs/NEW_EXAM_COVERAGE.md`](docs/NEW_EXAM_COVERAGE.md).
-
-## Cấu trúc mỗi đề Crown
-
-| Module | Số câu | Điểm | Phạm vi |
-|---|---:|---:|---|
-| A | 20 | 20 | 10 xác suất và 10 ma trận; số nhỏ, tính bằng giấy nháp |
-| B | 20 | 28 | Euclid, Requests/API, NumPy; gồm 2 câu code |
-| C | 12 | 42 | ML/RAG cơ bản, confusion matrix, SVM/backprop nhẹ; gồm 3 tự luận |
-| D | 8 | 10 | Đạo đức AI, banking, privacy, phân quyền và human review |
-
-## Bộ sinh đề
-
-Mười đề Crown được sinh xác định từ:
-
-```text
-scripts/exam-generator/
-├── shared.mjs
-├── module-a.mjs
-├── module-b.mjs
-├── module-c-core.mjs
-├── module-c-essays.mjs
-├── module-cd.mjs
-├── module-d.mjs
-└── baseline-generator.mjs
-```
-
-Chạy:
-
-```bash
-npm run materialize:new-exams
-```
-
-để tạo:
-
-```text
-src/data/new-exams/new-2026-01.json
-...
-src/data/new-exams/new-2026-10.json
-```
-
-Các file JSON đầu ra nằm trong `.gitignore`. `predev`, `prevalidate` và `prebuild` tự chạy materializer.
+- 10 bài kiểm tra mặc định, mỗi bài 60 câu, tổng 600 câu.
+- Mỗi bài 100 điểm, thời lượng gợi ý 90 phút.
+- Module A: Toán học & tư duy định lượng.
+- Module B: Python / NumPy / Pandas, gồm code tay/pseudo-code.
+- Module C: AI & tư duy sản phẩm AI, gồm tự luận pipeline/RAG/product AI.
+- Module D: Logic / đạo đức / hành vi, gồm tình huống Responsible AI.
+- Practice mode: chọn xong hiện đáp án và giải thích.
+- Exam mode: cuối bài mới hiện kết quả.
+- Câu code/tự luận dùng rubric + self-grade.
+- Lưu tiến độ bằng localStorage.
+- Tự load thêm mọi file đề JSON trong `src/data/exams/*.json`.
+- GitHub Actions validate PR và bật auto-merge cho PR chỉ thêm/sửa đề JSON.
 
 ## Chạy local
 
@@ -88,49 +28,94 @@ npm install
 npm run dev
 ```
 
-Trước khi chạy `dev`, đặt `CROWN_PASSWORD` trong biến môi trường của shell hiện tại. Generator Crown lock không có mật khẩu mặc định và sẽ dừng nếu biến này trống.
+Mở URL Vite hiện trong terminal, thường là:
 
-Thường mở tại:
-
-```text
+```txt
 http://localhost:5173
 ```
 
-## Validate và build
+## Kiểm tra dữ liệu đề
 
 ```bash
-npm run generate:crown-lock
 npm run validate
-npm run build
 ```
 
 Validator kiểm tra:
 
-- đúng 10 đề Crown và 600 câu;
-- mỗi đề đúng 20/20/12/8 và tổng 100 điểm;
-- mỗi đề có đúng 2 câu code ở B và 3 câu tự luận ở C;
-- mỗi đề có đúng 55 câu `L3` và 5 câu `L3-L4`;
-- Đề 03–10 có ít nhất 2 câu confusion matrix/SVM/backprop;
-- bộ ba tự luận không trùng hoàn toàn giữa hai đề;
-- ID đề/câu không trùng, MCQ có đủ A/B/C/D và đáp án hợp lệ;
-- skill overlap không vượt 90% và prompt trùng nguyên văn không vượt 48/60;
-- bộ cũ vẫn được kiểm tra theo schema legacy riêng.
+- Mỗi đề đúng 60 câu.
+- Module A/B/C/D có 10/22/20/8 câu.
+- Tổng điểm mỗi đề là 100.
+- MCQ có đủ A/B/C/D, answer hợp lệ, explanation.
+- Câu code/tự luận có modelAnswer và rubric.
 
-## Truy cập Crown và bảo vệ mật khẩu
+## Build self-host
 
-Nhấn biểu tượng vương miện ở góc dưới bên phải. Crown là **client-side access gate** chỉ chạy trên GitHub Pages, không phải authentication. Mật khẩu không được commit; workflow build đọc `CROWN_PASSWORD`, tạo verifier PBKDF2 + AES-GCM ngẫu nhiên rồi đưa verifier vào bundle.
+```bash
+npm run build
+npm run preview
+```
 
-Cơ chế này chỉ tăng độ khó vừa phải cho việc đoán mật khẩu. Câu hỏi và đáp án vẫn public; người có kỹ thuật có thể đọc dữ liệu, sửa frontend để bỏ qua cổng, thay đổi `sessionStorage` hoặc brute-force offline.
+Thư mục build nằm ở `dist/`.
 
-Chi tiết và giới hạn: [`docs/CROWN_SECURITY.md`](docs/CROWN_SECURITY.md).
+## Cách thêm đề mới
 
-Mọi mật khẩu Crown từng xuất hiện trong lịch sử repo phải được coi là đã lộ. Maintainer cần tạo passphrase mới rồi thêm repository secret tên `CROWN_PASSWORD` tại `Settings → Secrets and variables → Actions`.
+1. Copy `docs/exam-template.json` thành `src/data/exams/exam-11.json`.
+2. Điền đủ 60 câu theo schema trong `docs/EXAM_SCHEMA.md`.
+3. Chạy:
 
-## GitHub Actions
+```bash
+npm run validate
+npm run build
+```
 
-- `validate-exams.yml`: materialize, sinh verifier bằng password test, validate 1.200 câu, test Crown và build app.
-- `deploy-pages.yml`: sinh verifier từ repository secret, build và deploy duy nhất thư mục `dist/` lên GitHub Pages.
+App tự load mọi file `*.json` trong `src/data/exams`, nên không cần sửa `index.ts`.
+
+## GitHub Actions / Auto-merge PR đóng góp đề
+
+Repo có 2 workflow:
+
+1. `.github/workflows/validate-exams.yml`
+   - Chạy khi có PR/push.
+   - `npm ci`, `npm run validate`, `npm run build`.
+
+2. `.github/workflows/auto-merge-exam-pr.yml`
+   - Chạy bằng `pull_request_target` nhưng **chỉ checkout base branch**, không chạy code từ PR trong workflow có quyền ghi.
+   - Kiểm tra danh sách file thay đổi.
+   - PR chỉ đổi `src/data/exams/*.json` hoặc tài liệu đóng góp được gắn label `exam-contribution`.
+   - Tự bật auto-merge bằng `gh pr merge --auto --squash --delete-branch`.
+   - Maintainer chặn được bằng label `needs-review` hoặc `do-not-merge`.
+
+### Cấu hình khuyến nghị cho repo `HungBil/AI-TEST`
+
+Trong GitHub repo:
+
+1. **Settings → General → Pull Requests**
+   - Bật **Allow auto-merge**.
+   - Bật **Allow squash merging**.
+
+2. **Settings → Actions → General → Workflow permissions**
+   - Chọn **Read and write permissions**.
+
+3. **Settings → Branches → Add branch protection rule** cho `main`
+   - Bật **Require status checks to pass before merging**.
+   - Chọn check `Validate exam data and app build / Validate schema and build` sau khi workflow chạy lần đầu.
+   - Không bắt buộc required review nếu muốn cộng đồng đóng góp thoáng hơn.
+
+Cơ chế này đủ thoáng cho PR thêm đề, nhưng vẫn có kiểm soát: chỉ auto-merge nội dung đề/tài liệu được phép và phải pass validate/build.
+
+## Push lần đầu lên GitHub
+
+```bash
+git init
+git branch -M main
+git remote add origin https://github.com/HungBil/AI-TEST.git
+git add .
+git commit -m "init AI practice tests"
+git push -u origin main
+```
 
 ## Đóng góp
 
-Xem `CONTRIBUTING.md`, `docs/EXAM_SCHEMA.md` và `docs/NEW_EXAM_COVERAGE.md`. Nội dung mới phải giữ đúng baseline, không tự nhận là đề chính thức và không suy diễn từ dự án cá nhân của maintainer.
+Xem `CONTRIBUTING.md` và `docs/EXAM_SCHEMA.md`.
+
+Dự án mở miễn phí, rất hoan nghênh mọi người đóng góp thêm đề, sửa lỗi đáp án, cải thiện giải thích và UI/UX.
