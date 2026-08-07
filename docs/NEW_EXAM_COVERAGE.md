@@ -1,130 +1,119 @@
 # Ma trận phủ nội dung bộ Crown 2026
 
-## 1. Dữ liệu đầu vào đã bóc tách
+## Nguyên tắc thiết kế
 
-Bộ đề dùng hai nhóm phản hồi không chính thức từ người thi các khóa gần đây.
+Bộ Crown gồm 10 đề, mỗi đề 60 câu. Các đề **không được khác nhau quá xa** vì cùng mô phỏng một phạm vi đầu vào. Mục tiêu là:
 
-### Nhóm dữ liệu đã có trước
+- giữ một lõi kiến thức chung để người học ôn chắc nền tảng;
+- thay đổi vừa phải ở dữ kiện, cách hỏi và 4–8 câu trắc nghiệm;
+- tạo khác biệt rõ hơn ở đúng 3 câu tự luận của Module C;
+- ưu tiên câu ở mức áp dụng trực tiếp, giấy nháp và đọc code;
+- chỉ dùng câu lập luận/triển khai để quan sát mức sẵn sàng từ SFIA Level 3 lên Level 4, không biến đề thành bài kiến trúc hệ thống nâng cao.
 
-- 60 câu, chia 4 module.
-- Module 1 tập trung xác suất và đại số tuyến tính phần ma trận; không có giải tích.
-- Câu toán cần giấy nháp nhưng không cần máy tính cầm tay.
-- Module 2 có thuật toán Euclid, Python gọi API và giải thích code NumPy.
-- Module 3 có đúng 3 câu tự luận; cả ba yêu cầu lập luận, ví dụ và cách triển khai theo ràng buộc.
-- Có tình huống banking/privacy: dữ liệu nhạy cảm, giới hạn truy cập nhóm A/B, hậu quả pháp lý khi AI trả lời sai.
+Đây không phải bài đánh giá SFIA chính thức.
 
-### Dữ liệu mới từ ảnh ghi chú khóa trước
+## Nguồn baseline
 
-- Bayes: tỷ lệ mắc bệnh, tỷ lệ xét nghiệm đúng/sai, hai lần đều dương tính.
-- Nhân ma trận, đại số tuyến tính phần ma trận và inverse matrix.
-- Thuật toán Euclid.
-- Gọi API bằng Python và giải thích code NumPy.
-- Confusion matrix: tính accuracy, precision, recall và F1-score.
-- Backpropagation ở mức tính toán cơ bản.
-- SVM ở mức nền tảng.
-- Xác suất và xác suất có điều kiện.
+Phạm vi được giữ quanh dữ liệu người thi các khóa trước cung cấp:
 
-Dòng “xác suất, xác suất có phụ thuộc” trong ảnh nằm phía dưới phần Module 3, nhưng được xếp vào Module 1 vì phản hồi trước xác nhận Module 1 là xác suất và ma trận. Đây là lựa chọn cấu trúc thận trọng, không phải khẳng định về thứ tự chính thức của đề.
+1. 60 câu, chia 4 module.
+2. Module 1 có xác suất, xác suất có điều kiện/phụ thuộc và đại số tuyến tính phần ma trận, gồm nhân ma trận và inverse matrix.
+3. Câu toán cần dùng giấy nháp nhưng không cần máy tính cầm tay; không có giải tích.
+4. Module 2 có thuật toán Euclid, Python gọi API và giải thích code NumPy.
+5. Module 3 có confusion matrix, accuracy, precision, recall, F1, SVM và backpropagation cơ bản.
+6. Module 3 có đúng 3 câu tự luận yêu cầu lập luận, ví dụ và cách triển khai theo ràng buộc.
+7. Có tình huống banking/privacy: dữ liệu nhạy cảm, quyền nhóm A/B, hậu quả pháp lý/tài chính và human review.
 
-## 2. Cách dùng SFIA Level 3 → 4
-
-Bộ đề không phải bài đánh giá SFIA chính thức. SFIA chỉ được dùng để hiệu chỉnh kiểu năng lực:
-
-- **Level 3 – Apply:** áp dụng phương pháp chuẩn, làm các tác vụ đa dạng, tự quản lý phần việc dưới định hướng chung.
-- **Level 4 – Enable:** xử lý hoạt động phức tạp đa dạng hơn, lựa chọn phương pháp, giải thích quyết định, làm việc tương đối tự chủ và hỗ trợ mục tiêu nhóm.
-
-Vì đây là đầu vào cho định hướng đào tạo từ Level 3 lên Level 4:
-
-- Khoảng hai phần ba điểm kiểm tra khả năng **Apply**: tính toán, đọc code, chọn API đúng, đọc metric và áp dụng công thức.
-- Khoảng một phần ba điểm kiểm tra tín hiệu sẵn sàng **Enable**: lập luận theo ràng buộc, chọn baseline, đưa ví dụ, lập kế hoạch triển khai, đánh giá, giám sát và biết khi nào phải chuyển người.
-- Không yêu cầu chiến lược tổ chức, kiến trúc enterprise hay governance cấp cao.
-
-Tham khảo chính thức:
-
-- https://sfia-online.org/en/sfia-9/responsibilities
-- https://sfia-online.org/en/tools-and-resources/ai-skills-framework/ai-skills-framework-home
-
-## 3. Vì sao giảm từ 10 đề xuống 5 đề
-
-Dữ liệu hiện có chỉ đủ tạo năm hồ sơ kiến thức khác nhau có giá trị học tập. Việc ép đủ 10 đề trước đây khiến nhiều câu chỉ thay số hoặc thay bối cảnh.
-
-Collection mới gồm **5 đề × 60 câu = 300 câu**. Mỗi đề vẫn có cấu trúc:
+## Blueprint cố định mỗi đề
 
 | Module | Số câu | Điểm | Nội dung |
 |---|---:|---:|---|
 | A | 20 | 20 | 10 xác suất + 10 ma trận |
 | B | 20 | 28 | 18 MCQ Euclid/API/NumPy + 2 câu code |
 | C | 12 | 42 | 9 MCQ ML/RAG + 3 tự luận |
-| D | 8 | 10 | Privacy, banking, phân quyền và human review |
+| D | 8 | 10 | Privacy, banking và trách nhiệm AI |
+| **Tổng** | **60** | **100** | 90 phút |
 
-## 4. Năm hồ sơ đề khác nhau
+Mỗi đề có đúng 55 câu `L3` và 5 câu `L3-L4`. Năm câu `L3-L4` là 2 câu code ở B và 3 câu tự luận ở C.
 
-| Đề | Trọng tâm khác biệt |
-|---:|---|
-| 01 | Nền tảng Bayes, xác suất có điều kiện, ma trận 2×2, Requests, NumPy, RAG/FAQ/classifier |
-| 02 | Bảng xác suất, biến cố bù, inverse matrix, confusion matrix và API model thử nghiệm |
-| 03 | Nhân/nghịch đảo ma trận, đọc shape/slicing NumPy và SVM tuyến tính cơ bản |
-| 04 | Backpropagation một nơ-ron, gradient descent, debug API và triển khai neural network nhỏ |
-| 05 | Đề tổng hợp tín hiệu Level 3→4: chọn mô hình, chẩn đoán validation gap, giải thích và triển khai theo ràng buộc |
+## Hồ sơ 10 đề
 
-## 5. Phạm vi độ khó
+| Đề | Lõi chung | Phần thay đổi vừa phải | Ba tự luận |
+|---:|---|---|---|
+| 01 | Bayes, ma trận 2×2, Euclid, Requests, NumPy, RAG | Đề baseline | RAG nội bộ; FAQ bảo vệ dữ liệu; classifier + metrics |
+| 02 | Xác suất có điều kiện, inverse matrix, API, NumPy | Confusion matrix đầy đủ | Classifier + metrics; RAG nội bộ; deploy model API |
+| 03 | Xác suất/ma trận, Euclid, API, NumPy | SVM tuyến tính: margin, support vector, decision function | SVM pipeline; FAQ privacy; classifier + metrics |
+| 04 | Xác suất/ma trận, API debug, NumPy | Backprop một nơ-ron, ReLU, một bước cập nhật | Neural network nhỏ; deploy model API; RAG nội bộ |
+| 05 | Nền tảng tổng hợp | Chọn phương pháp và đọc F1 ở mức cơ bản | Model selection; classifier + metrics; RAG nội bộ |
+| 06 | Gần Đề 01 | Thay vài câu API/NumPy và thêm accuracy/precision/recall | Classifier + metrics; FAQ privacy; deploy model API |
+| 07 | Gần Đề 02 | Thêm vài câu SVM trực quan | SVM pipeline; RAG nội bộ; FAQ privacy |
+| 08 | Gần Đề 03 | Thêm gradient/backprop với số nhỏ | Neural network nhỏ; classifier + metrics; FAQ privacy |
+| 09 | Gần Đề 04 | Đọc confusion matrix, RAG và chọn mô hình | Model selection; RAG nội bộ; deploy model API |
+| 10 | Đề tổng hợp vừa sức | Kết hợp metrics, một câu SVM và một câu backprop khái niệm | Cải thiện validation; classifier + metrics; FAQ privacy |
+
+## Mức độ khó
 
 ### Module A
 
-Được phép:
+Chỉ dùng các dạng có thể làm trên giấy:
 
-- Bayes một hoặc hai lần dương tính.
-- Xác suất có điều kiện từ bảng đếm, xác suất toàn phần, biến cố bù, rút bi, xúc xắc, đồng xu, kỳ vọng và Bernoulli variance với số nhỏ.
-- Nhân ma trận 2×2, determinant, inverse matrix, transpose, rank, hệ 2 phương trình, `Ax=b`, ma trận đơn vị và ma trận chéo.
+- Bayes một hoặc hai lần dương tính;
+- xác suất có điều kiện từ nhóm hoặc bảng đếm;
+- xác suất toàn phần;
+- biến cố bù và ít nhất một;
+- rút bi không hoàn lại;
+- xúc xắc, đồng xu, tổ hợp nhỏ;
+- kỳ vọng và phương sai Bernoulli với số nhỏ;
+- kích thước, cộng, nhân vô hướng và nhân ma trận 2×2;
+- định thức, nghịch đảo 2×2, chuyển vị;
+- giải hệ hai phương trình hoặc `Ax=b`;
+- rank đơn giản, ma trận đơn vị/chéo và nhận biết ma trận suy biến.
 
-Không đưa:
-
-- Giải tích, tối ưu liên tục, SVD/PCA, eigen nâng cao, Markov hoặc ma trận lớn.
+Không dùng giải tích, SVD/PCA, tối ưu nâng cao, eigen nâng cao hoặc phép tính cần máy tính cầm tay.
 
 ### Module B
 
-Được phép:
+- GCD và các bước Euclid;
+- đọc vòng lặp/đệ quy, tìm lỗi đơn giản;
+- `requests.get`, `requests.post`, `params`, `json`, header, timeout;
+- `raise_for_status`, `response.json`, `RequestException`, HTTP status;
+- kiểm tra schema JSON và API key cơ bản;
+- NumPy `shape`, `ndim`, broadcasting, `axis`, slicing, boolean indexing, `reshape`;
+- hai câu mở: một câu Euclid và một câu API/NumPy.
 
-- Tính/trace/debug Euclid, độ phức tạp cơ bản.
-- `requests.get/post`, `params`, `json`, header, timeout, `raise_for_status`, `response.json`, `RequestException`, status code và schema validation.
-- NumPy `shape`, `ndim`, broadcasting, `axis`, slicing, boolean indexing và `reshape`.
-
-Không đưa distributed system, streaming, queue hoặc agent protocol.
+Không dùng distributed systems, streaming, agent protocol hoặc hạ tầng production phức tạp.
 
 ### Module C
 
-Được phép:
+Lõi chung:
 
-- Train/validation/test, overfit.
-- Confusion matrix và tính accuracy, precision, recall, F1 bằng số nhỏ.
-- SVM tuyến tính: margin, support vector và hàm quyết định đơn giản.
-- Backpropagation: mục đích, gradient của một nơ-ron tuyến tính, cập nhật trọng số và đạo hàm ReLU ngoài điểm 0.
-- RAG cơ bản: retrieval, embedding, citation và từ chối khi thiếu bằng chứng.
-- Ba tự luận có ràng buộc, yêu cầu lập luận + ví dụ + triển khai/đánh giá.
+- supervised classification;
+- train/validation/test;
+- overfit;
+- confusion matrix và lựa chọn metric;
+- retrieval, embedding, thiếu bằng chứng trong RAG;
+- human review và monitoring.
 
-Không yêu cầu kernel trick nâng cao, dual optimization, mạng sâu, đạo hàm ma trận hoặc MLOps enterprise.
+Phần xoay vòng:
 
-### Module D
+- SVM ở mức maximum margin, support vectors và hàm quyết định tuyến tính đơn giản;
+- backpropagation ở mức một nơ-ron, gradient, ReLU và một bước gradient descent;
+- không có dual optimization, kernel nâng cao, mạng sâu hoặc đạo hàm ma trận lớn.
 
-- Least privilege.
-- Phân quyền nhóm A/B ở server/data layer.
-- Data minimization, purpose limitation và consent ở mức tình huống.
-- Human approval cho quyết định ảnh hưởng lớn.
-- Audit log, kiểm tra chênh lệch theo nhóm và xử lý sự cố dữ liệu.
+## Quy tắc đa dạng
 
-## 6. Chống lặp kiến thức
+Bộ đề chủ động cho phép overlap kiến thức cao vì cùng một baseline. Validator chỉ ngăn hai cực đoan:
 
-Mỗi câu Crown có:
+- một đề tự lặp quá nhiều kỹ năng;
+- hai đề giống gần như toàn bộ cả skill lẫn prompt.
 
-- `skillId`: kỹ năng cụ thể.
-- `sfiaBand`: `L3` hoặc `L3-L4`.
-- `difficulty`: mức độ câu hỏi.
+Các ràng buộc chính:
 
-Validator kiểm tra:
-
-- Mỗi đề có ít nhất 50 `skillId` khác nhau.
-- Không cặp đề nào có Jaccard overlap `skillId` lớn hơn 75%.
-- Không cặp đề nào có hơn 18/60 prompt giống nguyên văn.
-- Collection phải phủ Bayes, conditional probability, inverse/matrix multiplication, Euclid, API, NumPy, confusion metrics, SVM, backprop, RAG, privacy và essay.
-
-Cấu trúc nền tảng vẫn được phép lặp ở mức hợp lý; mục tiêu là khác về kỹ năng và dạng suy luận, không phải đổi tên bối cảnh để tạo cảm giác mới giả tạo.
+- đúng 10 đề và 600 câu;
+- mỗi đề A/B/C/D = 20/20/12/8;
+- đúng 2 câu code và 3 câu tự luận mỗi đề;
+- bộ ba tự luận không được trùng hoàn toàn giữa hai đề;
+- mỗi đề 3–10 có ít nhất 2 câu thuộc confusion matrix/SVM/backprop;
+- skill overlap giữa hai đề không vượt 90%;
+- prompt giống nguyên văn không vượt 30/60;
+- không yêu cầu mỗi đề phải là một syllabus khác.
