@@ -29,7 +29,7 @@ function buildExam(blueprint) {
   const generated = [
     ...buildModuleA(dataExamNo, effectiveBlueprint),
     ...buildModuleB(dataExamNo, effectiveBlueprint),
-    ...buildModuleC(dataExamNo, effectiveBlueprint),
+    ...buildModuleC(dataExamNo, effectiveBlueprint, examNo),
     ...buildModuleD(dataExamNo, effectiveBlueprint)
   ];
   const questions = renumberQuestions(generated, examNo);
