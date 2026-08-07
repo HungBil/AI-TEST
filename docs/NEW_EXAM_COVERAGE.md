@@ -115,5 +115,5 @@ Các ràng buộc chính:
 - bộ ba tự luận không được trùng hoàn toàn giữa hai đề;
 - mỗi đề 3–10 có ít nhất 2 câu thuộc confusion matrix/SVM/backprop;
 - skill overlap giữa hai đề không vượt 90%;
-- prompt giống nguyên văn không vượt 30/60;
+- prompt giống nguyên văn không vượt 48/60;
 - không yêu cầu mỗi đề phải là một syllabus khác.
