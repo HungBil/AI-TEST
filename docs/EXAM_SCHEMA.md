@@ -18,15 +18,21 @@ Repo có hai collection:
   "moduleLabels": {
     "A": "Xác suất & đại số tuyến tính phần ma trận",
     "B": "Euclid, Python gọi API & NumPy",
-    "C": "AI cơ bản, RAG & triển khai",
+    "C": "ML cơ bản, confusion matrix, SVM, backprop & RAG",
     "D": "Đạo đức AI, banking & privacy"
   },
   "moduleOverview": ["...", "...", "...", "..."],
+  "coverageProfile": {
+    "title": "...",
+    "sfiaOrientation": "...",
+    "variationPolicy": "...",
+    "source": "..."
+  },
   "questions": []
 }
 ```
 
-`moduleLabels` và `moduleOverview` là tùy chọn. Nếu khai báo, `moduleLabels` phải đủ A/B/C/D và `moduleOverview` phải có đúng bốn dòng.
+`moduleLabels`, `moduleOverview` và `coverageProfile` là metadata mô tả. `moduleLabels` phải đủ A/B/C/D và `moduleOverview` phải có đúng bốn dòng khi được khai báo.
 
 ## Cách tạo bộ Crown
 
@@ -37,7 +43,10 @@ scripts/exam-generator/
 ├── shared.mjs
 ├── module-a.mjs
 ├── module-b.mjs
+├── module-c-core.mjs
+├── module-c-essays.mjs
 ├── module-cd.mjs
+├── module-d.mjs
 └── baseline-generator.mjs
 ```
 
@@ -62,10 +71,12 @@ Mỗi đề Crown phải có:
 
 - Đúng 2 câu `code`, đều ở Module B.
 - Đúng 3 câu `essay`, đều ở Module C.
-- Tổng 10 đề Crown là 600 câu, 20 câu code và 30 câu tự luận.
+- Đúng 55 câu `L3` và 5 câu `L3-L4`.
+- Tổng 10 đề là 600 câu, 20 câu code và 30 câu tự luận.
 - ID câu hỏi không trùng trong toàn repo.
+- Bộ ba tự luận không trùng hoàn toàn với đề khác.
 
-Không bắt buộc prompt giữa các đề Crown phải khác tuyệt đối. Các câu nền tảng có thể lặp cấu trúc và thay số liệu/bối cảnh vừa phải để bám baseline.
+Không bắt buộc prompt giữa các đề Crown phải khác tuyệt đối. Các đề dùng chung lõi kiến thức; khác biệt chủ yếu nằm ở ba tự luận và một số câu trắc nghiệm.
 
 ## MCQ
 
@@ -84,7 +95,10 @@ Không bắt buộc prompt giữa các đề Crown phải khác tuyệt đối. 
   ],
   "answer": "B",
   "explanation": "...",
-  "tags": ["probability"]
+  "tags": ["probability"],
+  "skillId": "probability.bayes.one-positive-test",
+  "sfiaBand": "L3",
+  "difficulty": "applied-basic"
 }
 ```
 
@@ -101,7 +115,10 @@ MCQ Crown phải có đúng A/B/C/D, nội dung lựa chọn không trùng, đá
   "prompt": "...",
   "modelAnswer": "...",
   "rubric": ["Ý 1", "Ý 2", "Ý 3"],
-  "tags": ["rag"]
+  "tags": ["rag"],
+  "skillId": "essay.rag.internal-access-controlled",
+  "sfiaBand": "L3-L4",
+  "difficulty": "applied-reasoning"
 }
 ```
 
@@ -110,6 +127,8 @@ Câu mở phải có `modelAnswer` và ít nhất ba tiêu chí rubric. Ba câu 
 1. Lập luận lựa chọn giải pháp.
 2. Một ví dụ cụ thể hoặc flow end-to-end.
 3. Cách triển khai và đánh giá theo các ràng buộc được cho.
+
+Hai câu code và ba câu tự luận là phần duy nhất mặc định gắn `L3-L4`; các câu trắc nghiệm còn lại ở mức `L3`.
 
 Độ khó và phạm vi phải theo [`NEW_EXAM_COVERAGE.md`](NEW_EXAM_COVERAGE.md). Không thêm chủ đề chỉ vì chúng xuất hiện trong dự án cá nhân của maintainer.
 
