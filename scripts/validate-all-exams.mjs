@@ -90,6 +90,11 @@ function validateExam(entry, globalQuestionIds) {
       check(typeof question.modelAnswer === 'string' && question.modelAnswer.trim().length >= 12, `${location}: thiếu modelAnswer`);
       check(Array.isArray(question.rubric) && question.rubric.length >= 3 && question.rubric.every((item) => typeof item === 'string' && item.trim()), `${location}: rubric phải có ít nhất 3 ý`);
     }
+
+    if (isNew) {
+      check(typeof question.skillId === 'string' && question.skillId.trim(), `${location}: thiếu skillId`);
+      check(['L3', 'L3-L4'].includes(question.sfiaBand), `${location}: sfiaBand phải là L3 hoặc L3-L4`);
+    }
   }
 
   for (const module of Object.keys(expected)) check(counts[module] === expected[module], `${label}: module ${module} phải có ${expected[module]} câu, hiện có ${counts[module]}`);
@@ -120,4 +125,4 @@ for (const entry of [...legacy, ...newExams]) {
 check(legacy.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ cũ phải có 600 câu');
 check(newExams.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ Crown phải có 600 câu');
 if (failed) process.exit(1);
-console.log(`\n✅ Toàn repo: ${legacy.length + newExams.length} đề, 1.200 câu; Crown bám baseline có đúng 10 đề và 600 câu.`);
+console.log(`\n✅ Toàn repo: ${legacy.length + newExams.length} đề, 1.200 câu; Crown có 10 đề cân bằng và 600 câu.`);
