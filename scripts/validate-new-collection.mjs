@@ -50,7 +50,8 @@ let totalEssays = 0;
 let totalCodeQuestions = 0;
 const globalIds = new Set();
 const collectionSkills = new Set();
-const essayCombinationKeys = new Set();
+const essaySkillUniverse = new Set();
+const essayPromptUniverse = new Set();
 
 for (const exam of exams) {
   const questions = Array.isArray(exam.questions) ? exam.questions : [];
@@ -94,6 +95,19 @@ for (const exam of exams) {
     fail(`${exam.id}: phải có đúng 5 câu L3-L4 (2 code + 3 tự luận), hiện có ${l3ToL4Count}`);
   }
 
+  const localEssaySkills = new Set(essays.map((question) => question.skillId));
+  if (localEssaySkills.size !== 3) {
+    fail(`${exam.id}: ba câu tự luận phải thuộc ba họ kỹ năng khác nhau`);
+  }
+  for (const essay of essays) {
+    essaySkillUniverse.add(essay.skillId);
+    const promptKey = essay.prompt.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (essayPromptUniverse.has(promptKey)) {
+      fail(`${exam.id}: có câu tự luận trùng nguyên văn với đề khác`);
+    }
+    essayPromptUniverse.add(promptKey);
+  }
+
   const examNo = Number(exam.id.slice(-2));
   if (examNo >= 3) {
     const specializedCount = questions.filter((question) =>
@@ -103,12 +117,6 @@ for (const exam of exams) {
       fail(`${exam.id}: cần ít nhất 2 câu confusion matrix/SVM/backprop để phản ánh dữ liệu khóa trước`);
     }
   }
-
-  const essayKey = essays.map((question) => question.skillId).sort().join('|');
-  if (essayCombinationKeys.has(essayKey)) {
-    fail(`${exam.id}: bộ ba tự luận trùng hoàn toàn với một đề trước`);
-  }
-  essayCombinationKeys.add(essayKey);
 
   totalQuestions += questions.length;
   totalEssays += essays.length;
@@ -121,6 +129,10 @@ for (const prefix of REQUIRED_SKILL_PREFIXES) {
   }
 }
 
+if (essaySkillUniverse.size < 12) {
+  fail(`Ngân hàng tự luận cần ít nhất 12 họ bài khác nhau, hiện có ${essaySkillUniverse.size}`);
+}
+
 for (let left = 0; left < exams.length; left += 1) {
   for (let right = left + 1; right < exams.length; right += 1) {
     const leftSkills = new Set(exams[left].questions.map((question) => question.skillId));
@@ -131,6 +143,13 @@ for (let left = 0; left < exams.length; left += 1) {
     const rightPrompts = new Set(exams[right].questions.map((question) => question.prompt));
     const exactPromptOverlap = exams[left].questions.filter((question) => rightPrompts.has(question.prompt)).length;
 
+    const leftEssaySkills = new Set(exams[left].questions.filter((question) => question.type === 'essay').map((question) => question.skillId));
+    const rightEssaySkills = new Set(exams[right].questions.filter((question) => question.type === 'essay').map((question) => question.skillId));
+    const essayOverlap = [...leftEssaySkills].filter((skill) => rightEssaySkills.has(skill)).length;
+
+    if (essayOverlap > 1) {
+      fail(`${exams[left].id}/${exams[right].id}: tự luận trùng ${essayOverlap}/3 họ bài; tối đa cho phép 1/3 (33,3%)`);
+    }
     if (jaccard > 0.9) {
       fail(`${exams[left].id}/${exams[right].id}: skill overlap quá cao (${(jaccard * 100).toFixed(1)}%)`);
     }
@@ -146,4 +165,4 @@ if (totalEssays !== 30) fail(`Bộ Crown phải có đúng 30 câu tự luận, 
 if (totalCodeQuestions !== 20) fail(`Bộ Crown phải có đúng 20 câu code, hiện có ${totalCodeQuestions}`);
 
 if (process.exitCode) process.exit(process.exitCode);
-console.log(`✅ Crown balanced set: ${exams.length} đề, ${totalQuestions} câu, ${totalEssays} tự luận, ${totalCodeQuestions} câu code.`);
+console.log(`✅ Crown balanced set: ${exams.length} đề, ${totalQuestions} câu, ${totalEssays} tự luận, ${totalCodeQuestions} câu code; essay overlap tối đa 1/3.`);
