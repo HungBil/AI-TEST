@@ -8,6 +8,14 @@ const CONFUSION = [
   { tp: 18, fp: 2, fn: 6, tn: 24 }
 ];
 
+const VALIDATION_CASES = [
+  { train: 97, validation: 74, recall: 58 },
+  { train: 96, validation: 76, recall: 61 },
+  { train: 98, validation: 79, recall: 63 },
+  { train: 95, validation: 72, recall: 55 },
+  { train: 97, validation: 77, recall: 60 }
+];
+
 // Mỗi cặp đề chỉ được dùng chung tối đa 1/3 họ tự luận.
 // Các họ bài vẫn nằm trong phạm vi kiến thức cơ bản và thường gặp.
 export const ESSAY_PLAN = {
@@ -29,6 +37,10 @@ function getContext(examNo) {
 
 function getConfusion(examNo) {
   return CONFUSION[(examNo - 1) % CONFUSION.length];
+}
+
+function getValidationCase(examNo) {
+  return VALIDATION_CASES[(examNo - 1) % VALIDATION_CASES.length];
 }
 
 export function essayQuestion(skill, examNo, id) {
@@ -69,7 +81,7 @@ export function essayQuestion(skill, examNo, id) {
   if (skill === 'deployModelApi') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Một mô hình phân loại đã đạt kết quả chấp nhận được trên test. Hãy đưa nó thành API thử nghiệm.\n\nRàng buộc:\n- Input JSON có vài trường bắt buộc.\n- Phản hồi cần dưới 2 giây.\n- Không log dữ liệu nhạy cảm thô.\n- Nếu phiên bản mới kém hơn phải quay lại bản cũ.\n\nHãy nêu: (1) flow request → prediction; (2) ví dụ request/response; (3) các kiểm tra trước và sau deploy.`,
+      prompt: `Một mô hình dùng để ${context.classifier} đã đạt kết quả chấp nhận được trên test. Hãy đưa nó thành API thử nghiệm cho ${context.users}.\n\nRàng buộc:\n- Input JSON có vài trường bắt buộc.\n- Phản hồi cần dưới 2 giây.\n- Không log dữ liệu nhạy cảm thô.\n- Nếu phiên bản mới kém hơn phải quay lại bản cũ.\n\nHãy nêu: (1) flow request → prediction; (2) ví dụ request/response; (3) các kiểm tra trước và sau deploy.`,
       modelAnswer: `API nhận JSON, validate schema, chạy đúng preprocessing rồi gọi model và trả label/score/model_version. Ví dụ request chứa các đặc trưng cho phép, response có label và score. Trước deploy cần test preprocessing, schema, mẫu dự đoán chuẩn và latency. Sau deploy theo dõi error rate, latency và chất lượng khi có nhãn; giữ model version cũ để rollback. Không ghi raw PII vào log.`,
       rubric: ['Có schema validation.', 'Preprocessing nhất quán với lúc train.', 'Có ví dụ request/response.', 'Có test latency/chất lượng.', 'Có version và rollback.'],
       tags: ['deployment', 'api', 'essay'], skillId: 'essay.ml.deploy-model-api', sfiaBand: 'L3-L4'
@@ -89,7 +101,7 @@ export function essayQuestion(skill, examNo, id) {
   if (skill === 'neuralBackprop') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Giải thích cách huấn luyện một neural network nhỏ cho bài toán phân loại.\n\nRàng buộc:\n- Dữ liệu chỉ vài nghìn mẫu.\n- Không dùng mạng sâu.\n- Cần giải thích forward pass, loss, backpropagation và cập nhật trọng số bằng ví dụ số nhỏ.\n\nHãy trình bày: (1) flow huấn luyện; (2) một ví dụ cập nhật một trọng số; (3) cách phát hiện overfit.`,
+      prompt: `Giải thích cách huấn luyện một neural network nhỏ để ${context.classifier} với khoảng ${sampleCount} mẫu.\n\nRàng buộc:\n- Không dùng mạng sâu.\n- Cần giải thích forward pass, loss, backpropagation và cập nhật trọng số bằng ví dụ số nhỏ.\n\nHãy trình bày: (1) flow huấn luyện; (2) một ví dụ cập nhật một trọng số; (3) cách phát hiện overfit.`,
       modelAnswer: `Forward pass tạo dự đoán, loss đo sai số, backprop dùng chain rule để tính gradient, sau đó gradient descent cập nhật w_new=w-η×grad. Có thể minh họa với một nơ-ron tuyến tính và số nhỏ. Chia train/validation/test, theo dõi train loss và validation loss; nếu train tiếp tục tốt lên nhưng validation xấu đi thì có dấu hiệu overfit. So sánh với baseline đơn giản trước khi chọn mạng.`,
       rubric: ['Giải thích đúng forward/loss/backprop/update.', 'Có ví dụ cập nhật số nhỏ.', 'Có train/validation/test.', 'Nhận biết overfit.', 'Có baseline để so sánh.'],
       tags: ['backpropagation', 'neural-network', 'essay'], skillId: 'essay.ml.neural-backprop-pipeline', sfiaBand: 'L3-L4'
@@ -99,7 +111,7 @@ export function essayQuestion(skill, examNo, id) {
   if (skill === 'modelSelection') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Bạn có ${sampleCount} mẫu cho một bài toán phân loại và cần chọn giữa logistic regression, SVM tuyến tính và neural network nhỏ.\n\nRàng buộc:\n- MVP trong 3 tuần.\n- Kết quả cần tương đối dễ giải thích.\n- Hai lớp hơi lệch.\n\nHãy nêu: (1) baseline nên thử trước; (2) thứ tự thử các mô hình tiếp theo; (3) tiêu chí để quyết định.`,
+      prompt: `Bạn có ${sampleCount} mẫu để ${context.classifier} và cần chọn giữa logistic regression, SVM tuyến tính và neural network nhỏ.\n\nRàng buộc:\n- MVP trong 3 tuần.\n- Kết quả cần tương đối dễ giải thích.\n- Hai lớp hơi lệch.\n\nHãy nêu: (1) baseline nên thử trước; (2) thứ tự thử các mô hình tiếp theo; (3) tiêu chí để quyết định.`,
       modelAnswer: `Nên bắt đầu logistic regression vì nhanh và dễ giải thích. Có thể thử SVM tuyến tính tiếp nếu dữ liệu phù hợp; neural network nhỏ chỉ nên thử khi baseline chưa đạt và có lý do rõ. Dùng train/validation/test, confusion matrix, precision, recall, F1, latency và độ đơn giản để so sánh. Chọn mô hình theo ràng buộc chứ không mặc định mô hình phức tạp hơn là tốt hơn.`,
       rubric: ['Có baseline hợp lý.', 'Có thứ tự thử mô hình.', 'Có metric cho lệch lớp.', 'Có xét latency/độ phức tạp.', 'Lập luận theo ràng buộc.'],
       tags: ['model-selection', 'essay'], skillId: 'essay.ml.select-model-under-constraints', sfiaBand: 'L3-L4'
@@ -107,9 +119,10 @@ export function essayQuestion(skill, examNo, id) {
   }
 
   if (skill === 'improveValidation') {
+    const scenario = getValidationCase(examNo);
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Một mô hình đạt train accuracy 97% nhưng validation accuracy 74%; recall lớp dương tính chỉ 58%.\n\nRàng buộc:\n- Chưa thể thu thêm dữ liệu trong 2 tuần.\n- Phải giữ baseline để so sánh.\n\nHãy: (1) nêu các nguyên nhân có thể; (2) nêu ba kiểm tra nên làm; (3) đề xuất vài cách cải thiện đơn giản mà không dùng test để tune.`,
+      prompt: `Mô hình dùng để ${context.classifier} đạt train accuracy ${scenario.train}% nhưng validation accuracy ${scenario.validation}%; recall lớp dương tính chỉ ${scenario.recall}%.\n\nRàng buộc:\n- Chưa thể thu thêm dữ liệu trong 2 tuần.\n- Phải giữ baseline để so sánh.\n\nHãy: (1) nêu các nguyên nhân có thể; (2) nêu ba kiểm tra nên làm; (3) đề xuất vài cách cải thiện đơn giản mà không dùng test để tune.`,
       modelAnswer: `Có thể do overfit, leakage, chia tập không phù hợp, lớp lệch hoặc threshold chưa hợp lý. Kiểm tra trùng lặp/leakage giữa train-validation, phân phối lớp và confusion matrix/learning curve. Có thể thử regularization, mô hình đơn giản hơn, class weight hoặc điều chỉnh threshold trên validation. Test chỉ dùng đánh giá cuối và baseline phải được giữ để so sánh.`,
       rubric: ['Nêu được overfit/leakage/lệch lớp.', 'Có kiểm tra cụ thể.', 'Không dùng test để tune.', 'Có biện pháp cải thiện đơn giản.', 'Giữ baseline để so sánh.'],
       tags: ['overfitting', 'evaluation', 'essay'], skillId: 'essay.ml.diagnose-validation-gap', sfiaBand: 'L3-L4'
@@ -119,7 +132,7 @@ export function essayQuestion(skill, examNo, id) {
   if (skill === 'dataSplitLeakage') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Bạn nhận một bộ dữ liệu ${sampleCount} mẫu đã gắn nhãn để huấn luyện mô hình phân loại.\n\nRàng buộc:\n- Có một số bản ghi gần trùng nhau.\n- Một vài cột được tạo sau khi kết quả thực tế đã xảy ra.\n- Cần báo cáo kết quả đáng tin cậy.\n\nHãy nêu: (1) cách chia train/validation/test; (2) data leakage có thể xuất hiện ở đâu; (3) cách kiểm tra pipeline trước khi train.`,
+      prompt: `Bạn nhận một bộ dữ liệu ${sampleCount} mẫu đã gắn nhãn để ${context.classifier}.\n\nRàng buộc:\n- Có một số bản ghi gần trùng nhau.\n- Một vài cột được tạo sau khi kết quả thực tế đã xảy ra.\n- Cần báo cáo kết quả đáng tin cậy.\n\nHãy nêu: (1) cách chia train/validation/test; (2) data leakage có thể xuất hiện ở đâu; (3) cách kiểm tra pipeline trước khi train.`,
       modelAnswer: `Loại hoặc gom các bản ghi gần trùng để không rơi vào nhiều tập khác nhau. Các cột chỉ xuất hiện sau thời điểm dự đoán phải bị loại khỏi feature vì gây leakage. Fit preprocessing chỉ trên train rồi áp dụng cho validation/test. Dùng validation để chọn mô hình và giữ test cho đánh giá cuối. Kiểm tra schema, missing values, tỷ lệ lớp và một vài mẫu bằng tay trước khi train.`,
       rubric: ['Chia train/validation/test đúng vai trò.', 'Nhận ra leakage từ cột hậu nghiệm.', 'Xử lý bản ghi trùng hợp lý.', 'Fit preprocessing trên train.', 'Có kiểm tra dữ liệu cơ bản.'],
       tags: ['data-preparation', 'leakage', 'essay'], skillId: 'essay.ml.data-split-and-leakage', sfiaBand: 'L3-L4'
@@ -130,7 +143,7 @@ export function essayQuestion(skill, examNo, id) {
     const data = getConfusion(examNo);
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Một classifier hiện có TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn}. Nhóm cân nhắc hạ threshold để bắt được nhiều ca dương tính hơn.\n\nRàng buộc:\n- Bỏ sót dương tính gây hậu quả lớn hơn một cảnh báo nhầm.\n- Không được chỉ nhìn accuracy.\n\nHãy giải thích: (1) precision và recall sẽ thường thay đổi theo hướng nào; (2) metric nên ưu tiên; (3) cách chọn threshold bằng validation.`,
+      prompt: `Một classifier dùng để ${context.classifier} hiện có TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn}. Nhóm cân nhắc hạ threshold để bắt được nhiều ca dương tính hơn.\n\nRàng buộc:\n- Bỏ sót dương tính gây hậu quả lớn hơn một cảnh báo nhầm.\n- Không được chỉ nhìn accuracy.\n\nHãy giải thích: (1) precision và recall sẽ thường thay đổi theo hướng nào; (2) metric nên ưu tiên; (3) cách chọn threshold bằng validation.`,
       modelAnswer: `Khi hạ threshold, thường có nhiều dự đoán dương hơn: recall có xu hướng tăng nhưng precision có thể giảm vì FP tăng. Vì FN gây hậu quả lớn hơn, recall nên được ưu tiên, nhưng vẫn theo dõi precision/F1 để tránh quá nhiều cảnh báo nhầm. Thử một số threshold trên validation và chọn theo tiêu chí đã thống nhất; test chỉ dùng đánh giá cuối.`,
       rubric: ['Hiểu trade-off precision/recall.', 'Chọn metric theo hậu quả FN.', 'Không chỉ dùng accuracy.', 'Chọn threshold trên validation.', 'Giữ test cho đánh giá cuối.'],
       tags: ['confusion-matrix', 'threshold', 'essay'], skillId: 'essay.ml.threshold-precision-recall-tradeoff', sfiaBand: 'L3-L4'
@@ -140,7 +153,7 @@ export function essayQuestion(skill, examNo, id) {
   if (skill === 'ragEvaluation') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Một hệ thống RAG trả lời trôi chảy nhưng đôi lúc lấy sai đoạn tài liệu hoặc không ghi đúng nguồn.\n\nRàng buộc:\n- Kho tài liệu chỉ vài nghìn đoạn.\n- Chưa cần tối ưu hạ tầng phức tạp.\n\nHãy nêu: (1) cách tách lỗi retrieval và lỗi generation; (2) một bộ test nhỏ nên có gì; (3) ba chỉ số/tiêu chí chất lượng nên theo dõi.`,
+      prompt: `Một hệ thống RAG dùng ${context.docs} trả lời trôi chảy nhưng đôi lúc lấy sai đoạn hoặc ghi sai nguồn.\n\nRàng buộc:\n- Kho chỉ khoảng ${sampleCount} đoạn/tài liệu.\n- Chưa cần tối ưu hạ tầng phức tạp.\n\nHãy nêu: (1) cách tách lỗi retrieval và lỗi generation; (2) một bộ test nhỏ nên có gì; (3) ba chỉ số/tiêu chí chất lượng nên theo dõi.`,
       modelAnswer: `Tạo bộ câu hỏi có tài liệu đúng đã biết. Trước tiên kiểm tra retrieval có đưa đúng đoạn vào top-k hay không; nếu retrieval đúng mà câu trả lời vẫn sai thì lỗi nằm nhiều hơn ở generation/prompt. Bộ test nên có câu dễ, câu không có đáp án và câu cần citation. Có thể theo dõi retrieval hit-rate, mức bám nguồn/correctness, citation đúng, tỷ lệ abstain đúng và latency.`,
       rubric: ['Tách được retrieval và generation.', 'Có bộ câu hỏi chuẩn nhỏ.', 'Có kiểm tra câu không đủ nguồn.', 'Có tiêu chí citation/groundedness.', 'Có metric retrieval cơ bản.'],
       tags: ['rag', 'evaluation', 'essay'], skillId: 'essay.rag.evaluate-retrieval-and-answer', sfiaBand: 'L3-L4'
@@ -150,7 +163,7 @@ export function essayQuestion(skill, examNo, id) {
   if (skill === 'apiPreprocessingDebug') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Mô hình chạy đúng trong notebook nhưng khi gọi API thì nhiều dự đoán sai bất thường.\n\nRàng buộc:\n- API vẫn trả HTTP 200.\n- Một số trường JSON có kiểu dữ liệu khác lúc train.\n- Có khả năng preprocessing ở API không giống notebook.\n\nHãy nêu: (1) thứ tự debug; (2) một ví dụ lỗi preprocessing/schema; (3) cách ngăn lỗi tương tự khi deploy lại.`,
+      prompt: `Mô hình để ${context.classifier} chạy đúng trong notebook nhưng khi gọi API thì nhiều dự đoán sai bất thường.\n\nRàng buộc:\n- API vẫn trả HTTP 200.\n- Một số trường JSON có kiểu dữ liệu khác lúc train.\n- Có khả năng preprocessing ở API không giống notebook.\n\nHãy nêu: (1) thứ tự debug; (2) một ví dụ lỗi preprocessing/schema; (3) cách ngăn lỗi tương tự khi deploy lại.`,
       modelAnswer: `So sánh cùng một input qua notebook và API, kiểm tra schema/kiểu dữ liệu, thứ tự feature, missing value, chuẩn hóa và version model. Ví dụ lúc train tuổi là số nhưng API nhận chuỗi, hoặc scaler không được dùng giống lúc train. Đóng gói preprocessing cùng model, validate schema, viết test với các input cố định và trả model_version để đối chiếu.`,
       rubric: ['Debug từ input/schema đến preprocessing/model.', 'Có ví dụ lỗi cụ thể.', 'Kiểm tra feature order/type.', 'Đóng gói preprocessing nhất quán.', 'Có regression test/model version.'],
       tags: ['api', 'debugging', 'preprocessing', 'essay'], skillId: 'essay.ml.debug-api-preprocessing', sfiaBand: 'L3-L4'
