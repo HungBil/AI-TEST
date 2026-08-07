@@ -20,7 +20,9 @@ function renumberQuestions(questions, examNo) {
 function buildExam(blueprint) {
   const examNo = blueprint.no;
   const dataExamNo = blueprint.variantOf ?? examNo;
-  const essayPlan = ESSAY_PLAN[examNo];
+  const essayPlan = examNo === 3
+    ? ['neuralBackprop', 'modelSelection', 'thresholdMetrics']
+    : ESSAY_PLAN[examNo];
   if (!essayPlan || essayPlan.length !== 3) {
     throw new Error(`Thiếu kế hoạch 3 câu tự luận cho Đề ${examNo}`);
   }
