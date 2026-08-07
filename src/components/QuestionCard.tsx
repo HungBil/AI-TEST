@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { AnswerState, Question } from '../types/exam';
 import { RichText } from './RichText';
 
@@ -12,9 +13,17 @@ interface Props {
 }
 
 export function QuestionCard({ question, index, total, answer, mode, submitted, onAnswer }: Props) {
+  const [showHint, setShowHint] = useState(false);
+  const [showModelAnswer, setShowModelAnswer] = useState(false);
   const isMcq = question.type === 'mcq';
   const hasAnswer = isMcq ? Boolean(answer?.selected) : Boolean(answer?.text?.trim());
-  const reveal = submitted || (mode === 'practice' && hasAnswer);
+  const revealMcq = submitted || (mode === 'practice' && hasAnswer);
+  const canUseOpenHelp = !isMcq && (mode === 'practice' || submitted);
+
+  useEffect(() => {
+    setShowHint(false);
+    setShowModelAnswer(false);
+  }, [question.id]);
 
   return (
     <article className="question-card card">
@@ -32,8 +41,8 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
         <div className="options">
           {question.options.map((option) => {
             const selected = answer?.selected === option.key;
-            const correct = reveal && option.key === question.answer;
-            const wrong = reveal && selected && option.key !== question.answer;
+            const correct = revealMcq && option.key === question.answer;
+            const wrong = revealMcq && selected && option.key !== question.answer;
             return (
               <button
                 key={option.key}
@@ -53,21 +62,50 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
             value={answer?.text ?? ''}
             onChange={(event) => onAnswer({ ...answer, text: event.target.value })}
           />
+
+          {canUseOpenHelp ? (
+            <div className="open-answer-tools">
+              <button
+                type="button"
+                className="secondary"
+                aria-expanded={showHint}
+                onClick={() => setShowHint((value) => !value)}
+              >
+                {showHint ? 'Ẩn gợi ý' : 'Gợi ý'}
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                aria-expanded={showModelAnswer}
+                onClick={() => setShowModelAnswer((value) => !value)}
+              >
+                {showModelAnswer ? 'Ẩn đáp án mẫu' : 'Xem đáp án mẫu'}
+              </button>
+            </div>
+          ) : (
+            <p className="open-help-note">Gợi ý và đáp án mẫu được ẩn trong Exam mode.</p>
+          )}
         </div>
       )}
 
-      {reveal && isMcq && answer?.selected && (
+      {revealMcq && isMcq && answer?.selected && (
         <section className="feedback">
           <strong>{answer.selected === question.answer ? 'Đúng' : `Sai. Đáp án đúng là ${question.answer}.`}</strong>
           <p>{question.explanation}</p>
         </section>
       )}
 
-      {reveal && !isMcq && (
-        <section className="feedback">
-          <strong>Đáp án mẫu / rubric tự chấm</strong>
-          <pre><code>{question.modelAnswer}</code></pre>
+      {canUseOpenHelp && showHint && (
+        <section className="feedback hint-panel">
+          <strong>Gợi ý / các ý nên có</strong>
           <ul>{question.rubric.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+      )}
+
+      {canUseOpenHelp && showModelAnswer && (
+        <section className="feedback model-answer-panel">
+          <strong>Đáp án mẫu</strong>
+          <pre><code>{question.modelAnswer}</code></pre>
           <div className="self-grade">
             <span>Tự chấm:</span>
             <button className={answer?.selfGrade === 'pass' ? 'active' : ''} onClick={() => onAnswer({ ...answer, selfGrade: 'pass' })}>Đạt</button>
