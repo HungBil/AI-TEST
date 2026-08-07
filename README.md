@@ -113,7 +113,7 @@ Validator kiểm tra:
 - Đề 03–10 có ít nhất 2 câu confusion matrix/SVM/backprop;
 - bộ ba tự luận không trùng hoàn toàn giữa hai đề;
 - ID đề/câu không trùng, MCQ có đủ A/B/C/D và đáp án hợp lệ;
-- skill overlap không vượt 90% và prompt trùng nguyên văn không vượt 30/60;
+- skill overlap không vượt 90% và prompt trùng nguyên văn không vượt 48/60;
 - bộ cũ vẫn được kiểm tra theo schema legacy riêng.
 
 ## Truy cập Crown và bảo vệ mật khẩu
