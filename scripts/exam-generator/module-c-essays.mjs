@@ -1,5 +1,13 @@
 import { openQuestion, neutralContexts } from './shared.mjs';
 
+const CONFUSION = [
+  { tp: 36, fp: 4, fn: 9, tn: 51 },
+  { tp: 30, fp: 10, fn: 5, tn: 55 },
+  { tp: 24, fp: 6, fn: 8, tn: 42 },
+  { tp: 40, fp: 10, fn: 20, tn: 30 },
+  { tp: 18, fp: 2, fn: 6, tn: 24 }
+];
+
 export function essayQuestion(skill, examNo, id) {
   const context = neutralContexts[examNo - 1];
   const sampleCount = 3500 + examNo * 500;
