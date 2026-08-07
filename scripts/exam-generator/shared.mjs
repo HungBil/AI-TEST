@@ -5,7 +5,7 @@ export const MODULE_LABELS = {
   D: 'Đạo đức AI, banking & privacy'
 };
 
-export const DISCLAIMER = 'Đây là bộ câu hỏi ôn tập cộng đồng, được biên soạn từ phản hồi không chính thức của người thi các khóa gần đây. Đây không phải đề thi chính thức hoặc đề bị lộ. Bộ đề chỉ mở rộng vừa phải quanh xác suất, ma trận, Euclid, Python API, NumPy, confusion matrix, SVM, backpropagation cơ bản, ba câu tự luận AI và các tình huống privacy/banking.';
+export const DISCLAIMER = 'Đây là bộ câu hỏi ôn tập cộng đồng, được biên soạn từ phản hồi không chính thức của người thi các khóa gần đây. Đây không phải đề thi chính thức hoặc đề bị lộ. Bộ đề giữ độ khó ứng dụng cơ bản, chủ yếu ở mức SFIA Level 3 và chỉ dùng một phần câu lập luận để quan sát mức sẵn sàng lên Level 4.';
 
 export const EXAM_BLUEPRINTS = [
   {
@@ -34,39 +34,104 @@ export const EXAM_BLUEPRINTS = [
   },
   {
     no: 3,
-    title: 'Ma trận, NumPy và SVM cơ bản',
-    description: 'Đề tập trung nhân/nghịch đảo ma trận, đọc code NumPy và kiến thức SVM ở mức nền tảng, không yêu cầu toán nâng cao.',
-    aProbability: ['bayesTwo', 'conditionalTable', 'probabilityTree', 'withoutReplacementBoth', 'complementAtLeastOne', 'conditionalDice', 'expectation', 'combinations', 'independenceCheck', 'totalProbability'],
+    title: 'Nền tảng SVM và đọc dữ liệu bằng NumPy',
+    description: 'Giữ cùng nền tảng toán và lập trình, bổ sung SVM tuyến tính ở mức nhận biết margin, support vector và hàm quyết định đơn giản.',
+    aProbability: ['bayesTwo', 'conditionalTable', 'totalProbability', 'withoutReplacementBoth', 'complementAtLeastOne', 'conditionalDice', 'binomialExact', 'independenceCheck', 'expectation', 'combinations'],
     aMatrix: ['matrixDimensions', 'matrixProductFull', 'inverseFull', 'determinant', 'solveSystem', 'rankProportional', 'identityProduct', 'transpose', 'singularRecognition', 'diagonalVector'],
     bMcq: ['recursionOutput', 'traceEuclid', 'negativeGcd', 'complexity', 'postJson', 'authHeader', 'responseJson', 'requestException', 'statusMeaning', 'schemaValidation', 'queryVsBody', 'shape', 'scalarBroadcast', 'vectorBroadcast', 'sumAxis0', 'sliceColumn1d', 'sliceColumn2d', 'booleanMask'],
     bOpen: ['traceGcd', 'explainNumpyShapes'],
-    cMcq: ['supervised', 'svmPurpose', 'svmSupportVectors', 'svmMargin', 'svmDecision', 'confusionAccuracy', 'confusionRecall', 'ragEmbedding', 'humanReview'],
-    cEssays: ['svmPipeline', 'faqPrivacy', 'ragInternal'],
+    cMcq: ['supervised', 'validationRole', 'svmPurpose', 'svmSupportVectors', 'svmMargin', 'confusionAccuracy', 'confusionRecall', 'ragEmbedding', 'humanReview'],
+    cEssays: ['svmPipeline', 'faqPrivacy', 'classifierMetrics'],
     dSkills: ['leastPrivilege', 'groupAccess', 'dataMinimization', 'highRiskEscalate', 'sourceCitation', 'humanApproval', 'auditLog', 'incidentResponse']
   },
   {
     no: 4,
-    title: 'Backpropagation cơ bản và triển khai mô hình',
-    description: 'Đề kiểm tra backpropagation bằng phép tính một nơ-ron đơn giản, cùng kỹ năng API, NumPy và triển khai mô hình có giám sát.',
-    aProbability: ['bayesOne', 'conditionalGroup', 'probabilityTree', 'withoutReplacementMixed', 'complementAtLeastOne', 'binomialExact', 'union', 'bernoulliVariance', 'expectation', 'independenceFromTable'],
+    title: 'Backpropagation một nơ-ron và debug API',
+    description: 'Đề giữ độ khó giấy nháp, chỉ tính gradient và một bước cập nhật trọng số với số nhỏ; phần lập trình tập trung đọc lỗi API.',
+    aProbability: ['bayesOne', 'conditionalGroup', 'totalProbability', 'withoutReplacementMixed', 'complementAtLeastOne', 'binomialExact', 'union', 'bernoulliVariance', 'expectation', 'independenceFromTable'],
     aMatrix: ['matrixProductElement', 'matrixProductFull', 'matrixAddition', 'scalarMultiply', 'determinant', 'inverseEntry', 'solveAX', 'transposeSum', 'unknownEntry', 'diagonalVector'],
     bMcq: ['gcdValue', 'oneIteration', 'bugEuclidZero', 'negativeGcd', 'getParamsTimeout', 'postJson', 'raiseStatus', 'requestException', 'statusMeaning', 'schemaValidation', 'missingField', 'shape', 'meanAxis1', 'sumAxis0', 'sliceColumn2d', 'booleanMask', 'reshapeNdim', 'vectorBroadcast'],
     bOpen: ['gcdLoop', 'debugApi'],
-    cMcq: ['backpropPurpose', 'backpropGradient', 'weightUpdate', 'reluDerivative', 'trainValTest', 'overfit', 'confusionPrecision', 'confusionRecall', 'monitoring'],
-    cEssays: ['neuralBackprop', 'deployModelApi', 'classifierMetrics'],
+    cMcq: ['backpropPurpose', 'backpropGradient', 'weightUpdate', 'reluDerivative', 'trainValTest', 'overfit', 'confusionPrecision', 'ragRetrieval', 'monitoring'],
+    cEssays: ['neuralBackprop', 'deployModelApi', 'ragInternal'],
     dSkills: ['leastPrivilege', 'purposeLimitation', 'consent', 'highRiskEscalate', 'humanApproval', 'auditLog', 'fairnessCheck', 'incidentResponse']
   },
   {
     no: 5,
-    title: 'Đề tổng hợp sẵn sàng chuyển từ Apply lên Enable',
-    description: 'Đề tổng hợp mức Level 3 và tín hiệu sẵn sàng Level 4: tính đúng, đọc code, chọn phương pháp, giải thích quyết định và lập kế hoạch triển khai.',
+    title: 'Đề tổng hợp nền tảng và lựa chọn phương pháp',
+    description: 'Đề tổng hợp mức Apply, có một phần nhỏ yêu cầu chọn phương pháp và giải thích cách triển khai nhưng không đòi hỏi kiến trúc nâng cao.',
     aProbability: ['bayesTwo', 'conditionalTable', 'totalProbability', 'withoutReplacementMixed', 'complementAtLeastOne', 'conditionalDice', 'union', 'independenceFromTable', 'expectation', 'bernoulliVariance'],
     aMatrix: ['matrixDimensions', 'matrixProductFull', 'determinant', 'inverseFull', 'solveAX', 'rankProportional', 'identityProduct', 'nonCommutative', 'transposeSum', 'unknownEntry'],
     bMcq: ['gcdValue', 'traceEuclid', 'bugEuclidZero', 'complexity', 'getParamsTimeout', 'postJson', 'authHeader', 'raiseStatus', 'responseJson', 'schemaValidation', 'missingField', 'shape', 'vectorBroadcast', 'meanAxis1', 'sliceColumn1d', 'sliceColumn2d', 'booleanMask', 'reshapeNdim'],
     bOpen: ['fixGcd', 'integratedApiNumpy'],
-    cMcq: ['confusionIdentify', 'confusionF1', 'svmSupportVectors', 'svmDecision', 'backpropPurpose', 'weightUpdate', 'ragRetrieval', 'ragNoEvidence', 'monitoring'],
-    cEssays: ['modelSelection', 'improveValidation', 'ragInternal'],
+    cMcq: ['supervised', 'confusionIdentify', 'confusionF1', 'svmSupportVectors', 'backpropPurpose', 'ragRetrieval', 'ragNoEvidence', 'humanReview', 'monitoring'],
+    cEssays: ['modelSelection', 'classifierMetrics', 'ragInternal'],
     dSkills: ['leastPrivilege', 'groupAccess', 'purposeLimitation', 'dataMinimization', 'highRiskEscalate', 'humanApproval', 'auditLog', 'incidentResponse']
+  },
+  {
+    no: 6,
+    variantOf: 1,
+    title: 'Baseline mở rộng nhẹ với confusion matrix',
+    description: 'Phần lớn giữ cấu trúc nền tảng của Đề 01; thay một số câu API/NumPy và thêm tính các chỉ số confusion matrix bằng số tròn.',
+    aProbability: ['bayesOne', 'conditionalGroup', 'totalProbability', 'withoutReplacementBoth', 'conditionalDice', 'binomialExact', 'union', 'independenceCheck', 'expectation', 'complementAtLeastOne'],
+    aMatrix: ['matrixDimensions', 'matrixProductElement', 'matrixAddition', 'determinant', 'inverseEntry', 'transpose', 'solveSystem', 'rankProportional', 'identityProduct', 'diagonalVector'],
+    bMcq: ['gcdValue', 'oneIteration', 'traceEuclid', 'complexity', 'getParamsTimeout', 'raiseStatus', 'responseJson', 'authHeader', 'requestException', 'statusMeaning', 'schemaValidation', 'shape', 'vectorBroadcast', 'sumAxis0', 'sliceColumn2d', 'booleanMask', 'reshapeNdim', 'meanAxis1'],
+    bOpen: ['gcdLoop', 'fetchAverage'],
+    cMcq: ['supervised', 'validationRole', 'confusionAccuracy', 'confusionPrecision', 'confusionRecall', 'ragRetrieval', 'ragNoEvidence', 'humanReview', 'monitoring'],
+    cEssays: ['classifierMetrics', 'faqPrivacy', 'deployModelApi'],
+    dSkills: ['leastPrivilege', 'groupAccess', 'dataMinimization', 'highRiskEscalate', 'humanApproval', 'auditLog', 'sourceCitation', 'incidentResponse']
+  },
+  {
+    no: 7,
+    variantOf: 2,
+    title: 'Inverse matrix, SVM cơ bản và RAG có phân quyền',
+    description: 'Đề giữ cùng mức tính toán, bổ sung vài câu SVM trực quan và thay đổi chủ yếu ở ba bài tự luận.',
+    aProbability: ['bayesTwo', 'conditionalTable', 'totalProbability', 'withoutReplacementMixed', 'complementAtLeastOne', 'conditionalDice', 'binomialExact', 'independenceFromTable', 'expectation', 'bernoulliVariance'],
+    aMatrix: ['matrixDimensions', 'matrixProductFull', 'determinant', 'inverseFull', 'solveAX', 'rankProportional', 'identityProduct', 'nonCommutative', 'transposeSum', 'singularRecognition'],
+    bMcq: ['gcdValue', 'traceEuclid', 'bugEuclidZero', 'complexity', 'getParamsTimeout', 'postJson', 'authHeader', 'raiseStatus', 'statusMeaning', 'schemaValidation', 'queryVsBody', 'shape', 'vectorBroadcast', 'meanAxis1', 'sliceColumn2d', 'booleanMask', 'reshapeNdim', 'sumAxis0'],
+    bOpen: ['fixGcd', 'explainNumpy'],
+    cMcq: ['supervised', 'validationRole', 'svmPurpose', 'svmSupportVectors', 'svmDecision', 'confusionRecall', 'ragEmbedding', 'humanReview', 'monitoring'],
+    cEssays: ['svmPipeline', 'ragInternal', 'faqPrivacy'],
+    dSkills: ['leastPrivilege', 'groupAccess', 'purposeLimitation', 'highRiskEscalate', 'humanApproval', 'auditLog', 'fairnessCheck', 'incidentResponse']
+  },
+  {
+    no: 8,
+    variantOf: 3,
+    title: 'NumPy, backpropagation cơ bản và đánh giá mô hình',
+    description: 'Đề dùng lại phần lớn nền tảng, chỉ thêm một số phép tính gradient đơn giản và bài tự luận giải thích quy trình huấn luyện.',
+    aProbability: ['bayesOne', 'conditionalGroup', 'probabilityTree', 'withoutReplacementBoth', 'complementAtLeastOne', 'binomialExact', 'union', 'independenceCheck', 'expectation', 'combinations'],
+    aMatrix: ['matrixProductElement', 'matrixProductFull', 'matrixAddition', 'scalarMultiply', 'determinant', 'inverseEntry', 'solveSystem', 'transpose', 'unknownEntry', 'diagonalVector'],
+    bMcq: ['gcdValue', 'oneIteration', 'negativeGcd', 'complexity', 'getParamsTimeout', 'postJson', 'raiseStatus', 'requestException', 'statusMeaning', 'schemaValidation', 'missingField', 'shape', 'meanAxis1', 'sumAxis0', 'sliceColumn1d', 'booleanMask', 'reshapeNdim', 'vectorBroadcast'],
+    bOpen: ['traceGcd', 'debugApi'],
+    cMcq: ['supervised', 'trainValTest', 'backpropPurpose', 'backpropGradient', 'weightUpdate', 'confusionAccuracy', 'recallWhen', 'ragRetrieval', 'monitoring'],
+    cEssays: ['neuralBackprop', 'classifierMetrics', 'faqPrivacy'],
+    dSkills: ['leastPrivilege', 'consent', 'dataMinimization', 'highRiskEscalate', 'humanApproval', 'auditLog', 'fairnessCheck', 'incidentResponse']
+  },
+  {
+    no: 9,
+    variantOf: 4,
+    title: 'Confusion matrix, RAG và lựa chọn mô hình',
+    description: 'Đề giữ toán và code ở mức cơ bản; phần khác biệt nằm ở cách đọc lỗi mô hình và lập luận chọn phương án phù hợp với ràng buộc.',
+    aProbability: ['bayesTwo', 'conditionalTable', 'totalProbability', 'withoutReplacementMixed', 'complementAtLeastOne', 'conditionalDice', 'union', 'independenceFromTable', 'expectation', 'combinations'],
+    aMatrix: ['matrixDimensions', 'matrixProductFull', 'determinant', 'inverseFull', 'solveAX', 'rankProportional', 'identityProduct', 'transposeSum', 'unknownEntry', 'singularRecognition'],
+    bMcq: ['gcdValue', 'recursionOutput', 'bugEuclidZero', 'complexity', 'getParamsTimeout', 'postJson', 'authHeader', 'responseJson', 'requestException', 'schemaValidation', 'missingField', 'shape', 'scalarBroadcast', 'vectorBroadcast', 'meanAxis1', 'sliceColumn2d', 'booleanMask', 'reshapeNdim'],
+    bOpen: ['gcdLoop', 'integratedApiNumpy'],
+    cMcq: ['supervised', 'overfit', 'confusionIdentify', 'confusionF1', 'svmPurpose', 'ragRetrieval', 'ragNoEvidence', 'humanReview', 'monitoring'],
+    cEssays: ['modelSelection', 'ragInternal', 'deployModelApi'],
+    dSkills: ['leastPrivilege', 'groupAccess', 'purposeLimitation', 'highRiskEscalate', 'sourceCitation', 'humanApproval', 'auditLog', 'incidentResponse']
+  },
+  {
+    no: 10,
+    variantOf: 5,
+    title: 'Đề tổng hợp vừa sức cho mức Level 3 → 4',
+    description: 'Đề tổng hợp cuối vẫn ưu tiên thao tác và hiểu nền tảng; phần Level 4 chỉ thể hiện qua giải thích lựa chọn, triển khai và theo dõi.',
+    aProbability: ['bayesOne', 'conditionalGroup', 'totalProbability', 'withoutReplacementBoth', 'complementAtLeastOne', 'binomialExact', 'union', 'independenceCheck', 'expectation', 'bernoulliVariance'],
+    aMatrix: ['matrixDimensions', 'matrixProductElement', 'matrixAddition', 'scalarMultiply', 'determinant', 'inverseEntry', 'transpose', 'solveSystem', 'rankProportional', 'diagonalVector'],
+    bMcq: ['gcdValue', 'traceEuclid', 'negativeGcd', 'complexity', 'getParamsTimeout', 'raiseStatus', 'responseJson', 'safeKey', 'statusMeaning', 'schemaValidation', 'queryVsBody', 'shape', 'vectorBroadcast', 'sumAxis0', 'sliceColumn1d', 'booleanMask', 'reshapeNdim', 'meanAxis1'],
+    bOpen: ['fixGcd', 'explainNumpyShapes'],
+    cMcq: ['supervised', 'validationRole', 'confusionAccuracy', 'confusionPrecision', 'confusionRecall', 'svmSupportVectors', 'backpropPurpose', 'ragRetrieval', 'monitoring'],
+    cEssays: ['improveValidation', 'classifierMetrics', 'faqPrivacy'],
+    dSkills: ['leastPrivilege', 'groupAccess', 'dataMinimization', 'highRiskEscalate', 'humanApproval', 'auditLog', 'fairnessCheck', 'incidentResponse']
   }
 ];
 
