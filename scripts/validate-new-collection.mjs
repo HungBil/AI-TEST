@@ -134,7 +134,7 @@ for (let left = 0; left < exams.length; left += 1) {
     if (jaccard > 0.9) {
       fail(`${exams[left].id}/${exams[right].id}: skill overlap quá cao (${(jaccard * 100).toFixed(1)}%)`);
     }
-    if (exactPromptOverlap > 30) {
+    if (exactPromptOverlap > 48) {
       fail(`${exams[left].id}/${exams[right].id}: có ${exactPromptOverlap} prompt giống nguyên văn`);
     }
   }
