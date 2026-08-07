@@ -4,7 +4,22 @@ import process from 'node:process';
 
 const ROOT = process.cwd();
 const NEW_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
-const EXPECTED_IDS = Array.from({ length: 10 }, (_, index) => `new-2026-${String(index + 1).padStart(2, '0')}`);
+const EXPECTED_IDS = Array.from({ length: 5 }, (_, index) => `new-2026-${String(index + 1).padStart(2, '0')}`);
+const REQUIRED_SKILL_PREFIXES = [
+  'probability.bayes',
+  'probability.conditional',
+  'matrix.inverse',
+  'matrix.multiplication',
+  'euclid.',
+  'api.',
+  'numpy.',
+  'ml.metrics.',
+  'ml.svm.',
+  'ml.backprop.',
+  'rag.',
+  'privacy.',
+  'essay.'
+];
 
 function fail(message) {
   console.error(`❌ ${message}`);
@@ -33,17 +48,29 @@ let totalQuestions = 0;
 let totalEssays = 0;
 let totalCodeQuestions = 0;
 const globalIds = new Set();
+const collectionSkills = new Set();
 
 for (const exam of exams) {
   const questions = Array.isArray(exam.questions) ? exam.questions : [];
   const essays = questions.filter((question) => question.type === 'essay');
   const codeQuestions = questions.filter((question) => question.type === 'code');
   const counts = { A: 0, B: 0, C: 0, D: 0 };
+  const skillIds = new Set();
 
   for (const question of questions) {
     if (question.module in counts) counts[question.module] += 1;
     if (globalIds.has(question.id)) fail(`Trùng question.id toàn bộ collection: ${question.id}`);
     globalIds.add(question.id);
+
+    if (typeof question.skillId !== 'string' || !question.skillId.trim()) {
+      fail(`${question.id}: thiếu skillId`);
+    } else {
+      skillIds.add(question.skillId);
+      collectionSkills.add(question.skillId);
+    }
+    if (!['L3', 'L3-L4'].includes(question.sfiaBand)) {
+      fail(`${question.id}: sfiaBand phải là L3 hoặc L3-L4`);
+    }
   }
 
   if (questions.length !== 60) fail(`${exam.id}: phải có 60 câu, hiện có ${questions.length}`);
@@ -56,16 +83,45 @@ for (const exam of exams) {
   if (codeQuestions.length !== 2 || !codeQuestions.every((question) => question.module === 'B')) {
     fail(`${exam.id}: phải có đúng 2 câu code và tất cả nằm ở Module B`);
   }
+  if (skillIds.size < 50) {
+    fail(`${exam.id}: chỉ có ${skillIds.size} skillId khác nhau; đề đang lặp kỹ năng quá nhiều`);
+  }
 
   totalQuestions += questions.length;
   totalEssays += essays.length;
   totalCodeQuestions += codeQuestions.length;
 }
 
-if (exams.length !== 10) fail(`Bộ Crown phải có đúng 10 đề, hiện có ${exams.length}`);
-if (totalQuestions !== 600) fail(`Bộ Crown phải có đúng 600 câu, hiện có ${totalQuestions}`);
-if (totalEssays !== 30) fail(`Bộ Crown phải có đúng 30 câu tự luận, hiện có ${totalEssays}`);
-if (totalCodeQuestions !== 20) fail(`Bộ Crown phải có đúng 20 câu code, hiện có ${totalCodeQuestions}`);
+for (const prefix of REQUIRED_SKILL_PREFIXES) {
+  if (![...collectionSkills].some((skill) => skill.startsWith(prefix))) {
+    fail(`Collection thiếu nhóm kỹ năng bắt buộc: ${prefix}`);
+  }
+}
+
+for (let left = 0; left < exams.length; left += 1) {
+  for (let right = left + 1; right < exams.length; right += 1) {
+    const leftSkills = new Set(exams[left].questions.map((question) => question.skillId));
+    const rightSkills = new Set(exams[right].questions.map((question) => question.skillId));
+    const overlap = [...leftSkills].filter((skill) => rightSkills.has(skill)).length;
+    const union = new Set([...leftSkills, ...rightSkills]).size;
+    const jaccard = overlap / union;
+    const exactPromptOverlap = exams[left].questions.filter((question) =>
+      exams[right].questions.some((candidate) => candidate.prompt === question.prompt)
+    ).length;
+
+    if (jaccard > 0.75) {
+      fail(`${exams[left].id}/${exams[right].id}: skill overlap quá cao (${(jaccard * 100).toFixed(1)}%)`);
+    }
+    if (exactPromptOverlap > 18) {
+      fail(`${exams[left].id}/${exams[right].id}: có ${exactPromptOverlap} prompt giống nguyên văn`);
+    }
+  }
+}
+
+if (exams.length !== 5) fail(`Bộ Crown phải có đúng 5 đề khác biệt, hiện có ${exams.length}`);
+if (totalQuestions !== 300) fail(`Bộ Crown phải có đúng 300 câu, hiện có ${totalQuestions}`);
+if (totalEssays !== 15) fail(`Bộ Crown phải có đúng 15 câu tự luận, hiện có ${totalEssays}`);
+if (totalCodeQuestions !== 10) fail(`Bộ Crown phải có đúng 10 câu code, hiện có ${totalCodeQuestions}`);
 
 if (process.exitCode) process.exit(process.exitCode);
-console.log(`✅ Crown baseline: ${exams.length} đề, ${totalQuestions} câu, ${totalEssays} tự luận, ${totalCodeQuestions} câu code.`);
+console.log(`✅ Crown evidence-based set: ${exams.length} đề, ${totalQuestions} câu, ${totalEssays} tự luận, ${totalCodeQuestions} câu code.`);
