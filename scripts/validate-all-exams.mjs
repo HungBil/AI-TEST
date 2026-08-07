@@ -8,7 +8,7 @@ const NEW_DIR = path.join(ROOT, 'src', 'data', 'new-exams');
 const VALID_MODULES = new Set(['A', 'B', 'C', 'D']);
 const VALID_TYPES = new Set(['mcq', 'code', 'essay']);
 const VALID_ANSWERS = new Set(['A', 'B', 'C', 'D']);
-const EXPECTED_NEW_IDS = Array.from({ length: 10 }, (_, index) => `new-2026-${String(index + 1).padStart(2, '0')}`);
+const EXPECTED_NEW_IDS = Array.from({ length: 5 }, (_, index) => `new-2026-${String(index + 1).padStart(2, '0')}`);
 
 let failed = false;
 const fail = (message) => { failed = true; console.error(`❌ ${message}`); };
@@ -90,6 +90,11 @@ function validateExam(entry, globalQuestionIds) {
       check(typeof question.modelAnswer === 'string' && question.modelAnswer.trim().length >= 12, `${location}: thiếu modelAnswer`);
       check(Array.isArray(question.rubric) && question.rubric.length >= 3 && question.rubric.every((item) => typeof item === 'string' && item.trim()), `${location}: rubric phải có ít nhất 3 ý`);
     }
+
+    if (isNew) {
+      check(typeof question.skillId === 'string' && question.skillId.trim(), `${location}: thiếu skillId`);
+      check(['L3', 'L3-L4'].includes(question.sfiaBand), `${location}: sfiaBand phải là L3 hoặc L3-L4`);
+    }
   }
 
   for (const module of Object.keys(expected)) check(counts[module] === expected[module], `${label}: module ${module} phải có ${expected[module]} câu, hiện có ${counts[module]}`);
@@ -106,7 +111,7 @@ function validateExam(entry, globalQuestionIds) {
 const legacy = loadLegacy();
 const newExams = loadNew();
 check(legacy.length === 10, `Bộ cũ phải có đúng 10 đề, hiện có ${legacy.length}`);
-check(newExams.length === 10, `Bộ Crown phải có đúng 10 đề, hiện có ${newExams.length}`);
+check(newExams.length === 5, `Bộ Crown phải có đúng 5 đề khác biệt, hiện có ${newExams.length}`);
 check(newExams.map(({ exam }) => exam.id).sort().join('|') === EXPECTED_NEW_IDS.join('|'), `ID bộ Crown phải là ${EXPECTED_NEW_IDS.join(', ')}`);
 
 const examIds = new Set();
@@ -118,6 +123,6 @@ for (const entry of [...legacy, ...newExams]) {
 }
 
 check(legacy.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ cũ phải có 600 câu');
-check(newExams.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 600, 'Bộ Crown phải có 600 câu');
+check(newExams.reduce((sum, entry) => sum + entry.exam.questions.length, 0) === 300, 'Bộ Crown phải có 300 câu');
 if (failed) process.exit(1);
-console.log(`\n✅ Toàn repo: ${legacy.length + newExams.length} đề, 1.200 câu; Crown bám baseline có đúng 10 đề và 600 câu.`);
+console.log(`\n✅ Toàn repo: ${legacy.length + newExams.length} đề, 900 câu; Crown có 5 đề khác biệt và 300 câu.`);
