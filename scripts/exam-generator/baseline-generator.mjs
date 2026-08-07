@@ -4,6 +4,7 @@ import { MODULE_LABELS, DISCLAIMER, EXAM_BLUEPRINTS, qid } from './shared.mjs';
 import { buildModuleA } from './module-a.mjs';
 import { buildModuleB } from './module-b.mjs';
 import { buildModuleC, buildModuleD } from './module-cd.mjs';
+import { ESSAY_PLAN } from './module-c-essays.mjs';
 
 function renumberQuestions(questions, examNo) {
   const counters = { A: 0, B: 0, C: 0, D: 0 };
@@ -19,11 +20,17 @@ function renumberQuestions(questions, examNo) {
 function buildExam(blueprint) {
   const examNo = blueprint.no;
   const dataExamNo = blueprint.variantOf ?? examNo;
+  const essayPlan = ESSAY_PLAN[examNo];
+  if (!essayPlan || essayPlan.length !== 3) {
+    throw new Error(`Thiếu kế hoạch 3 câu tự luận cho Đề ${examNo}`);
+  }
+  const effectiveBlueprint = { ...blueprint, cEssays: essayPlan };
+
   const generated = [
-    ...buildModuleA(dataExamNo, blueprint),
-    ...buildModuleB(dataExamNo, blueprint),
-    ...buildModuleC(dataExamNo, blueprint),
-    ...buildModuleD(dataExamNo, blueprint)
+    ...buildModuleA(dataExamNo, effectiveBlueprint),
+    ...buildModuleB(dataExamNo, effectiveBlueprint),
+    ...buildModuleC(dataExamNo, effectiveBlueprint, examNo),
+    ...buildModuleD(dataExamNo, effectiveBlueprint)
   ];
   const questions = renumberQuestions(generated, examNo);
 
@@ -44,7 +51,7 @@ function buildExam(blueprint) {
     coverageProfile: {
       title: blueprint.title,
       sfiaOrientation: 'Level 3 Apply là trọng tâm; câu tự luận dùng để quan sát mức sẵn sàng lên Level 4 Enable, không phải đánh giá SFIA chính thức',
-      variationPolicy: 'Các đề dùng chung nền tảng; khác biệt chủ yếu nằm ở ba câu tự luận và một số câu trắc nghiệm xoay vòng',
+      variationPolicy: 'Các đề dùng chung nền tảng; ba câu tự luận được phân phối theo các họ bài khác nhau và mỗi cặp đề chỉ trùng tối đa một họ tự luận',
       source: 'Learner-reported prior-exam topics plus limited adjacent fundamentals'
     },
     questions

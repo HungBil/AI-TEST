@@ -8,81 +8,170 @@ const CONFUSION = [
   { tp: 18, fp: 2, fn: 6, tn: 24 }
 ];
 
+const VALIDATION_CASES = [
+  { train: 97, validation: 74, recall: 58 },
+  { train: 96, validation: 76, recall: 61 },
+  { train: 98, validation: 79, recall: 63 },
+  { train: 95, validation: 72, recall: 55 },
+  { train: 97, validation: 77, recall: 60 }
+];
+
+// Mỗi cặp đề chỉ được dùng chung tối đa 1/3 họ tự luận.
+// Các họ bài vẫn nằm trong phạm vi kiến thức cơ bản và thường gặp.
+export const ESSAY_PLAN = {
+  1: ['ragInternal', 'faqPrivacy', 'classifierMetrics'],
+  2: ['deployModelApi', 'svmPipeline', 'dataSplitLeakage'],
+  3: ['neuralBackprop', 'modelSelection', 'thresholdMetrics'],
+  4: ['improveValidation', 'thresholdMetrics', 'apiPreprocessingDebug'],
+  5: ['ragInternal', 'deployModelApi', 'modelSelection'],
+  6: ['faqPrivacy', 'svmPipeline', 'improveValidation'],
+  7: ['classifierMetrics', 'neuralBackprop', 'dataSplitLeakage'],
+  8: ['ragInternal', 'svmPipeline', 'thresholdMetrics'],
+  9: ['faqPrivacy', 'neuralBackprop', 'apiPreprocessingDebug'],
+  10: ['classifierMetrics', 'modelSelection', 'ragEvaluation']
+};
+
+function getContext(examNo) {
+  return neutralContexts[(examNo - 1) % neutralContexts.length];
+}
+
+function getConfusion(examNo) {
+  return CONFUSION[(examNo - 1) % CONFUSION.length];
+}
+
+function getValidationCase(examNo) {
+  return VALIDATION_CASES[(examNo - 1) % VALIDATION_CASES.length];
+}
+
 export function essayQuestion(skill, examNo, id) {
-  const context = neutralContexts[examNo - 1];
+  const context = getContext(examNo);
   const sampleCount = 3500 + examNo * 500;
+
   if (skill === 'ragInternal') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Thiết kế một trợ lý RAG cho ${context.users} tra cứu khoảng ${sampleCount} ${context.docs}.\n\nRàng buộc:\n- Dữ liệu của ${context.teamA} không được hiển thị cho người chỉ thuộc ${context.teamB}, và ngược lại.\n- Câu trả lời phải ghi nguồn.\n- Có 4 tuần để làm bản thử nghiệm.\n\nHãy trình bày: (1) lý do chọn RAG và các bước chính; (2) một ví dụ hỏi–đáp; (3) cách triển khai và đánh giá.`,
-      modelAnswer: `Pipeline cơ bản: làm sạch tài liệu, chia đoạn, gắn nguồn và quyền ${context.teamA}/${context.teamB}, tạo embedding, lưu index. Khi có câu hỏi, backend xác thực người dùng và lọc quyền trước retrieval; chỉ đoạn được phép mới vào prompt. Mô hình trả lời dựa trên bằng chứng và ghi nguồn.\n\nVí dụ: người thuộc ${context.teamA} hỏi một quy trình; hệ thống lấy tài liệu thuộc quyền A, trả lời kèm citation và không truy xuất tài liệu riêng của B.\n\nKế hoạch 4 tuần: chuẩn hóa dữ liệu và bộ câu hỏi; làm retrieval; thêm phân quyền/citation; kiểm thử và pilot. Đánh giá khả năng tìm đúng tài liệu, bám nguồn, không rò rỉ A/B, độ trễ và phản hồi.`,
-      rubric: ['Giải thích đúng vai trò RAG.', 'Có ingestion/chunking/embedding/retrieval/generation.', 'Lọc quyền trước khi đưa tài liệu vào prompt.', 'Có ví dụ và citation.', 'Có kế hoạch triển khai và đánh giá.'],
-      tags: ['rag', 'essay'], skillId: 'essay.rag.internal-access-controlled', sfiaBand: 'L3-L4'
+      prompt: `Thiết kế một trợ lý RAG cho ${context.users} tra cứu ${context.docs}.\n\nRàng buộc:\n- Khoảng ${sampleCount} tài liệu/đoạn tài liệu.\n- ${context.teamA} và ${context.teamB} có quyền xem khác nhau.\n- Câu trả lời phải có nguồn.\n- Có 4 tuần làm bản thử nghiệm.\n\nHãy nêu: (1) pipeline chính; (2) một ví dụ hỏi–đáp; (3) cách kiểm thử trước khi cho dùng thử.`,
+      modelAnswer: `Pipeline cơ bản gồm làm sạch tài liệu, chia đoạn, gắn metadata nguồn/quyền, tạo embedding, lập chỉ mục và retrieval. Khi có câu hỏi, hệ thống xác thực người dùng, lọc quyền trước retrieval rồi mới đưa đoạn phù hợp vào prompt. Câu trả lời phải bám nguồn và nói chưa đủ thông tin khi không có bằng chứng. Ví dụ người thuộc ${context.teamA} chỉ nhận tài liệu của A. Kiểm thử bằng câu hỏi mẫu, kiểm tra citation, quyền A/B, độ đúng retrieval và thời gian phản hồi.`,
+      rubric: ['Có ingestion/chunking/embedding/retrieval/generation.', 'Lọc quyền trước retrieval.', 'Có ví dụ end-to-end.', 'Có citation/abstain khi thiếu nguồn.', 'Có kế hoạch kiểm thử cơ bản.'],
+      tags: ['rag', 'access-control', 'essay'], skillId: 'essay.rag.internal-access-controlled', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'faqPrivacy') {
+    const faqCount = 100 + examNo * 10;
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Thiết kế ${context.faq} dùng mô hình ngôn ngữ.\n\nRàng buộc:\n- Không gửi dữ liệu nhạy cảm thô cho dịch vụ bên ngoài.\n- FAQ được trả lời tự động; thay đổi thông tin tài khoản, hoàn tiền hoặc quyết định ảnh hưởng lớn phải chuyển người.\n- Phản hồi cần nhanh và có giới hạn chi phí.\n\nHãy nêu: (1) cách phân luồng; (2) một ví dụ hội thoại; (3) triển khai, kiểm thử và giám sát.`,
-      modelAnswer: `Dùng router phân loại FAQ và yêu cầu nhạy cảm. FAQ dùng tài liệu đã duyệt. Dữ liệu nhạy cảm được loại bỏ hoặc thay mã trước khi gọi dịch vụ ngoài. Hành động ảnh hưởng lớn chỉ tạo phiếu và chuyển người có thẩm quyền.\n\nVí dụ: hỏi giờ làm việc thì hệ thống trả từ FAQ; yêu cầu đổi số điện thoại thì chuyển luồng xác minh của nhân viên.\n\nKiểm thử độ đúng, tình huống chứa dữ liệu nhạy cảm, yêu cầu vượt quyền, độ trễ và chi phí. Theo dõi tỷ lệ chuyển người, lỗi và phản hồi.`,
-      rubric: ['Có phân luồng FAQ và yêu cầu nhạy cảm.', 'Không gửi dữ liệu nhạy cảm thô.', 'Có human handoff.', 'Có ví dụ hội thoại.', 'Có kiểm thử và monitoring.'],
-      tags: ['llm', 'privacy', 'essay'], skillId: 'essay.llm.faq-privacy-handoff', sfiaBand: 'L3-L4'
+      prompt: `Thiết kế ${context.faq} dùng mô hình ngôn ngữ cho khoảng ${faqCount} câu hỏi thường gặp.\n\nRàng buộc:\n- FAQ thông thường được trả lời tự động.\n- Không gửi dữ liệu nhạy cảm thô cho dịch vụ ngoài.\n- Yêu cầu thay đổi thông tin, hoàn tiền hoặc quyết định ảnh hưởng lớn phải chuyển người.\n\nHãy trình bày: (1) cách phân luồng; (2) một ví dụ hội thoại; (3) cách kiểm thử và giám sát.`,
+      modelAnswer: `Dùng một bước phân loại yêu cầu: FAQ có thể trả tự động từ tài liệu đã duyệt, còn yêu cầu nhạy cảm hoặc có hành động ảnh hưởng lớn phải handoff cho người có thẩm quyền. Dữ liệu nhạy cảm được loại bỏ hoặc thay mã trước khi gửi ra ngoài. Ví dụ hỏi giờ làm việc thì trả trực tiếp; yêu cầu đổi thông tin tài khoản thì chuyển người. Kiểm thử cả câu bình thường, câu chứa PII và câu vượt quyền; theo dõi lỗi, độ trễ và tỷ lệ handoff.`,
+      rubric: ['Phân biệt FAQ và yêu cầu rủi ro.', 'Không gửi dữ liệu nhạy cảm thô.', 'Có human handoff.', 'Có ví dụ hội thoại.', 'Có kiểm thử/monitoring cơ bản.'],
+      tags: ['llm', 'privacy', 'human-in-the-loop', 'essay'], skillId: 'essay.llm.faq-privacy-handoff', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'classifierMetrics') {
-    const data = CONFUSION[examNo - 1];
+    const data = getConfusion(examNo);
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Xây dựng mô hình để ${context.classifier}.\n\nRàng buộc:\n- Có khoảng ${sampleCount} mẫu đã gắn nhãn, hai lớp hơi lệch.\n- Baseline phải dễ giải thích.\n- Khi thử nghiệm, confusion matrix dự kiến được dùng để tính accuracy, precision, recall và F1.\n- Cần đóng gói thành API đơn giản.\n\nHãy trình bày: (1) lựa chọn baseline và cách chia dữ liệu; (2) ví dụ input/output; (3) cách đánh giá và triển khai. Dùng TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn} để minh họa cách đọc chỉ số.`,
-      modelAnswer: `Có thể bắt đầu với logistic regression, cây quyết định nhỏ hoặc SVM tuyến tính tùy loại đặc trưng. Chia train/validation/test; xử lý dữ liệu thiếu và mã hóa đặc trưng. Với confusion matrix đã cho, tính accuracy=(TP+TN)/tổng, precision=TP/(TP+FP), recall=TP/(TP+FN), F1 là trung bình điều hòa precision/recall. Chọn chỉ số theo hậu quả của FP/FN.\n\nVí dụ: input là đặc trưng của một yêu cầu; output gồm nhãn và score. Đóng gói preprocessing và model thành API /predict, kiểm tra schema, version model và log tối thiểu. Theo dõi chỉ số trên dữ liệu mới và phản hồi người dùng.`,
-      rubric: ['Chọn baseline hợp lý và giải thích.', 'Chia dữ liệu đúng.', 'Đọc đúng confusion matrix và metric.', 'Có ví dụ input/output.', 'Có API, versioning và monitoring cơ bản.'],
+      prompt: `Xây dựng một mô hình phân loại để ${context.classifier}.\n\nRàng buộc:\n- Có khoảng ${sampleCount} mẫu đã gắn nhãn.\n- Hai lớp hơi lệch.\n- Kết quả thử nghiệm có TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn}.\n\nHãy: (1) chọn một baseline dễ hiểu; (2) giải thích accuracy, precision, recall, F1 và metric nên ưu tiên; (3) nêu cách đưa mô hình vào thử nghiệm.`,
+      modelAnswer: `Có thể bắt đầu bằng logistic regression hoặc cây quyết định nhỏ. Chia train/validation/test và giữ test cho đánh giá cuối. Từ confusion matrix tính accuracy, precision=TP/(TP+FP), recall=TP/(TP+FN), F1 là trung bình điều hòa precision/recall. Nếu bỏ sót lớp dương tính nguy hiểm thì ưu tiên recall hơn accuracy. Khi thử nghiệm, đóng gói preprocessing + model thành API đơn giản và theo dõi metric trên dữ liệu mới.`,
+      rubric: ['Chọn baseline hợp lý.', 'Chia dữ liệu đúng.', 'Giải thích đúng bốn metric.', 'Chọn metric theo hậu quả FP/FN.', 'Có cách triển khai thử cơ bản.'],
       tags: ['classification', 'confusion-matrix', 'essay'], skillId: 'essay.ml.classifier-confusion-matrix', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'deployModelApi') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Bạn đã có một mô hình phân loại đạt kết quả chấp nhận được trên test. Hãy thiết kế cách đưa mô hình thành API thử nghiệm.\n\nRàng buộc:\n- Input là JSON có vài trường bắt buộc.\n- Phản hồi cần dưới 2 giây.\n- Không log dữ liệu nhạy cảm thô.\n- Phải có cách quay lại phiên bản cũ nếu chất lượng giảm.\n\nTrình bày: (1) các thành phần; (2) một ví dụ request/response; (3) kiểm thử và giám sát.`,
-      modelAnswer: `Đóng gói cùng preprocessing và model version trong một service /predict. Validate schema, xử lý lỗi rõ, đo latency và chỉ log trace/metadata tối thiểu. Ví dụ request chứa các đặc trưng đã cho phép; response gồm label, score và model_version. Kiểm thử unit cho preprocessing, integration cho API, tập mẫu vàng cho chất lượng và load test nhẹ. Deploy phạm vi nhỏ, theo dõi latency, error rate, phân phối score và metric khi có nhãn; giữ phiên bản trước để rollback.`,
-      rubric: ['Có preprocessing + model + API.', 'Có schema validation và ví dụ request/response.', 'Không log dữ liệu nhạy cảm thô.', 'Có test chất lượng và latency.', 'Có version và rollback.'],
+      prompt: `Một mô hình dùng để ${context.classifier} đã đạt kết quả chấp nhận được trên test. Hãy đưa nó thành API thử nghiệm cho ${context.users}.\n\nRàng buộc:\n- Input JSON có vài trường bắt buộc.\n- Phản hồi cần dưới 2 giây.\n- Không log dữ liệu nhạy cảm thô.\n- Nếu phiên bản mới kém hơn phải quay lại bản cũ.\n\nHãy nêu: (1) flow request → prediction; (2) ví dụ request/response; (3) các kiểm tra trước và sau deploy.`,
+      modelAnswer: `API nhận JSON, validate schema, chạy đúng preprocessing rồi gọi model và trả label/score/model_version. Ví dụ request chứa các đặc trưng cho phép, response có label và score. Trước deploy cần test preprocessing, schema, mẫu dự đoán chuẩn và latency. Sau deploy theo dõi error rate, latency và chất lượng khi có nhãn; giữ model version cũ để rollback. Không ghi raw PII vào log.`,
+      rubric: ['Có schema validation.', 'Preprocessing nhất quán với lúc train.', 'Có ví dụ request/response.', 'Có test latency/chất lượng.', 'Có version và rollback.'],
       tags: ['deployment', 'api', 'essay'], skillId: 'essay.ml.deploy-model-api', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'svmPipeline') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Xây dựng một mô hình SVM tuyến tính để ${context.classifier}.\n\nRàng buộc:\n- Có ${sampleCount} mẫu đã gắn nhãn và số đặc trưng không quá lớn.\n- Cần so sánh với một baseline đơn giản.\n- Người dùng cần biết ví dụ nào làm mô hình khó phân loại.\n\nHãy trình bày: (1) vì sao SVM có thể phù hợp hoặc không phù hợp; (2) một ví dụ input/output; (3) cách huấn luyện, đánh giá và triển khai thử.`,
-      modelAnswer: `SVM tuyến tính phù hợp khi dữ liệu có thể phân tách tương đối bằng ranh giới tuyến tính và số mẫu vừa phải. Chuẩn hóa đặc trưng nếu thang đo khác nhau; chia train/validation/test; chọn C trên validation và so sánh với logistic regression. Support vectors là các mẫu gần ranh giới, có thể dùng để kiểm tra trường hợp khó. Đánh giá confusion matrix, precision, recall và F1. Đóng gói cùng preprocessing thành API, version model và theo dõi chất lượng.`,
-      rubric: ['Giải thích margin/support vectors ở mức đúng.', 'Có baseline so sánh.', 'Có chia dữ liệu và đánh giá metric.', 'Có ví dụ input/output.', 'Có API và monitoring cơ bản.'],
-      tags: ['svm', 'essay'], skillId: 'essay.ml.svm-pipeline', sfiaBand: 'L3-L4'
+      prompt: `Xây dựng SVM tuyến tính cho bài toán ${context.classifier}.\n\nRàng buộc:\n- Có khoảng ${sampleCount} mẫu đã gắn nhãn và số đặc trưng không lớn.\n- Cần so sánh với logistic regression.\n- Không yêu cầu kernel nâng cao.\n\nHãy trình bày: (1) ý nghĩa margin và support vectors; (2) các bước train/evaluate; (3) khi nào giữ SVM hoặc quay về baseline.`,
+      modelAnswer: `SVM tuyến tính tìm ranh giới có margin lớn; support vectors là các mẫu gần biên và ảnh hưởng mạnh đến ranh giới. Chuẩn hóa đặc trưng khi cần, chia train/validation/test, thử C ở mức cơ bản trên validation rồi đánh giá confusion matrix, precision, recall và F1 trên test. So sánh với logistic regression về chất lượng, tốc độ và khả năng giải thích; chỉ giữ SVM nếu có lợi ích rõ.`,
+      rubric: ['Giải thích margin đúng.', 'Giải thích support vectors đúng.', 'Có train/validation/test.', 'Có metric phù hợp.', 'Có so sánh với baseline.'],
+      tags: ['svm', 'classification', 'essay'], skillId: 'essay.ml.svm-pipeline', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'neuralBackprop') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Thiết kế quá trình huấn luyện một neural network nhỏ cho bài toán phân loại.\n\nRàng buộc:\n- Dữ liệu vài nghìn mẫu, không dùng mạng quá sâu.\n- Cần giải thích forward pass, loss, backpropagation và cập nhật trọng số bằng ngôn ngữ dễ hiểu.\n- Phải phát hiện overfit và triển khai bản thử nghiệm.\n\nHãy trình bày: (1) kiến trúc/baseline; (2) một ví dụ một bước cập nhật; (3) đánh giá và triển khai.`,
-      modelAnswer: `Bắt đầu bằng mạng nhỏ và so sánh với logistic regression. Forward pass tạo dự đoán; loss đo sai lệch; backprop dùng quy tắc dây chuyền để tính gradient; optimizer cập nhật w_new=w-ηgrad. Minh họa với một nơ-ron và số nhỏ. Chia train/validation/test, theo dõi train và validation loss, dùng early stopping khi cần. Đánh giá confusion matrix và metric phù hợp. Đóng gói preprocessing + model thành API, version và theo dõi lỗi/latency/chất lượng.`,
-      rubric: ['Giải thích forward/loss/backprop/update đúng.', 'Có baseline đơn giản.', 'Có ví dụ cập nhật số nhỏ.', 'Có cách phát hiện overfit.', 'Có đánh giá và triển khai API cơ bản.'],
+      prompt: `Giải thích cách huấn luyện một neural network nhỏ để ${context.classifier} với khoảng ${sampleCount} mẫu.\n\nRàng buộc:\n- Không dùng mạng sâu.\n- Cần giải thích forward pass, loss, backpropagation và cập nhật trọng số bằng ví dụ số nhỏ.\n\nHãy trình bày: (1) flow huấn luyện; (2) một ví dụ cập nhật một trọng số; (3) cách phát hiện overfit.`,
+      modelAnswer: `Forward pass tạo dự đoán, loss đo sai số, backprop dùng chain rule để tính gradient, sau đó gradient descent cập nhật w_new=w-η×grad. Có thể minh họa với một nơ-ron tuyến tính và số nhỏ. Chia train/validation/test, theo dõi train loss và validation loss; nếu train tiếp tục tốt lên nhưng validation xấu đi thì có dấu hiệu overfit. So sánh với baseline đơn giản trước khi chọn mạng.`,
+      rubric: ['Giải thích đúng forward/loss/backprop/update.', 'Có ví dụ cập nhật số nhỏ.', 'Có train/validation/test.', 'Nhận biết overfit.', 'Có baseline để so sánh.'],
       tags: ['backpropagation', 'neural-network', 'essay'], skillId: 'essay.ml.neural-backprop-pipeline', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'modelSelection') {
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Bạn cần chọn giữa logistic regression, SVM tuyến tính và neural network nhỏ cho một bài toán phân loại có ${sampleCount} mẫu.\n\nRàng buộc:\n- Cần giải thích được kết quả cho nhóm vận hành.\n- Thời gian làm MVP là 3 tuần.\n- Dữ liệu có 20 đặc trưng và hơi lệch lớp.\n\nHãy: (1) lập luận chọn baseline và phương án thử tiếp theo; (2) nêu một ví dụ input/output; (3) lập kế hoạch huấn luyện, đánh giá và triển khai.`,
-      modelAnswer: `Chọn logistic regression làm baseline vì nhanh, dễ giải thích; thử SVM tuyến tính nếu ranh giới phù hợp; chỉ dùng neural network nhỏ khi baseline không đủ và có bằng chứng. Chia train/validation/test, chuẩn hóa khi cần, dùng confusion matrix, precision, recall, F1 và thời gian suy luận. MVP 3 tuần gồm dữ liệu/baseline, so sánh mô hình, API/pilot. Ví dụ response có label, score, model_version. Quyết định cuối dựa trên metric và ràng buộc vận hành, không dựa trên độ phức tạp.`,
-      rubric: ['Lập luận theo dữ liệu và ràng buộc.', 'Có baseline và phương án so sánh.', 'Có metric cho lệch lớp.', 'Có ví dụ input/output.', 'Có kế hoạch 3 tuần và triển khai.'],
+      prompt: `Bạn có ${sampleCount} mẫu để ${context.classifier} và cần chọn giữa logistic regression, SVM tuyến tính và neural network nhỏ.\n\nRàng buộc:\n- MVP trong 3 tuần.\n- Kết quả cần tương đối dễ giải thích.\n- Hai lớp hơi lệch.\n\nHãy nêu: (1) baseline nên thử trước; (2) thứ tự thử các mô hình tiếp theo; (3) tiêu chí để quyết định.`,
+      modelAnswer: `Nên bắt đầu logistic regression vì nhanh và dễ giải thích. Có thể thử SVM tuyến tính tiếp nếu dữ liệu phù hợp; neural network nhỏ chỉ nên thử khi baseline chưa đạt và có lý do rõ. Dùng train/validation/test, confusion matrix, precision, recall, F1, latency và độ đơn giản để so sánh. Chọn mô hình theo ràng buộc chứ không mặc định mô hình phức tạp hơn là tốt hơn.`,
+      rubric: ['Có baseline hợp lý.', 'Có thứ tự thử mô hình.', 'Có metric cho lệch lớp.', 'Có xét latency/độ phức tạp.', 'Lập luận theo ràng buộc.'],
       tags: ['model-selection', 'essay'], skillId: 'essay.ml.select-model-under-constraints', sfiaBand: 'L3-L4'
     });
   }
+
   if (skill === 'improveValidation') {
+    const scenario = getValidationCase(examNo);
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Một mô hình có train accuracy 97% nhưng validation accuracy 74%; recall lớp dương tính chỉ 58%.\n\nRàng buộc:\n- Không được thu thập thêm dữ liệu trong 2 tuần đầu.\n- Cần giữ một baseline để so sánh.\n- Sau 3 tuần phải có API thử nghiệm.\n\nHãy trình bày: (1) các giả thuyết nguyên nhân; (2) một ví dụ kiểm tra; (3) kế hoạch cải thiện, đánh giá và triển khai.`,
-      modelAnswer: `Khả năng gồm overfit, chia dữ liệu chưa đúng, đặc trưng gây leakage, lớp lệch hoặc ngưỡng chưa phù hợp. Kiểm tra trùng lặp train/validation, phân phối lớp, confusion matrix và learning curve. Giữ baseline, thử regularization/mô hình đơn giản hơn, class weight hoặc điều chỉnh threshold trên validation. Không dùng test để điều chỉnh. Sau khi chọn mô hình, đóng gói preprocessing và API, theo dõi recall/precision, latency và lỗi; giữ phiên bản baseline để rollback.`,
-      rubric: ['Nêu được overfit/leakage/lệch lớp.', 'Có kiểm tra cụ thể.', 'Không dùng test để tune.', 'Có biện pháp cải thiện vừa phải.', 'Có API, monitoring và rollback.'],
+      prompt: `Mô hình dùng để ${context.classifier} đạt train accuracy ${scenario.train}% nhưng validation accuracy ${scenario.validation}%; recall lớp dương tính chỉ ${scenario.recall}%.\n\nRàng buộc:\n- Chưa thể thu thêm dữ liệu trong 2 tuần.\n- Phải giữ baseline để so sánh.\n\nHãy: (1) nêu các nguyên nhân có thể; (2) nêu ba kiểm tra nên làm; (3) đề xuất vài cách cải thiện đơn giản mà không dùng test để tune.`,
+      modelAnswer: `Có thể do overfit, leakage, chia tập không phù hợp, lớp lệch hoặc threshold chưa hợp lý. Kiểm tra trùng lặp/leakage giữa train-validation, phân phối lớp và confusion matrix/learning curve. Có thể thử regularization, mô hình đơn giản hơn, class weight hoặc điều chỉnh threshold trên validation. Test chỉ dùng đánh giá cuối và baseline phải được giữ để so sánh.`,
+      rubric: ['Nêu được overfit/leakage/lệch lớp.', 'Có kiểm tra cụ thể.', 'Không dùng test để tune.', 'Có biện pháp cải thiện đơn giản.', 'Giữ baseline để so sánh.'],
       tags: ['overfitting', 'evaluation', 'essay'], skillId: 'essay.ml.diagnose-validation-gap', sfiaBand: 'L3-L4'
     });
   }
+
+  if (skill === 'dataSplitLeakage') {
+    return openQuestion({
+      id, module: 'C', type: 'essay', points: 8,
+      prompt: `Bạn nhận một bộ dữ liệu ${sampleCount} mẫu đã gắn nhãn để ${context.classifier}.\n\nRàng buộc:\n- Có một số bản ghi gần trùng nhau.\n- Một vài cột được tạo sau khi kết quả thực tế đã xảy ra.\n- Cần báo cáo kết quả đáng tin cậy.\n\nHãy nêu: (1) cách chia train/validation/test; (2) data leakage có thể xuất hiện ở đâu; (3) cách kiểm tra pipeline trước khi train.`,
+      modelAnswer: `Loại hoặc gom các bản ghi gần trùng để không rơi vào nhiều tập khác nhau. Các cột chỉ xuất hiện sau thời điểm dự đoán phải bị loại khỏi feature vì gây leakage. Fit preprocessing chỉ trên train rồi áp dụng cho validation/test. Dùng validation để chọn mô hình và giữ test cho đánh giá cuối. Kiểm tra schema, missing values, tỷ lệ lớp và một vài mẫu bằng tay trước khi train.`,
+      rubric: ['Chia train/validation/test đúng vai trò.', 'Nhận ra leakage từ cột hậu nghiệm.', 'Xử lý bản ghi trùng hợp lý.', 'Fit preprocessing trên train.', 'Có kiểm tra dữ liệu cơ bản.'],
+      tags: ['data-preparation', 'leakage', 'essay'], skillId: 'essay.ml.data-split-and-leakage', sfiaBand: 'L3-L4'
+    });
+  }
+
+  if (skill === 'thresholdMetrics') {
+    const data = getConfusion(examNo);
+    const validationSize = 400 + examNo * 50;
+    return openQuestion({
+      id, module: 'C', type: 'essay', points: 8,
+      prompt: `Một classifier dùng để ${context.classifier} được kiểm tra trên ${validationSize} mẫu validation và hiện có TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn}. Nhóm cân nhắc hạ threshold để bắt được nhiều ca dương tính hơn.\n\nRàng buộc:\n- Bỏ sót dương tính gây hậu quả lớn hơn một cảnh báo nhầm.\n- Không được chỉ nhìn accuracy.\n\nHãy giải thích: (1) precision và recall sẽ thường thay đổi theo hướng nào; (2) metric nên ưu tiên; (3) cách chọn threshold bằng validation.`,
+      modelAnswer: `Khi hạ threshold, thường có nhiều dự đoán dương hơn: recall có xu hướng tăng nhưng precision có thể giảm vì FP tăng. Vì FN gây hậu quả lớn hơn, recall nên được ưu tiên, nhưng vẫn theo dõi precision/F1 để tránh quá nhiều cảnh báo nhầm. Thử một số threshold trên validation và chọn theo tiêu chí đã thống nhất; test chỉ dùng đánh giá cuối.`,
+      rubric: ['Hiểu trade-off precision/recall.', 'Chọn metric theo hậu quả FN.', 'Không chỉ dùng accuracy.', 'Chọn threshold trên validation.', 'Giữ test cho đánh giá cuối.'],
+      tags: ['confusion-matrix', 'threshold', 'essay'], skillId: 'essay.ml.threshold-precision-recall-tradeoff', sfiaBand: 'L3-L4'
+    });
+  }
+
+  if (skill === 'ragEvaluation') {
+    return openQuestion({
+      id, module: 'C', type: 'essay', points: 8,
+      prompt: `Một hệ thống RAG dùng ${context.docs} trả lời trôi chảy nhưng đôi lúc lấy sai đoạn hoặc ghi sai nguồn.\n\nRàng buộc:\n- Kho chỉ khoảng ${sampleCount} đoạn/tài liệu.\n- Chưa cần tối ưu hạ tầng phức tạp.\n\nHãy nêu: (1) cách tách lỗi retrieval và lỗi generation; (2) một bộ test nhỏ nên có gì; (3) ba chỉ số/tiêu chí chất lượng nên theo dõi.`,
+      modelAnswer: `Tạo bộ câu hỏi có tài liệu đúng đã biết. Trước tiên kiểm tra retrieval có đưa đúng đoạn vào top-k hay không; nếu retrieval đúng mà câu trả lời vẫn sai thì lỗi nằm nhiều hơn ở generation/prompt. Bộ test nên có câu dễ, câu không có đáp án và câu cần citation. Có thể theo dõi retrieval hit-rate, mức bám nguồn/correctness, citation đúng, tỷ lệ abstain đúng và latency.`,
+      rubric: ['Tách được retrieval và generation.', 'Có bộ câu hỏi chuẩn nhỏ.', 'Có kiểm tra câu không đủ nguồn.', 'Có tiêu chí citation/groundedness.', 'Có metric retrieval cơ bản.'],
+      tags: ['rag', 'evaluation', 'essay'], skillId: 'essay.rag.evaluate-retrieval-and-answer', sfiaBand: 'L3-L4'
+    });
+  }
+
+  if (skill === 'apiPreprocessingDebug') {
+    const requestsPerMinute = 40 + examNo * 10;
+    return openQuestion({
+      id, module: 'C', type: 'essay', points: 8,
+      prompt: `Mô hình để ${context.classifier} chạy đúng trong notebook nhưng API xử lý khoảng ${requestsPerMinute} request/phút lại cho nhiều dự đoán sai bất thường.\n\nRàng buộc:\n- API vẫn trả HTTP 200.\n- Một số trường JSON có kiểu dữ liệu khác lúc train.\n- Có khả năng preprocessing ở API không giống notebook.\n\nHãy nêu: (1) thứ tự debug; (2) một ví dụ lỗi preprocessing/schema; (3) cách ngăn lỗi tương tự khi deploy lại.`,
+      modelAnswer: `So sánh cùng một input qua notebook và API, kiểm tra schema/kiểu dữ liệu, thứ tự feature, missing value, chuẩn hóa và version model. Ví dụ lúc train tuổi là số nhưng API nhận chuỗi, hoặc scaler không được dùng giống lúc train. Đóng gói preprocessing cùng model, validate schema, viết test với các input cố định và trả model_version để đối chiếu.`,
+      rubric: ['Debug từ input/schema đến preprocessing/model.', 'Có ví dụ lỗi cụ thể.', 'Kiểm tra feature order/type.', 'Đóng gói preprocessing nhất quán.', 'Có regression test/model version.'],
+      tags: ['api', 'debugging', 'preprocessing', 'essay'], skillId: 'essay.ml.debug-api-preprocessing', sfiaBand: 'L3-L4'
+    });
+  }
+
   throw new Error(`Không có essay Module C: ${skill}`);
 }
