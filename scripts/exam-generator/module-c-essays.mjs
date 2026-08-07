@@ -21,7 +21,7 @@ const VALIDATION_CASES = [
 export const ESSAY_PLAN = {
   1: ['ragInternal', 'faqPrivacy', 'classifierMetrics'],
   2: ['deployModelApi', 'svmPipeline', 'dataSplitLeakage'],
-  3: ['neuralBackprop', 'modelSelection', 'ragEvaluation'],
+  3: ['neuralBackprop', 'modelSelection', 'thresholdMetrics'],
   4: ['improveValidation', 'thresholdMetrics', 'apiPreprocessingDebug'],
   5: ['ragInternal', 'deployModelApi', 'modelSelection'],
   6: ['faqPrivacy', 'svmPipeline', 'improveValidation'],
@@ -45,7 +45,7 @@ function getValidationCase(examNo) {
 
 export function essayQuestion(skill, examNo, id) {
   const context = getContext(examNo);
-  const sampleCount = 3500 + ((examNo - 1) % 5 + 1) * 500;
+  const sampleCount = 3500 + examNo * 500;
 
   if (skill === 'ragInternal') {
     return openQuestion({
@@ -58,9 +58,10 @@ export function essayQuestion(skill, examNo, id) {
   }
 
   if (skill === 'faqPrivacy') {
+    const faqCount = 100 + examNo * 10;
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Thiết kế ${context.faq} dùng mô hình ngôn ngữ.\n\nRàng buộc:\n- FAQ thông thường được trả lời tự động.\n- Không gửi dữ liệu nhạy cảm thô cho dịch vụ ngoài.\n- Yêu cầu thay đổi thông tin, hoàn tiền hoặc quyết định ảnh hưởng lớn phải chuyển người.\n\nHãy trình bày: (1) cách phân luồng; (2) một ví dụ hội thoại; (3) cách kiểm thử và giám sát.`,
+      prompt: `Thiết kế ${context.faq} dùng mô hình ngôn ngữ cho khoảng ${faqCount} câu hỏi thường gặp.\n\nRàng buộc:\n- FAQ thông thường được trả lời tự động.\n- Không gửi dữ liệu nhạy cảm thô cho dịch vụ ngoài.\n- Yêu cầu thay đổi thông tin, hoàn tiền hoặc quyết định ảnh hưởng lớn phải chuyển người.\n\nHãy trình bày: (1) cách phân luồng; (2) một ví dụ hội thoại; (3) cách kiểm thử và giám sát.`,
       modelAnswer: `Dùng một bước phân loại yêu cầu: FAQ có thể trả tự động từ tài liệu đã duyệt, còn yêu cầu nhạy cảm hoặc có hành động ảnh hưởng lớn phải handoff cho người có thẩm quyền. Dữ liệu nhạy cảm được loại bỏ hoặc thay mã trước khi gửi ra ngoài. Ví dụ hỏi giờ làm việc thì trả trực tiếp; yêu cầu đổi thông tin tài khoản thì chuyển người. Kiểm thử cả câu bình thường, câu chứa PII và câu vượt quyền; theo dõi lỗi, độ trễ và tỷ lệ handoff.`,
       rubric: ['Phân biệt FAQ và yêu cầu rủi ro.', 'Không gửi dữ liệu nhạy cảm thô.', 'Có human handoff.', 'Có ví dụ hội thoại.', 'Có kiểm thử/monitoring cơ bản.'],
       tags: ['llm', 'privacy', 'human-in-the-loop', 'essay'], skillId: 'essay.llm.faq-privacy-handoff', sfiaBand: 'L3-L4'
@@ -141,9 +142,10 @@ export function essayQuestion(skill, examNo, id) {
 
   if (skill === 'thresholdMetrics') {
     const data = getConfusion(examNo);
+    const validationSize = 400 + examNo * 50;
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Một classifier dùng để ${context.classifier} hiện có TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn}. Nhóm cân nhắc hạ threshold để bắt được nhiều ca dương tính hơn.\n\nRàng buộc:\n- Bỏ sót dương tính gây hậu quả lớn hơn một cảnh báo nhầm.\n- Không được chỉ nhìn accuracy.\n\nHãy giải thích: (1) precision và recall sẽ thường thay đổi theo hướng nào; (2) metric nên ưu tiên; (3) cách chọn threshold bằng validation.`,
+      prompt: `Một classifier dùng để ${context.classifier} được kiểm tra trên ${validationSize} mẫu validation và hiện có TP=${data.tp}, FP=${data.fp}, FN=${data.fn}, TN=${data.tn}. Nhóm cân nhắc hạ threshold để bắt được nhiều ca dương tính hơn.\n\nRàng buộc:\n- Bỏ sót dương tính gây hậu quả lớn hơn một cảnh báo nhầm.\n- Không được chỉ nhìn accuracy.\n\nHãy giải thích: (1) precision và recall sẽ thường thay đổi theo hướng nào; (2) metric nên ưu tiên; (3) cách chọn threshold bằng validation.`,
       modelAnswer: `Khi hạ threshold, thường có nhiều dự đoán dương hơn: recall có xu hướng tăng nhưng precision có thể giảm vì FP tăng. Vì FN gây hậu quả lớn hơn, recall nên được ưu tiên, nhưng vẫn theo dõi precision/F1 để tránh quá nhiều cảnh báo nhầm. Thử một số threshold trên validation và chọn theo tiêu chí đã thống nhất; test chỉ dùng đánh giá cuối.`,
       rubric: ['Hiểu trade-off precision/recall.', 'Chọn metric theo hậu quả FN.', 'Không chỉ dùng accuracy.', 'Chọn threshold trên validation.', 'Giữ test cho đánh giá cuối.'],
       tags: ['confusion-matrix', 'threshold', 'essay'], skillId: 'essay.ml.threshold-precision-recall-tradeoff', sfiaBand: 'L3-L4'
@@ -161,9 +163,10 @@ export function essayQuestion(skill, examNo, id) {
   }
 
   if (skill === 'apiPreprocessingDebug') {
+    const requestsPerMinute = 40 + examNo * 10;
     return openQuestion({
       id, module: 'C', type: 'essay', points: 8,
-      prompt: `Mô hình để ${context.classifier} chạy đúng trong notebook nhưng khi gọi API thì nhiều dự đoán sai bất thường.\n\nRàng buộc:\n- API vẫn trả HTTP 200.\n- Một số trường JSON có kiểu dữ liệu khác lúc train.\n- Có khả năng preprocessing ở API không giống notebook.\n\nHãy nêu: (1) thứ tự debug; (2) một ví dụ lỗi preprocessing/schema; (3) cách ngăn lỗi tương tự khi deploy lại.`,
+      prompt: `Mô hình để ${context.classifier} chạy đúng trong notebook nhưng API xử lý khoảng ${requestsPerMinute} request/phút lại cho nhiều dự đoán sai bất thường.\n\nRàng buộc:\n- API vẫn trả HTTP 200.\n- Một số trường JSON có kiểu dữ liệu khác lúc train.\n- Có khả năng preprocessing ở API không giống notebook.\n\nHãy nêu: (1) thứ tự debug; (2) một ví dụ lỗi preprocessing/schema; (3) cách ngăn lỗi tương tự khi deploy lại.`,
       modelAnswer: `So sánh cùng một input qua notebook và API, kiểm tra schema/kiểu dữ liệu, thứ tự feature, missing value, chuẩn hóa và version model. Ví dụ lúc train tuổi là số nhưng API nhận chuỗi, hoặc scaler không được dùng giống lúc train. Đóng gói preprocessing cùng model, validate schema, viết test với các input cố định và trả model_version để đối chiếu.`,
       rubric: ['Debug từ input/schema đến preprocessing/model.', 'Có ví dụ lỗi cụ thể.', 'Kiểm tra feature order/type.', 'Đóng gói preprocessing nhất quán.', 'Có regression test/model version.'],
       tags: ['api', 'debugging', 'preprocessing', 'essay'], skillId: 'essay.ml.debug-api-preprocessing', sfiaBand: 'L3-L4'
