@@ -61,6 +61,13 @@ textarea { min-height: 180px; resize: vertical; }
 .option span { display: inline-grid; place-items: center; min-width: 32px; height: 32px; border-radius: 50%; background: #eef3fb; font-weight: 900; }
 .option.correct { border-color: #25a55b; background: #ecf9f0; }
 .option.wrong { border-color: #df5555; background: #fff0f0; }
+.open-answer { margin-top: 20px; }
+.open-answer-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.open-answer-tools .secondary { padding: 10px 16px; }
+.open-help-note { margin: 10px 0 0; color: #617086; font-size: .92rem; }
+.hint-panel { background: #fff9e9; border-color: #f0dda4; }
+.hint-panel ul { margin-bottom: 0; padding-left: 22px; }
+.hint-panel li + li { margin-top: 6px; }
 .feedback { margin-top: 20px; padding: 18px; border-radius: 18px; background: #f7faff; border: 1px solid #d9e5f5; }
 .self-grade { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
 .self-grade button { background: #e9eef7; }
@@ -92,4 +99,5 @@ textarea { min-height: 180px; resize: vertical; }
   .community-cta { width: 100%; justify-content: center; text-align: center; border-radius: 18px; }
   .crown-access { width: 52px; height: 52px; }
   .gate-dialog { padding: 24px 20px; }
+  .open-answer-tools { display: grid; grid-template-columns: 1fr 1fr; }
 }
