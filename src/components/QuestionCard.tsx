@@ -16,6 +16,8 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
   const [showHint, setShowHint] = useState(false);
   const [showModelAnswer, setShowModelAnswer] = useState(false);
   const isMcq = question.type === 'mcq';
+  const openQuestion = question.type === 'mcq' ? null : question;
+  const hintItems = openQuestion?.hint?.length ? openQuestion.hint : openQuestion?.rubric ?? [];
   const hasAnswer = isMcq ? Boolean(answer?.selected) : Boolean(answer?.text?.trim());
   const revealMcq = submitted || (mode === 'practice' && hasAnswer);
   const canUseOpenHelp = !isMcq && (mode === 'practice' || submitted);
@@ -65,20 +67,10 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
 
           {canUseOpenHelp ? (
             <div className="open-answer-tools">
-              <button
-                type="button"
-                className="secondary"
-                aria-expanded={showHint}
-                onClick={() => setShowHint((value) => !value)}
-              >
+              <button type="button" className="secondary" aria-expanded={showHint} onClick={() => setShowHint((value) => !value)}>
                 {showHint ? 'Ẩn gợi ý' : 'Gợi ý'}
               </button>
-              <button
-                type="button"
-                className="secondary"
-                aria-expanded={showModelAnswer}
-                onClick={() => setShowModelAnswer((value) => !value)}
-              >
+              <button type="button" className="secondary" aria-expanded={showModelAnswer} onClick={() => setShowModelAnswer((value) => !value)}>
                 {showModelAnswer ? 'Ẩn đáp án mẫu' : 'Xem đáp án mẫu'}
               </button>
             </div>
@@ -97,15 +89,15 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
 
       {canUseOpenHelp && showHint && (
         <section className="feedback hint-panel">
-          <strong>Gợi ý / các ý nên có</strong>
-          <ul>{question.rubric.map((item) => <li key={item}>{item}</li>)}</ul>
+          <strong>Gợi ý / các bước nên nghĩ tới</strong>
+          <ul>{hintItems.map((item) => <li key={item}>{item}</li>)}</ul>
         </section>
       )}
 
-      {canUseOpenHelp && showModelAnswer && (
+      {canUseOpenHelp && showModelAnswer && openQuestion && (
         <section className="feedback model-answer-panel">
           <strong>Đáp án mẫu</strong>
-          <pre><code>{question.modelAnswer}</code></pre>
+          <pre><code>{openQuestion.modelAnswer}</code></pre>
           <div className="self-grade">
             <span>Tự chấm:</span>
             <button className={answer?.selfGrade === 'pass' ? 'active' : ''} onClick={() => onAnswer({ ...answer, selfGrade: 'pass' })}>Đạt</button>
