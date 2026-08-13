@@ -1,4 +1,5 @@
 import { EXAM_11 } from './extra-blueprint-11.mjs';
+import { EXAM_13 } from './review-set-three.mjs';
 
 const EXAM_12 = {
   no: 12,
@@ -11,7 +12,7 @@ const EXAM_12 = {
   bOpen: ['traceGcd', 'explainNumpyShapes'],
   cMcq: ['ragRetrieval', 'ragEmbedding', 'cosineSimilarityMeaning', 'chunkSizeTradeoff', 'topKTradeoff', 'retrievalVsGeneration', 'ragNoEvidence', 'citationVersioning', 'humanReview'],
   cEssays: [],
-  dSkills: ['groupAccess', 'dataMinimization', 'purposeLimitation', 'sourceCitation', 'highRiskEscalate', 'humanApproval', 'auditLog', 'incidentResponse']
+  dSkills: ['leastPrivilege', 'groupAccess', 'dataMinimization', 'purposeLimitation', 'consent', 'humanApproval', 'auditLog', 'fairnessCheck']
 };
 
-export const EXTRA_EXAM_BLUEPRINTS = [EXAM_11, EXAM_12];
+export const EXTRA_EXAM_BLUEPRINTS = [EXAM_11, EXAM_12, EXAM_13];
