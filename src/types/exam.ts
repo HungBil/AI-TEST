@@ -27,6 +27,7 @@ export interface OpenQuestion extends BaseQuestion {
   type: 'code' | 'essay';
   modelAnswer: string;
   rubric: string[];
+  hint?: string[];
 }
 
 export type Question = McqQuestion | OpenQuestion;

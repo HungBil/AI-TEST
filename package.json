@@ -13,7 +13,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "prevalidate": "npm run materialize:new-exams",
-    "validate": "node scripts/validate-all-exams.mjs && node scripts/validate-new-collection.mjs && npm run test:crown",
+    "validate": "node scripts/validate-expanded.mjs && npm run test:crown",
     "test:crown": "node --test scripts/generate-crown-lock.test.mjs && vitest run src"
   },
   "dependencies": {
