@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react';
 import type { Exam, QuizMode } from '../types/exam';
 import { Disclaimer } from './Disclaimer';
+import { CheatSheetLibrary } from './CheatSheetLibrary';
 
 const COMMUNITY_URL = 'https://www.facebook.com/groups/1450219003271674';
 
@@ -55,7 +56,12 @@ export function ExamSelector({
             ? `${exams.length} đề mô phỏng, mỗi đề 60 câu và dùng nguyên cơ chế Practice/Exam, timer, tự chấm tự luận và thống kê cuối bài.`
             : `Local/self-host web app với ${exams.length} bài kiểm tra. Mỗi bài 60 câu, có Practice mode, Exam mode, tự luận self-grade và thống kê cuối bài.`}
         </p>
-        {!isNewCollection && (
+        {isNewCollection ? (
+          <a className="cheat-sheet-jump" href="#cheat-sheets">
+            <span aria-hidden="true">▤</span>
+            Mở 4 cheat sheet và học ngay trên web
+          </a>
+        ) : (
           <a className="community-cta" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
             <span aria-hidden="true">-&gt;</span>
             Đây là nhóm thảo luận AI THỰC CHIẾN - AI startup in Vietnam
@@ -98,6 +104,8 @@ export function ExamSelector({
 
         <button className="primary" onClick={onStart}>Bắt đầu làm bài</button>
       </section>
+
+      {isNewCollection && <CheatSheetLibrary />}
     </main>
   );
 }
