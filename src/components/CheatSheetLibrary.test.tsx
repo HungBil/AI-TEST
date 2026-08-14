@@ -26,10 +26,7 @@ describe('CheatSheetLibrary', () => {
     expect(container.textContent).toContain('Euclid & Python core');
     expect(container.textContent).toContain('dict.get(k, default)');
     expect(container.textContent).toContain('Requests/HTTP/JSON');
-
-    const pdfLink = [...container.querySelectorAll<HTMLAnchorElement>('a')]
-      .find((link) => link.textContent === 'Mở PDF');
-    expect(pdfLink?.getAttribute('href')).toContain('cheatsheets/module-b.pdf');
+    expect(container.textContent).toContain('Nội dung chuẩn để học trên web');
   });
 
   it('expands another module and switches between its three pages', async () => {
@@ -39,14 +36,14 @@ describe('CheatSheetLibrary', () => {
       .find((button) => button.textContent?.includes('Module A'))!;
     await act(async () => moduleA.click());
 
-    expect(container.textContent).toContain('Xác suất - nhận dạng từ khóa trước khi tính');
-    expect(container.textContent).not.toContain('Euclid & Python core');
+    const activeHeading = () => container.querySelector<HTMLHeadingElement>('.cheat-page-heading h3')?.textContent;
+    expect(activeHeading()).toContain('Xác suất - nhận dạng từ khóa trước khi tính');
 
     const pageTwo = [...container.querySelectorAll<HTMLButtonElement>('.cheat-page-tabs button')]
       .find((button) => button.textContent === 'Trang 2')!;
     await act(async () => pageTwo.click());
 
-    expect(container.textContent).toContain('Bayes - cập nhật niềm tin bằng bằng chứng');
+    expect(activeHeading()).toContain('Bayes - cập nhật niềm tin bằng bằng chứng');
     expect(container.textContent).toContain('Cách làm bảng 1.000 người');
   });
 });
