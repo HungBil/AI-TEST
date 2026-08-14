@@ -1,5 +1,6 @@
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useState, type CSSProperties } from 'react';
 import cheatSheetsRaw from '../data/cheatsheets.json';
+import '../styles/cheatsheets.css';
 
 type ModuleCode = 'A' | 'B' | 'C' | 'D';
 type TableSection = { kind: 'table'; title: string; rows: string[][] };
