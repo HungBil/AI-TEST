@@ -22,16 +22,11 @@ type CheatSheet = {
   accent: string;
   dark: string;
   tint: string;
-  pdfFile: string;
   pages: CheatPage[];
 };
 
 const cheatSheets = cheatSheetsRaw as CheatSheet[];
 const initialPages: Record<ModuleCode, number> = { A: 0, B: 0, C: 0, D: 0 };
-
-function assetUrl(path: string) {
-  return `${import.meta.env.BASE_URL}${path}`;
-}
 
 function stripNumber(text: string) {
   return text.replace(/^\s*\d+[).]\s*/, '');
@@ -206,10 +201,7 @@ export function CheatSheetLibrary() {
                         </button>
                       ))}
                     </div>
-                    <div className="cheat-file-actions">
-                      <a href={assetUrl(sheet.pdfFile)} target="_blank" rel="noreferrer">Mở PDF</a>
-                      <a href={assetUrl(sheet.pdfFile)} download>Tải PDF</a>
-                    </div>
+                    <span className="cheat-panel-note">Nội dung chuẩn để học trên web · PDF sửa lỗi được đính kèm riêng</span>
                   </div>
 
                   <div className="cheat-page" role="tabpanel">
