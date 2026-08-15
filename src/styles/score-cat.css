@@ -1,0 +1,92 @@
+.score-cat-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, .68);
+  backdrop-filter: blur(8px);
+}
+
+.score-cat-dialog {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  width: min(820px, 100%);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, .35);
+  animation: score-cat-pop .24s ease-out;
+}
+
+.score-cat-art {
+  min-height: 320px;
+  background: #eef4ff;
+}
+
+.score-cat-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  object-fit: cover;
+}
+
+.score-cat-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 34px;
+}
+
+.score-cat-copy h2 {
+  margin: 9px 0 8px;
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  line-height: 1.03;
+}
+
+.score-cat-copy p {
+  margin: 0 0 22px;
+  color: #526176;
+}
+
+.score-cat-copy .primary { align-self: flex-start; }
+
+.score-cat-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.9);
+  color: #172033;
+  font-size: 1.45rem;
+  box-shadow: 0 7px 18px rgba(15,23,42,.16);
+}
+
+.score-cat-high .score-cat-copy { background: linear-gradient(160deg, #fffdf5, #fff4c8); }
+.score-cat-high .eyebrow, .score-cat-high h2 { color: #9a5b00; }
+.score-cat-mid .score-cat-copy { background: linear-gradient(160deg, #f8fffb, #daf7e8); }
+.score-cat-mid .eyebrow, .score-cat-mid h2 { color: #087647; }
+.score-cat-low .score-cat-copy { background: linear-gradient(160deg, #f7fbff, #dceeff); }
+.score-cat-low .eyebrow, .score-cat-low h2 { color: #2459a9; }
+
+@keyframes score-cat-pop {
+  from { opacity: 0; transform: translateY(16px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 720px) {
+  .score-cat-dialog { grid-template-columns: 1fr; max-height: calc(100vh - 32px); overflow-y: auto; }
+  .score-cat-art, .score-cat-art img { min-height: 220px; max-height: 300px; }
+  .score-cat-copy { padding: 26px 22px 24px; }
+  .score-cat-copy .primary { width: 100%; }
+}
