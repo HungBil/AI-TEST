@@ -2,6 +2,7 @@ import type { ChangeEvent } from 'react';
 import type { Exam, QuizMode } from '../types/exam';
 import { Disclaimer } from './Disclaimer';
 import { CheatSheetLibrary } from './CheatSheetLibrary';
+import '../styles/day-one-cheatsheets.css';
 
 const COMMUNITY_URL = 'https://www.facebook.com/groups/1450219003271674';
 
