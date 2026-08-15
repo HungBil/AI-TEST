@@ -26,8 +26,15 @@ describe('CheatSheetLibrary', () => {
     const special = container.querySelector<HTMLElement>('[data-cheat-collection="day-one-special"]')!;
     expect(special.textContent).toContain('4 cheat sheet đặc biệt cho Đề 14–16');
     expect(special.textContent).toContain('Định thức — chọn đường tính ngắn nhất');
-    expect(special.textContent).toContain('b_new = b_old - learning_rate × db');
     expect(special.textContent).toContain('ĐỀ 14–16 · ÔN CẤP TỐC');
+
+    const pageThree = [...special.querySelectorAll<HTMLButtonElement>('.cheat-page-tabs button')]
+      .find((button) => button.textContent === 'Trang 3')!;
+    await act(async () => pageThree.click());
+
+    expect(special.querySelector<HTMLHeadingElement>('.cheat-page-heading h3')?.textContent)
+      .toContain('Update bias');
+    expect(special.textContent).toContain('b_new = b_old - learning_rate × db');
   });
 
   it('opens special Module B and switches to the broadcasting page', async () => {
