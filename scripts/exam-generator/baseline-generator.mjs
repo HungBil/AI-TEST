@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { MODULE_LABELS, DISCLAIMER, EXAM_BLUEPRINTS, qid } from './shared.mjs';
 import { EXTRA_EXAM_BLUEPRINTS } from './extra-blueprints.mjs';
+import { buildActualDayExams } from './actual-day-generator.mjs';
 import { buildModuleA } from './module-a.mjs';
 import { buildModuleB } from './module-b.mjs';
 import { buildModuleC, buildModuleD } from './module-cd.mjs';
@@ -55,7 +56,7 @@ function buildExam(blueprint) {
 }
 
 export function buildBaselineExams() {
-  return BLUEPRINTS.map(buildExam);
+  return [...BLUEPRINTS.map(buildExam), ...buildActualDayExams()];
 }
 
 export function materializeBaselineExams(outputDir) {
