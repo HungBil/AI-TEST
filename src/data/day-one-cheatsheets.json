@@ -1,0 +1,517 @@
+[
+  {
+    "module": "A",
+    "title": "Định thức, Rank & Update Bias",
+    "subtitle": "Trọng tâm Đề 14–16: tính tay det 2×2/3×3, nhận biết hàng phụ thuộc và cập nhật bias đúng dấu.",
+    "accent": "#e11d48",
+    "dark": "#881337",
+    "tint": "#fff1f2",
+    "pages": [
+      {
+        "title": "1. Định thức — chọn đường tính ngắn nhất",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Dạng xuất hiện trong ba đề",
+            "rows": [
+              ["Ma trận 2×2", "det([[a,b],[c,d]]) = ad - bc.", "Đề 14: [[2,1],[3,4]] → 2×4-1×3=5."],
+              ["Ma trận tam giác 3×3", "Định thức bằng tích các phần tử trên đường chéo chính.", "Đề 15: 2×3×4=24."],
+              ["Khai triển 3×3", "Chọn hàng/cột có nhiều số 0 để giảm số phép tính.", "Đề 16: khai triển theo hàng đầu."],
+              ["Đổi chỗ hai hàng", "Định thức đổi dấu.", "det mới = -det cũ."],
+              ["Nhân một hàng với k", "Định thức bị nhân với k.", "Hàng ×3 → det ×3."],
+              ["Cộng bội hàng khác", "Định thức không đổi.", "R2 ← R2-2R1 không làm đổi det."]
+            ]
+          },
+          {
+            "kind": "formula",
+            "title": "Công thức cần thuộc",
+            "items": [
+              "det([[a,b],[c,d]]) = ad - bc",
+              "Ma trận tam giác: det(A) = tích đường chéo chính",
+              "det(A)=0 ⇔ A suy biến ⇔ A không có nghịch đảo",
+              "Đổi hai hàng: det đổi dấu; cộng bội hàng khác: det giữ nguyên"
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Quy trình 40 giây",
+            "items": [
+              "Nhìn cấu trúc: 2×2, tam giác hay có nhiều số 0?",
+              "Viết công thức trước khi thế số.",
+              "Tách từng tích và kiểm tra dấu trừ.",
+              "Ước lượng nhanh để phát hiện đáp số vô lý."
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Bẫy thường gặp",
+            "text": "Với 2×2 là ad-bc, không phải ad+bc. Với 3×3 không nên dùng công thức dài nếu ma trận tam giác hoặc có hàng/cột nhiều số 0."
+          }
+        ]
+      },
+      {
+        "title": "2. Rank — đếm số hàng độc lập",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Dấu hiệu nhận biết nhanh",
+            "rows": [
+              ["Một hàng là bội hàng khác", "Hàng đó phụ thuộc, không làm rank tăng.", "[2,4] = 2×[1,2] → rank 1 nếu chỉ có hai hàng."],
+              ["Một hàng là tổng các hàng trước", "Hàng đó cũng phụ thuộc.", "R3=R1+R2 → chỉ cần đếm R1,R2 độc lập."],
+              ["Row reduction", "Biến đổi sơ cấp rồi đếm số hàng khác 0/pivot.", "Mỗi pivot tương ứng một chiều độc lập."],
+              ["det khác 0 với ma trận vuông n×n", "Rank đầy đủ bằng n.", "det(A)≠0 → rank(A)=n."],
+              ["det bằng 0", "Rank nhỏ hơn n nhưng vẫn phải xác định cụ thể.", "det=0 không đồng nghĩa rank=0."],
+              ["Giới hạn", "rank(A) ≤ min(số hàng, số cột).", "Ma trận 3×2 không thể rank 3."]
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Ba mẫu của Đề 14–16",
+            "items": [
+              "Đề 14: R2=2R1 → chỉ có 1 hàng độc lập → rank=1.",
+              "Đề 15: R3=R1+R2, còn R1 và R2 độc lập → rank=2.",
+              "Đề 16: R3=R1+R2 → rank=2.",
+              "Khi không thấy quan hệ ngay, dùng R2←R2-kR1 để tạo số 0."
+            ]
+          },
+          {
+            "kind": "formula",
+            "title": "Nhớ nhanh",
+            "items": [
+              "rank = số pivot = số hàng khác 0 sau row reduction",
+              "Ma trận vuông: det≠0 → rank đầy đủ",
+              "Hàng là bội/tổng của hàng khác → không tạo thêm chiều độc lập"
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Cách trình bày để có điểm",
+            "text": "Không chỉ ghi rank=2. Hãy ghi một dòng quan hệ như R3=R1+R2 hoặc chỉ ra hai pivot sau biến đổi hàng."
+          }
+        ]
+      },
+      {
+        "title": "3. Update bias — công thức ngắn, dễ nhầm dấu",
+        "sections": [
+          {
+            "kind": "formula",
+            "title": "Một bước gradient descent",
+            "items": [
+              "b_new = b_old - learning_rate × db",
+              "Nếu có nhiều mẫu: db_batch = trung bình các db_i",
+              "db > 0 → b giảm; db < 0 → b tăng",
+              "Learning rate chỉ điều khiển độ lớn bước đi, không đổi quy tắc dấu"
+            ]
+          },
+          {
+            "kind": "table",
+            "title": "Ba ví dụ đúng theo Đề 14–16",
+            "rows": [
+              ["Đề 14", "b=0.5, η=0.1, db=-0.4", "b_new=0.5-0.1×(-0.4)=0.54."],
+              ["Đề 15", "b=-0.2, η=0.05, db=0.6", "b_new=-0.2-0.05×0.6=-0.23."],
+              ["Đề 16", "db=[0.2,-0.1,0.5] → trung bình 0.2", "b_new=0.1-0.1×0.2=0.08."],
+              ["Gradient âm", "Trừ một số âm", "Bias tăng."],
+              ["Gradient dương", "Trừ một số dương", "Bias giảm."]
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Cách làm không sai dấu",
+            "items": [
+              "Nếu đề cho nhiều gradient, tính trung bình trước.",
+              "Viết b_new = b - η(db) và đặt db trong ngoặc.",
+              "Thế số nguyên dòng, chưa bấm nhẩm vội.",
+              "Kiểm tra chiều thay đổi: gradient âm thì kết quả phải lớn hơn b cũ."
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Mini drill",
+            "text": "b=1.2, η=0.05, db=0.8 → b_new=1.2-0.04=1.16. Nếu bạn ra 1.24 thì đã cộng sai dấu."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "B",
+    "title": "NumPy Matrix, Broadcasting & Python Trace",
+    "subtitle": "Phân biệt *, @, +; suy luận shape từ phải sang trái và trace code bằng bảng trạng thái.",
+    "accent": "#059669",
+    "dark": "#065f46",
+    "tint": "#ecfdf5",
+    "pages": [
+      {
+        "title": "1. Toán tử NumPy — cùng ký hiệu nhưng khác bản chất",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Lệnh phải nhận diện ngay",
+            "rows": [
+              ["A * B", "Nhân từng phần tử; shape phải bằng nhau hoặc broadcast được.", "[[1,2],[3,4]]*[[2,0],[1,2]]=[[2,0],[3,8]]."],
+              ["A @ B", "Nhân ma trận: hàng của A nhân cột của B.", "A(m,n) @ B(n,p) → (m,p)."],
+              ["A + B", "Cộng từng phần tử; có thể dùng broadcasting.", "(2,3)+(3,) → (2,3)."],
+              ["x.T", "Chuyển vị; với ma trận đổi hàng thành cột.", "(2,3) → (3,2)."],
+              ["reshape(...) ", "Đổi shape nhưng giữ nguyên số phần tử.", "6 phần tử → (2,3), (3,2) hoặc (6,)."],
+              ["shape", "Tuple kích thước từng chiều.", "(2,3) là 2 hàng, 3 cột."],
+              ["ndim", "Số chiều của mảng.", "Vector (3,) có ndim=1; matrix (2,3) có ndim=2."],
+              ["axis=0", "Gộp chiều hàng, giữ kết quả theo cột.", "x.sum(axis=0) với (2,3) → (3,)."],
+              ["axis=1", "Gộp chiều cột, giữ kết quả theo hàng.", "x.mean(axis=1) với (2,3) → (2,)."]
+            ]
+          },
+          {
+            "kind": "code",
+            "title": "Mẫu Đề 14: @ khác *",
+            "code": [
+              "A = np.array([[1, 2], [3, 4]])",
+              "B = np.array([[2, 0], [1, 2]])",
+              "X = A @ B   # [[4, 4], [10, 8]]",
+              "Y = A * B   # [[2, 0], [3, 8]]"
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Suy shape trước khi tính giá trị",
+            "items": [
+              "Với @: kiểm tra hai chiều ở giữa có bằng nhau không.",
+              "Với *, +, -: kiểm tra quy tắc broadcasting.",
+              "Với .T: đảo thứ tự các chiều của ma trận 2D.",
+              "Với reshape: tích các chiều mới phải bằng số phần tử cũ."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "2. Broadcasting — so shape từ phải sang trái",
+        "sections": [
+          {
+            "kind": "formula",
+            "title": "Hai chiều tương thích khi",
+            "items": [
+              "Hai kích thước bằng nhau",
+              "Hoặc một trong hai kích thước bằng 1",
+              "Thiếu chiều bên trái được hiểu như kích thước 1",
+              "Nếu có một cặp chiều không bằng nhau và không có số 1 → lỗi broadcasting"
+            ]
+          },
+          {
+            "kind": "table",
+            "title": "Ba dạng phải làm được",
+            "rows": [
+              ["Row vector", "(2,3) + (3,) → (2,3)", "Vector được cộng vào từng hàng."],
+              ["Column vector", "(2,3) + (2,1) → (2,3)", "Mỗi hàng nhận một giá trị riêng."],
+              ["Nhiều chiều", "(2,1,3) + (1,4,1) → (2,4,3)", "So lần lượt 3↔1, 1↔4, 2↔1."],
+              ["Không hợp lệ", "(2,3) + (2,)", "Chiều cuối 3 và 2 không tương thích."],
+              ["Matmul rồi cộng", "(2,3)@(3,1) → (2,1); reshape(2) → (2,)", "Sau đó cộng vector (2,) bình thường."]
+            ]
+          },
+          {
+            "kind": "code",
+            "title": "Ba ví dụ từ Đề 14–16",
+            "code": [
+              "# Đề 14",
+              "x.shape == (2, 3); v.shape == (3,); (x + v).shape == (2, 3)",
+              "",
+              "# Đề 15",
+              "x.shape == (2, 1, 3); y.shape == (1, 4, 1)",
+              "(x + y).shape == (2, 4, 3)",
+              "",
+              "# Đề 16",
+              "A.shape == (2, 3); b.shape == (2, 1)",
+              "(A + b).shape == (2, 3)"
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Mẹo thi",
+            "text": "Viết các shape thẳng cột và căn bên phải. Chỉ sau khi shape hợp lệ mới tính giá trị; cách này giảm rất nhiều lỗi nhẩm."
+          }
+        ]
+      },
+      {
+        "title": "3. Trace Python khó — lập bảng trạng thái, không đoán",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Cấu trúc code hay làm mất thời gian",
+            "rows": [
+              ["continue", "Bỏ phần còn lại của vòng hiện tại, sang vòng kế tiếp.", "Số chẵn bị continue thì không chạy dòng gán phía dưới."],
+              ["dict.get(k,0)+1", "Đếm tần suất; key chưa có thì bắt đầu từ 0.", "ai xuất hiện 2 lần → counts['ai']=2."],
+              ["lower()", "Chuẩn hóa chữ hoa/thường trước khi đếm.", "'AI' và 'ai' thành cùng key."],
+              ["sorted(d.items())", "Sắp các cặp tuple, mặc định so key trước.", "('ai',2) đứng trước ('rag',1)."],
+              ["List comprehension", "Lọc bằng if rồi mới đưa biểu thức vào list.", "[x*2 for x in nums if x%2==1]."],
+              ["slice [1:]", "Bỏ phần tử đầu và lấy đến hết.", "[2,6,10][1:] → [6,10]."],
+              ["Alias list", "Hai biến có thể cùng trỏ một list.", "y=x; y.append(3) làm x cũng đổi."],
+              ["//", "Chia lấy phần nguyên.", "7//2=3."]
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Bảng trace 4 cột",
+            "items": [
+              "Cột 1: vòng lặp/index hiện tại.",
+              "Cột 2: điều kiện True/False.",
+              "Cột 3: biến bị thay đổi sau dòng lệnh.",
+              "Cột 4: output tạm thời/list/dict hiện tại.",
+              "Chỉ tính biểu thức cuối sau khi hoàn thành bảng."
+            ]
+          },
+          {
+            "kind": "code",
+            "title": "Mẫu trace nhanh",
+            "code": [
+              "values = [1, 2, 3, 4, 5]",
+              "result = {}",
+              "for x in values:",
+              "    if x % 2 == 0:",
+              "        continue",
+              "    result[x] = x * x",
+              "# result = {1: 1, 3: 9, 5: 25}; sum = 35"
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Quản lý thời gian",
+            "text": "Nếu code có nhiều nhánh, đánh dấu và quay lại sau. Làm trước câu shape/toán tử chắc chắn; đừng để một câu trace chiếm thời gian của các câu tự luận dài."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "C",
+    "title": "LLM, Cancer Metrics & RAG Architecture",
+    "subtitle": "Nhiệm vụ của LLM, cách chọn metric khi lớp lệch và khung trả lời RAG vs fine-tune/kiến trúc nội bộ.",
+    "accent": "#7c3aed",
+    "dark": "#4c1d95",
+    "tint": "#f5f3ff",
+    "pages": [
+      {
+        "title": "1. LLM — biết làm gì, không tự có gì",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Khái niệm cần trả lời gọn",
+            "rows": [
+              ["Nhiệm vụ nền tảng", "Dự đoán/sinh token tiếp theo dựa trên ngữ cảnh.", "Từ đó tạo văn bản, giải thích, tóm tắt, dịch và code."],
+              ["ChatGPT / Claude", "Trợ lý LLM đa dụng tương tác qua hội thoại.", "Hỏi đáp, soạn thảo, phân tích, tóm tắt, hỗ trợ code."],
+              ["Context", "Thông tin được đưa vào prompt/file/tool ở lượt hiện tại.", "Model không tự biết database nội bộ chưa kết nối."],
+              ["Hallucination", "Câu trả lời nghe hợp lý nhưng không có bằng chứng hoặc sai.", "Cần citation, kiểm chứng hoặc abstain."],
+              ["Tool use", "Ứng dụng cho model gọi API/search/database qua quyền được kiểm soát.", "LLM không tự có quyền hệ thống."],
+              ["RAG", "Lấy tài liệu liên quan rồi đưa vào context trước khi sinh câu trả lời.", "Phù hợp kiến thức riêng/thay đổi."],
+              ["Fine-tune", "Điều chỉnh trọng số để học hành vi, format hoặc mẫu tác vụ ổn định.", "Không phải database cập nhật theo ngày."]
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Mẫu trả lời câu “LLM có nhiệm vụ gì?”",
+            "items": [
+              "Nêu bản chất: dự đoán token theo ngữ cảnh.",
+              "Nêu 3–5 ứng dụng: hỏi đáp, tóm tắt, viết lại, dịch, code.",
+              "Nêu giới hạn: có thể sai, không tự biết dữ liệu riêng, không tự chịu trách nhiệm.",
+              "Nêu kiểm soát: context, tool, citation và human review."
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Câu nhớ nhanh",
+            "text": "LLM là bộ máy sinh/nghiên cứu ngôn ngữ theo xác suất, không phải kho sự thật tuyệt đối và cũng không tự kết nối hệ thống nội bộ."
+          }
+        ]
+      },
+      {
+        "title": "2. Ung thư: accuracy cao chưa chắc model tốt",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Confusion matrix",
+            "rows": [
+              ["TP", "Có ung thư và model cảnh báo ung thư.", "Phát hiện đúng."],
+              ["FP", "Không ung thư nhưng model cảnh báo.", "Gọi kiểm tra thêm không cần thiết."],
+              ["FN", "Có ung thư nhưng model dự đoán không.", "Bỏ sót — thường nguy hiểm nhất trong sàng lọc."],
+              ["TN", "Không ung thư và model dự đoán không.", "Loại đúng."],
+              ["Accuracy", "Tỷ lệ đúng trên toàn bộ mẫu.", "Có thể rất cao chỉ vì TN quá nhiều."],
+              ["Precision", "Trong các cảnh báo dương, bao nhiêu là đúng.", "TP/(TP+FP)."],
+              ["Recall / Sensitivity", "Trong các ca dương thật, bắt được bao nhiêu.", "TP/(TP+FN)."],
+              ["F1", "Trung bình điều hòa precision và recall.", "Dùng khi cần cân bằng hai metric."]
+            ]
+          },
+          {
+            "kind": "formula",
+            "title": "Công thức",
+            "items": [
+              "Accuracy = (TP + TN) / (TP + FP + FN + TN)",
+              "Precision = TP / (TP + FP)",
+              "Recall = TP / (TP + FN)",
+              "F1 = 2 × Precision × Recall / (Precision + Recall)"
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Khi bỏ sót nguy hiểm hơn cảnh báo nhầm",
+            "items": [
+              "Ưu tiên tăng recall để giảm FN.",
+              "Có thể hạ threshold trên validation, nhưng precision thường giảm.",
+              "Cải thiện dữ liệu/feature cho lớp dương và kiểm tra class weight.",
+              "Giữ bước xác nhận bởi bác sĩ/người chuyên môn; model chỉ hỗ trợ sàng lọc.",
+              "Không chốt bằng accuracy chung — phải báo confusion matrix và metric lớp dương."
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Cách giải thích nontech",
+            "text": "Nếu 950/1.000 người không bệnh, model đoán tất cả là không bệnh vẫn đạt 95% accuracy nhưng bỏ sót toàn bộ người có bệnh."
+          }
+        ]
+      },
+      {
+        "title": "3. RAG hay fine-tune? Kiến trúc chatbot nội bộ",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Chọn giải pháp theo ràng buộc",
+            "rows": [
+              ["RAG", "Tri thức thay đổi, cần citation, cập nhật tài liệu nhanh, có phân quyền.", "Đổi tài liệu/index, không cần train lại toàn model."],
+              ["Fine-tune", "Muốn format/giọng văn/hành vi hoặc mẫu tác vụ ổn định.", "Cần dữ liệu train, compute và đánh giá lại."],
+              ["Hybrid", "Vừa cần kiến thức cập nhật vừa cần style cố định.", "RAG cho knowledge; fine-tune nhẹ cho behavior."],
+              ["Không nên fine-tune để nhớ tài liệu thay đổi", "Khó cập nhật, khó citation và có nguy cơ nhúng dữ liệu vào trọng số.", "Quy định thay đổi hàng tuần → ưu tiên RAG."],
+              ["LLM mã nguồn mở", "Có thể phù hợp on-premise/privacy nhưng cần hạ tầng và vận hành.", "Không mặc định tốt hơn RAG qua API; phải xét tổng ràng buộc."]
+            ]
+          },
+          {
+            "kind": "code",
+            "title": "Kiến trúc RAG đơn giản",
+            "code": [
+              "OFFLINE",
+              "Tài liệu → làm sạch → chunk → metadata(source, version, ACL)",
+              "→ embedding → vector index",
+              "",
+              "ONLINE",
+              "Đăng nhập → xác định role → lọc quyền trước retrieval",
+              "→ embedding câu hỏi → top-k chunks → prompt + chunks",
+              "→ LLM → câu trả lời + citation",
+              "→ thiếu bằng chứng: abstain / chuyển người"
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Checklist bài tự luận kiến trúc",
+            "items": [
+              "Tách pipeline offline và online.",
+              "Gắn source, version và ACL cho từng chunk.",
+              "Lọc quyền trước retrieval, không lọc sau khi model đã thấy dữ liệu.",
+              "Có citation và câu trả lời 'chưa đủ thông tin'.",
+              "Test retrieval, generation, quyền A/B, prompt injection, latency và log an toàn."
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Câu kết luận mẫu",
+            "text": "Với tài liệu nội bộ thay đổi thường xuyên và cần nguồn kiểm chứng, em chọn RAG trước; chỉ fine-tune sau nếu cần chuẩn hóa hành vi/format mà prompt chưa đáp ứng."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "D",
+    "title": "Góp ý Senior, Ethics & Escalation",
+    "subtitle": "Khung phản biện chuyên nghiệp: tôn trọng mục tiêu, chỉ ra rủi ro bằng bằng chứng và đưa phương án thay thế.",
+    "accent": "#d97706",
+    "dark": "#7c2d12",
+    "tint": "#fff7ed",
+    "pages": [
+      {
+        "title": "1. Góp ý senior — phản biện hướng làm, không công kích người",
+        "sections": [
+          {
+            "kind": "steps",
+            "title": "Khung M-R-B-P-X",
+            "items": [
+              "Mục tiêu: xác nhận điều senior muốn đạt, ví dụ kịp deadline.",
+              "Rủi ro: nói cụ thể điều gì có thể sai hoặc gây hại.",
+              "Bằng chứng: đưa metric, test nhỏ, log hoặc ví dụ tái hiện.",
+              "Phương án: đề xuất lựa chọn thay thế có thời gian/chi phí rõ.",
+              "Xác nhận: hỏi còn ràng buộc nào chưa biết và chốt bước thử tiếp theo."
+            ]
+          },
+          {
+            "kind": "table",
+            "title": "Cách nói nên dùng",
+            "rows": [
+              ["Mở đầu", "Em hiểu mục tiêu là kịp tiến độ/giảm chi phí.", "Cho thấy bạn không phủ nhận mục tiêu chung."],
+              ["Nêu lo ngại", "Em lo hướng này có thể gây rủi ro X vì bằng chứng Y.", "Tránh nói 'anh sai rồi'."],
+              ["Đề xuất", "Em đề nghị thử phương án nhỏ trong 1–2 giờ và đo bằng metric Z.", "Biến tranh luận thành thử nghiệm."],
+              ["Hỏi lại", "Có ràng buộc nào em chưa biết không ạ?", "Giữ thái độ học hỏi."],
+              ["Chốt", "Nếu kết quả không đạt ngưỡng, mình giữ phương án an toàn hơn.", "Có tiêu chí quyết định rõ."]
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Điểm đạo đức cốt lõi",
+            "text": "Tôn trọng cấp bậc không đồng nghĩa im lặng trước rủi ro. Trách nhiệm nghề nghiệp là nêu vấn đề có căn cứ và giúp nhóm tìm phương án khả thi hơn."
+          }
+        ]
+      },
+      {
+        "title": "2. Ba tình huống sát Đề 14–16",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Rủi ro và phương án thay thế",
+            "rows": [
+              ["Bỏ validation để kịp deadline", "Không biết model có overfit/sai trên dữ liệu mới; có thể phát hành lỗi.", "Giữ validation tối thiểu, smoke test, pilot nhỏ và rollback."],
+              ["Gửi dữ liệu nhạy cảm thô ra LLM ngoài", "Rò rỉ dữ liệu, vượt mục đích/quyền, nguy cơ pháp lý.", "Dữ liệu giả/khử định danh, môi trường được duyệt hoặc triển khai nội bộ."],
+              ["Bỏ ACL và citation trong RAG", "Người A có thể thấy tài liệu B; câu trả lời không kiểm chứng được.", "Metadata ACL, filter trước retrieval, citation bắt buộc."],
+              ["Model có recall thấp ở một nhóm", "Bất công và bỏ sót rủi ro ở nhóm đó.", "Đo metric theo nhóm, bổ sung dữ liệu/test và human review."],
+              ["Senior muốn giấu hạn chế", "Báo cáo sai lệch làm người dùng/đơn vị phê duyệt hiểu nhầm.", "Ghi giới hạn, phạm vi dùng và điều kiện giám sát rõ ràng."]
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Ví dụ trả lời hoàn chỉnh",
+            "items": [
+              "Em hiểu mục tiêu là có demo trước thứ Sáu.",
+              "Em lo bỏ validation sẽ không phát hiện model giảm recall trên dữ liệu mới.",
+              "Em có thể chạy bộ 50 test quan trọng trong hai giờ và báo confusion matrix.",
+              "Nếu đạt ngưỡng thì pilot 5% người dùng; nếu không thì giữ phiên bản cũ.",
+              "Anh xem phương án này có phù hợp deadline và còn ràng buộc nào khác không ạ?"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "3. Khi nào cần escalation & mẫu tự luận",
+        "sections": [
+          {
+            "kind": "table",
+            "title": "Mức xử lý",
+            "rows": [
+              ["Khác biệt kỹ thuật thông thường", "Thảo luận trực tiếp, thử nghiệm nhỏ, ghi kết quả.", "Không cần escalation ngay."],
+              ["Rủi ro chất lượng có thể đảo ngược", "Pilot giới hạn, monitoring, rollback.", "Chốt ngưỡng trước khi phát hành."],
+              ["Dữ liệu nhạy cảm/pháp lý/an toàn", "Dừng hành động rủi ro, ghi nhận và hỏi owner/compliance phù hợp.", "Không tự ý lách quy trình."],
+              ["Nguy cơ gây hại nghiêm trọng vẫn bị bỏ qua", "Escalate qua kênh chính thức với bằng chứng tối thiểu.", "Tập trung vào rủi ro, không công kích cá nhân."],
+              ["Sau quyết định", "Ghi ai quyết định, phạm vi, metric, version và biện pháp giảm thiểu.", "Không ghi secret hoặc PII thô."]
+            ]
+          },
+          {
+            "kind": "steps",
+            "title": "Khung tự luận 5 đoạn",
+            "items": [
+              "Đoạn 1: xác nhận mục tiêu của senior.",
+              "Đoạn 2: nêu rủi ro cụ thể và hậu quả.",
+              "Đoạn 3: đưa bằng chứng/test/metric.",
+              "Đoạn 4: đề xuất phương án thay thế và tiêu chí quyết định.",
+              "Đoạn 5: nói khi nào cần ghi nhận hoặc escalation."
+            ]
+          },
+          {
+            "kind": "callout",
+            "title": "Mẫu kết luận",
+            "text": "Em sẽ góp ý riêng, dựa trên dữ liệu và đưa phương án thử nhỏ. Nếu vấn đề liên quan dữ liệu nhạy cảm hoặc nguy cơ gây hại nghiêm trọng mà chưa được xử lý, em sẽ ghi nhận và dùng kênh escalation phù hợp."
+          }
+        ]
+      }
+    ]
+  }
+]

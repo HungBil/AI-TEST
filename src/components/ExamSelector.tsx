@@ -2,6 +2,7 @@ import type { ChangeEvent } from 'react';
 import type { Exam, QuizMode } from '../types/exam';
 import { Disclaimer } from './Disclaimer';
 import { CheatSheetLibrary } from './CheatSheetLibrary';
+import '../styles/day-one-cheatsheets.css';
 
 const COMMUNITY_URL = 'https://www.facebook.com/groups/1450219003271674';
 
@@ -57,10 +58,16 @@ export function ExamSelector({
             : `Local/self-host web app với ${exams.length} bài kiểm tra. Mỗi bài 60 câu, có Practice mode, Exam mode, tự luận self-grade và thống kê cuối bài.`}
         </p>
         {isNewCollection ? (
-          <a className="cheat-sheet-jump" href="#cheat-sheets">
-            <span aria-hidden="true">▤</span>
-            Mở 4 cheat sheet và học ngay trên web
-          </a>
+          <div className="cheat-sheet-jump-group">
+            <a className="cheat-sheet-jump cheat-sheet-jump-special" href="#day-one-cheat-sheets">
+              <span aria-hidden="true">★</span>
+              Cheat sheet đặc biệt Đề 14–16
+            </a>
+            <a className="cheat-sheet-jump cheat-sheet-jump-secondary" href="#cheat-sheets">
+              <span aria-hidden="true">▤</span>
+              Bộ cheat sheet nền tảng
+            </a>
+          </div>
         ) : (
           <a className="community-cta" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
             <span aria-hidden="true">-&gt;</span>
