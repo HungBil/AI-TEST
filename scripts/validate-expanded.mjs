@@ -10,6 +10,18 @@ const questionIds = new Set();
 let failed = false;
 const fail = (message) => { failed = true; console.error(`❌ ${message}`); };
 
+const ACTUAL_DAY_REQUIRED_SKILLS = [
+  'matrix.open.determinant-and-rank',
+  'ml.optimization.open-bias-update',
+  'numpy.code.short-broadcast-output',
+  'numpy.code.elementwise-vs-matmul',
+  'llm.open.capabilities-and-limitations',
+  'ml.essay.cancer-metrics-and-threshold',
+  'rag.essay.rag-vs-open-model-finetune',
+  'rag.essay.internal-chatbot-architecture',
+  'responsible-ai.essay.challenge-senior-direction'
+];
+
 for (const { crown, file, exam } of entries) {
   const label = `${crown ? 'crown' : 'legacy'}/${file}`;
   if (!exam.id || examIds.has(exam.id)) fail(`${label}: exam id thiếu hoặc trùng`);
@@ -32,19 +44,43 @@ for (const { crown, file, exam } of entries) {
   }
   const expected = crown ? '20/20/12/8' : '10/22/20/8';
   if (`${count.A}/${count.B}/${count.C}/${count.D}` !== expected || Math.abs(points - 100) > 0.001) fail(`${label}: phân bố hoặc điểm sai`);
+
   if (crown) {
     const essays = questions.filter((q) => q.type === 'essay');
     const codes = questions.filter((q) => q.type === 'code');
-    if (essays.length !== 3 || !essays.every((q) => q.module === 'C')) fail(`${label}: cần 3 essay C`);
-    if (codes.length !== 2 || !codes.every((q) => q.module === 'B')) fail(`${label}: cần 2 code B`);
+    const openQuestions = questions.filter((q) => q.type !== 'mcq');
     const number = Number(exam.id.slice(-2));
-    if (number >= 11 && essays.some((q) => !Array.isArray(q.hint) || q.hint.length < 3 || !String(q.modelAnswer).includes('Ví dụ'))) fail(`${label}: đề mở rộng cần gợi ý và ví dụ`);
+    const actualDay = exam.actualDayProfile === true || number >= 14;
+
+    if (actualDay) {
+      const essayModules = { A: 0, B: 0, C: 0, D: 0 };
+      essays.forEach((q) => { essayModules[q.module] += 1; });
+      if (openQuestions.length !== 10 || exam.openQuestionCount !== 10) fail(`${label}: đề ngày thi phải có đúng 10 câu điền/tự luận`);
+      if (codes.length !== 3 || !codes.every((q) => q.module === 'B')) fail(`${label}: đề ngày thi cần đúng 3 câu code ở Module B`);
+      if (essays.length !== 7 || `${essayModules.A}/${essayModules.B}/${essayModules.C}/${essayModules.D}` !== '2/0/4/1') {
+        fail(`${label}: essay phải phân bố A/B/C/D = 2/0/4/1`);
+      }
+      if (openQuestions.some((q) => !Array.isArray(q.hint) || q.hint.length < 3 || !String(q.modelAnswer).includes('Ví dụ'))) {
+        fail(`${label}: cả 10 câu mở phải có ít nhất 3 gợi ý và đáp án mẫu có ví dụ`);
+      }
+      if (exam.resultCelebration !== true) fail(`${label}: thiếu cờ resultCelebration`);
+      const skillIds = new Set(questions.map((q) => q.skillId));
+      for (const skill of ACTUAL_DAY_REQUIRED_SKILLS) {
+        if (!skillIds.has(skill)) fail(`${label}: thiếu kỹ năng ngày thi ${skill}`);
+      }
+    } else {
+      if (essays.length !== 3 || !essays.every((q) => q.module === 'C')) fail(`${label}: cần 3 essay C`);
+      if (codes.length !== 2 || !codes.every((q) => q.module === 'B')) fail(`${label}: cần 2 code B`);
+      if (number >= 11 && essays.some((q) => !Array.isArray(q.hint) || q.hint.length < 3 || !String(q.modelAnswer).includes('Ví dụ'))) {
+        fail(`${label}: đề mở rộng cần gợi ý và ví dụ`);
+      }
+    }
   }
   console.log(`✅ ${label}: 60 câu, 100 điểm`);
 }
 
 const legacy = entries.filter((e) => !e.crown);
 const crown = entries.filter((e) => e.crown);
-if (legacy.length !== 10 || crown.length !== 13) fail(`Cần 10 legacy và 13 Crown, hiện có ${legacy.length}/${crown.length}`);
+if (legacy.length !== 10 || crown.length !== 16) fail(`Cần 10 legacy và 16 Crown, hiện có ${legacy.length}/${crown.length}`);
 if (failed) process.exit(1);
-console.log('\n✅ Toàn repo: 23 đề, 1.380 câu.');
+console.log('\n✅ Toàn repo: 26 đề, 1.560 câu; Đề 14-16 có đúng 10 câu điền/tự luận.');
