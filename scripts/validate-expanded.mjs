@@ -55,7 +55,7 @@ for (const { crown, file, exam } of entries) {
         'matrix.determinant.written-calculation',
         'matrix.rank.written-row-dependence',
         'ml.optimization.update-bias-one-step',
-        'numpy.code.matmul',
+        'numpy.code.',
         'llm.application.common-assistant-tasks',
         'ml.metrics.prioritize-recall-costly-false-negative',
         'rag.choice.changing-knowledge-vs-finetune',
