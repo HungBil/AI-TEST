@@ -6,7 +6,7 @@ import { buildModuleA } from './module-a.mjs';
 import { buildModuleB } from './module-b.mjs';
 import { buildModuleC, buildModuleD } from './module-cd.mjs';
 import { ESSAY_PLAN } from './module-c-essays.mjs';
-import { buildDayOneExams } from './day-one-exams.mjs';
+import { buildDayOneExams } from './day-one-exams-safe.mjs';
 
 const BLUEPRINTS = [...EXAM_BLUEPRINTS, ...EXTRA_EXAM_BLUEPRINTS];
 
