@@ -41,6 +41,9 @@ export interface Exam {
   disclaimer: string;
   moduleOverview?: string[];
   moduleLabels?: Partial<Record<ModuleId, string>>;
+  actualDayProfile?: boolean;
+  openQuestionCount?: number;
+  resultCelebration?: boolean;
   questions: Question[];
 }
 
