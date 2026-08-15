@@ -1,0 +1,112 @@
+.cheat-sheet-jump-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cheat-sheet-jump-group .cheat-sheet-jump {
+  margin-top: 0;
+}
+
+.cheat-sheet-jump-special {
+  background: linear-gradient(135deg, #8a6200, #b7791f);
+  box-shadow: 0 14px 30px rgba(138, 98, 0, .24);
+}
+
+.cheat-sheet-jump-secondary {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+  box-shadow: 0 10px 24px rgba(51, 65, 85, .1);
+}
+
+.cheat-sheet-jump-secondary:hover {
+  box-shadow: 0 14px 28px rgba(51, 65, 85, .16);
+}
+
+.cheat-library + .cheat-library {
+  margin-top: 20px;
+}
+
+.cheat-library-special {
+  position: relative;
+  overflow: visible;
+  border: 2px solid #e6b94d;
+  background:
+    radial-gradient(circle at 100% 0, rgba(255, 223, 128, .34), transparent 34%),
+    linear-gradient(180deg, #fffdf5 0%, #ffffff 42%);
+  box-shadow: 0 18px 42px rgba(128, 88, 8, .13);
+}
+
+.cheat-special-ribbon {
+  position: absolute;
+  top: -13px;
+  left: 26px;
+  z-index: 2;
+  padding: 7px 13px;
+  border: 1px solid #e6b94d;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff4bf, #ffe08a);
+  color: #6d4800;
+  font-size: .74rem;
+  font-weight: 950;
+  letter-spacing: .055em;
+  box-shadow: 0 8px 18px rgba(128, 88, 8, .14);
+}
+
+.cheat-library-special .cheat-library-header {
+  padding-top: 7px;
+}
+
+.cheat-library-special .cheat-library-badge {
+  border: 1px solid #e8c76d;
+  background: #fff4c7;
+  color: #704b00;
+}
+
+.cheat-library-special .cheat-sheet {
+  border-color: #ead9aa;
+}
+
+.cheat-library-special .cheat-sheet.open {
+  box-shadow: 0 16px 36px rgba(100, 72, 15, .13);
+}
+
+.cheat-library-special .cheat-page {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 238, .88), #fff 92px);
+}
+
+.cheat-library-standard {
+  background: linear-gradient(180deg, #f8fbff 0%, #fff 120px);
+}
+
+@media (max-width: 780px) {
+  .cheat-special-ribbon {
+    left: 18px;
+  }
+}
+
+@media (max-width: 620px) {
+  .cheat-sheet-jump-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .cheat-sheet-jump-group .cheat-sheet-jump {
+    width: 100%;
+  }
+
+  .cheat-library-special {
+    margin-top: 8px;
+  }
+
+  .cheat-special-ribbon {
+    max-width: calc(100% - 36px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
