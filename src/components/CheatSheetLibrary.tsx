@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import cheatSheetsRaw from '../data/cheatsheets.json';
+import dayOneCheatSheetsRaw from '../data/day-one-cheatsheets.json';
 import '../styles/cheatsheets.css';
 
 type ModuleCode = 'A' | 'B' | 'C' | 'D';
@@ -25,7 +26,21 @@ type CheatSheet = {
   pages: CheatPage[];
 };
 
+interface CheatSheetCollectionProps {
+  id: string;
+  collectionKey: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  badge: string;
+  sheets: CheatSheet[];
+  defaultOpen: ModuleCode;
+  variant?: 'standard' | 'special';
+  panelNote: string;
+}
+
 const cheatSheets = cheatSheetsRaw as CheatSheet[];
+const dayOneCheatSheets = dayOneCheatSheetsRaw as CheatSheet[];
 const initialPages: Record<ModuleCode, number> = { A: 0, B: 0, C: 0, D: 0 };
 
 function stripNumber(text: string) {
@@ -136,29 +151,45 @@ function Section({ section }: { section: CheatSection }) {
   );
 }
 
-export function CheatSheetLibrary() {
-  const [openModule, setOpenModule] = useState<ModuleCode | null>('B');
+function CheatSheetCollection({
+  id,
+  collectionKey,
+  eyebrow,
+  title,
+  description,
+  badge,
+  sheets,
+  defaultOpen,
+  variant = 'standard',
+  panelNote
+}: CheatSheetCollectionProps) {
+  const [openModule, setOpenModule] = useState<ModuleCode | null>(defaultOpen);
   const [activePages, setActivePages] = useState<Record<ModuleCode, number>>(initialPages);
+  const isSpecial = variant === 'special';
 
   return (
-    <section id="cheat-sheets" className="cheat-library card" aria-labelledby="cheat-library-title">
+    <section
+      id={id}
+      className={`cheat-library card ${isSpecial ? 'cheat-library-special' : 'cheat-library-standard'}`}
+      aria-labelledby={`${collectionKey}-title`}
+      data-cheat-collection={collectionKey}
+    >
+      {isSpecial && <span className="cheat-special-ribbon">ĐỀ 14–16 · ÔN CẤP TỐC</span>}
       <header className="cheat-library-header">
         <div>
-          <span className="eyebrow">Ôn trực tiếp trên web</span>
-          <h2 id="cheat-library-title">4 cheat sheet bám theo nội dung bài test</h2>
-          <p>
-            Mỗi module gồm 3 trang cô đọng. Module B có riêng bảng thuật ngữ, câu lệnh Python,
-            Requests/HTTP/JSON, NumPy và Pandas để tra ý nghĩa ngay khi ôn.
-          </p>
+          <span className="eyebrow">{eyebrow}</span>
+          <h2 id={`${collectionKey}-title`}>{title}</h2>
+          <p>{description}</p>
         </div>
-        <span className="cheat-library-badge">12 trang · mở rộng từng module</span>
+        <span className="cheat-library-badge">{badge}</span>
       </header>
 
       <div className="cheat-sheet-list">
-        {cheatSheets.map((sheet) => {
+        {sheets.map((sheet) => {
           const isOpen = openModule === sheet.module;
           const activePage = activePages[sheet.module] ?? 0;
           const page = sheet.pages[activePage];
+          const panelId = `${collectionKey}-panel-${sheet.module}`;
           const style = {
             '--cheat-accent': sheet.accent,
             '--cheat-dark': sheet.dark,
@@ -171,12 +202,12 @@ export function CheatSheetLibrary() {
                 type="button"
                 className="cheat-sheet-summary"
                 aria-expanded={isOpen}
-                aria-controls={`cheat-panel-${sheet.module}`}
+                aria-controls={panelId}
                 onClick={() => setOpenModule((current) => current === sheet.module ? null : sheet.module)}
               >
                 <span className="cheat-module-icon"><ModuleIcon module={sheet.module} /></span>
                 <span className="cheat-summary-copy">
-                  <span>Module {sheet.module} · 3 trang</span>
+                  <span>{isSpecial ? 'Đề 14–16 · ' : ''}Module {sheet.module} · {sheet.pages.length} trang</span>
                   <strong>{sheet.title}</strong>
                   <small>{sheet.subtitle}</small>
                 </span>
@@ -185,7 +216,7 @@ export function CheatSheetLibrary() {
               </button>
 
               {isOpen && (
-                <div id={`cheat-panel-${sheet.module}`} className="cheat-sheet-panel">
+                <div id={panelId} className="cheat-sheet-panel">
                   <div className="cheat-panel-toolbar">
                     <div className="cheat-page-tabs" role="tablist" aria-label={`Trang Module ${sheet.module}`}>
                       {sheet.pages.map((item, index) => (
@@ -201,14 +232,14 @@ export function CheatSheetLibrary() {
                         </button>
                       ))}
                     </div>
-                    <span className="cheat-panel-note">Nội dung chuẩn để học trên web · PDF sửa lỗi được đính kèm riêng</span>
+                    <span className="cheat-panel-note">{panelNote}</span>
                   </div>
 
                   <div className="cheat-page" role="tabpanel">
                     <div className="cheat-page-heading">
                       <span className="cheat-page-module">{sheet.module}</span>
                       <div>
-                        <span>Module {sheet.module} · Trang {activePage + 1}/3</span>
+                        <span>Module {sheet.module} · Trang {activePage + 1}/{sheet.pages.length}</span>
                         <h3>{page.title}</h3>
                       </div>
                     </div>
@@ -223,5 +254,36 @@ export function CheatSheetLibrary() {
         })}
       </div>
     </section>
+  );
+}
+
+export function CheatSheetLibrary() {
+  return (
+    <>
+      <CheatSheetCollection
+        id="day-one-cheat-sheets"
+        collectionKey="day-one-special"
+        eyebrow="Cấp tốc theo phản hồi ngày thi đầu"
+        title="4 cheat sheet đặc biệt cho Đề 14–16"
+        description="Chỉ giữ các mảng vừa xuất hiện: determinant, rank, update bias; NumPy matrix/broadcasting; LLM, cancer metrics, RAG; và cách góp ý senior. Mỗi module gồm ba trang để ôn nhanh trước buổi thi tiếp theo."
+        badge="12 trang · đúng 10 câu mở"
+        sheets={dayOneCheatSheets}
+        defaultOpen="A"
+        variant="special"
+        panelNote="Bám trực tiếp Đề 14–16 · có công thức, ví dụ và khung tự luận"
+      />
+
+      <CheatSheetCollection
+        id="cheat-sheets"
+        collectionKey="foundation"
+        eyebrow="Ôn nền tảng trực tiếp trên web"
+        title="4 cheat sheet đầy đủ theo module"
+        description="Mỗi module gồm ba trang cô đọng. Module B có bảng thuật ngữ, câu lệnh Python, Requests/HTTP/JSON, NumPy và Pandas để tra ý nghĩa khi ôn dài hạn."
+        badge="12 trang · nền tảng tổng hợp"
+        sheets={cheatSheets}
+        defaultOpen="B"
+        panelNote="Nội dung nền tảng để học trên web · dùng cho toàn bộ bộ Crown"
+      />
+    </>
   );
 }
