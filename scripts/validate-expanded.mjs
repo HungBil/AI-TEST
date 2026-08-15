@@ -33,18 +33,50 @@ for (const { crown, file, exam } of entries) {
   const expected = crown ? '20/20/12/8' : '10/22/20/8';
   if (`${count.A}/${count.B}/${count.C}/${count.D}` !== expected || Math.abs(points - 100) > 0.001) fail(`${label}: phân bố hoặc điểm sai`);
   if (crown) {
+    const number = Number(exam.id.slice(-2));
     const essays = questions.filter((q) => q.type === 'essay');
     const codes = questions.filter((q) => q.type === 'code');
-    if (essays.length !== 3 || !essays.every((q) => q.module === 'C')) fail(`${label}: cần 3 essay C`);
-    if (codes.length !== 2 || !codes.every((q) => q.module === 'B')) fail(`${label}: cần 2 code B`);
-    const number = Number(exam.id.slice(-2));
-    if (number >= 11 && essays.some((q) => !Array.isArray(q.hint) || q.hint.length < 3 || !String(q.modelAnswer).includes('Ví dụ'))) fail(`${label}: đề mở rộng cần gợi ý và ví dụ`);
+    const openQuestions = questions.filter((q) => q.type !== 'mcq');
+
+    if (number >= 14) {
+      const essayByModule = Object.fromEntries(['A', 'B', 'C', 'D'].map((module) => [module, essays.filter((q) => q.module === module).length]));
+      if (openQuestions.length !== 10) fail(`${label}: cấu trúc ngày đầu cần đúng 10 câu điền/tự luận`);
+      if (codes.length !== 3 || !codes.every((q) => q.module === 'B')) fail(`${label}: cần đúng 3 câu code Module B`);
+      if (essays.length !== 7 || essayByModule.A !== 3 || essayByModule.C !== 3 || essayByModule.D !== 1) {
+        fail(`${label}: essay phải phân bố A=3, C=3, D=1`);
+      }
+      if (exam.dayOneStructure !== true || exam.openResponseCount !== 10 || exam.catCelebration !== true) {
+        fail(`${label}: thiếu metadata cấu trúc ngày đầu/cat celebration`);
+      }
+      if (openQuestions.some((q) => !Array.isArray(q.hint) || q.hint.length < 3 || !String(q.modelAnswer).includes('Ví dụ'))) {
+        fail(`${label}: mọi câu mở cần ít nhất 3 gợi ý và đáp án mẫu có ví dụ dễ hiểu`);
+      }
+      const requiredSkills = [
+        'matrix.determinant.written-calculation',
+        'matrix.rank.written-row-dependence',
+        'ml.optimization.update-bias-one-step',
+        'numpy.code.',
+        'llm.application.common-assistant-tasks',
+        'ml.metrics.prioritize-recall-costly-false-negative',
+        'rag.choice.changing-knowledge-vs-finetune',
+        'rag.architecture.internal-chatbot-order'
+      ];
+      for (const prefix of requiredSkills) {
+        if (!questions.some((q) => String(q.skillId).startsWith(prefix))) fail(`${label}: thiếu coverage ${prefix}`);
+      }
+    } else {
+      if (essays.length !== 3 || !essays.every((q) => q.module === 'C')) fail(`${label}: cần 3 essay C`);
+      if (codes.length !== 2 || !codes.every((q) => q.module === 'B')) fail(`${label}: cần 2 code B`);
+      if (number >= 11 && essays.some((q) => !Array.isArray(q.hint) || q.hint.length < 3 || !String(q.modelAnswer).includes('Ví dụ'))) {
+        fail(`${label}: đề mở rộng cần gợi ý và ví dụ`);
+      }
+    }
   }
   console.log(`✅ ${label}: 60 câu, 100 điểm`);
 }
 
 const legacy = entries.filter((e) => !e.crown);
 const crown = entries.filter((e) => e.crown);
-if (legacy.length !== 10 || crown.length !== 13) fail(`Cần 10 legacy và 13 Crown, hiện có ${legacy.length}/${crown.length}`);
+if (legacy.length !== 10 || crown.length !== 16) fail(`Cần 10 legacy và 16 Crown, hiện có ${legacy.length}/${crown.length}`);
 if (failed) process.exit(1);
-console.log('\n✅ Toàn repo: 23 đề, 1.380 câu.');
+console.log('\n✅ Toàn repo: 26 đề, 1.560 câu.');
