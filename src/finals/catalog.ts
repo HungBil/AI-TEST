@@ -1,5 +1,4 @@
 import type { Exam, Question } from '../types/exam';
-import raw from './content.json';
 import plan from './plan.json';
 
 export type FinalPhase = 'phase1' | 'phase2';
@@ -36,7 +35,14 @@ export interface FinalCatalog {
   cheatSheets: FinalCheatSheet[];
 }
 export interface FinalSlot { id: string; phase: FinalPhase; trackId?: FinalTrack; number: number }
-export const finalCatalog = raw as FinalCatalog;
+const emptyCatalog: FinalCatalog = { schemaVersion: 1, sources: [], trackDefinitions: [], exams: [], cheatSheets: [] };
+export let finalCatalog = emptyCatalog;
+export function setFinalCatalog(catalog: FinalCatalog | null): void {
+  finalCatalog = catalog ?? emptyCatalog;
+}
+export function hasFinalCatalog(): boolean {
+  return finalCatalog !== emptyCatalog;
+}
 export const finalPlan = plan;
 export const finalSlots: FinalSlot[] = [
   ...Array.from({ length: plan.phase1Count }, (_, i) => ({

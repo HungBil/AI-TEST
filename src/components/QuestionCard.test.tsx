@@ -86,6 +86,7 @@ describe('QuestionCard open answers', () => {
 
     await act(async () => modelButton.click());
     expect(container.textContent).toContain(essayQuestion.modelAnswer);
+    expect(container.textContent).toContain('Tiêu chí tự chấm');
     expect(container.textContent).toContain('Tự chấm:');
   });
 

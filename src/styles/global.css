@@ -53,9 +53,10 @@ textarea { min-height: 180px; resize: vertical; }
 .question-nav button { border: 1px solid #d8e1ed; border-radius: 10px; background: white; padding: 8px 0; }
 .question-nav button.active { background: #2858ff; border-color: #2858ff; color: white; }
 .question-nav button.answered:not(.active) { background: #e6f7ec; border-color: #9fdbb3; }
-.quiz-main { display: grid; gap: 16px; align-content: start; }
+.quiz-main { display: grid; gap: 16px; align-content: start; min-width: 0; }
 .question-header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
 .rich-text pre, .feedback pre { overflow-x: auto; background: #111827; color: #e5e7eb; border-radius: 16px; padding: 16px; line-height: 1.5; }
+.model-answer-panel pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .options { display: grid; gap: 12px; margin-top: 20px; }
 .option { display: flex; gap: 12px; align-items: flex-start; }
 .option span { display: inline-grid; place-items: center; min-width: 32px; height: 32px; border-radius: 50%; background: #eef3fb; font-weight: 900; }

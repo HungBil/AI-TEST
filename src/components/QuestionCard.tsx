@@ -9,10 +9,11 @@ interface Props {
   answer?: AnswerState;
   mode: 'practice' | 'exam';
   submitted: boolean;
+  moduleLabel?: string;
   onAnswer: (answer: AnswerState) => void;
 }
 
-export function QuestionCard({ question, index, total, answer, mode, submitted, onAnswer }: Props) {
+export function QuestionCard({ question, index, total, answer, mode, submitted, moduleLabel, onAnswer }: Props) {
   const [showHint, setShowHint] = useState(false);
   const [showModelAnswer, setShowModelAnswer] = useState(false);
   const isMcq = question.type === 'mcq';
@@ -31,7 +32,7 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
     <article className="question-card card">
       <header className="question-header">
         <div>
-          <span className="eyebrow">Câu {index + 1}/{total} · Module {question.module}</span>
+          <span className="eyebrow">Câu {index + 1}/{total} · Module {question.module}{moduleLabel ? ` · ${moduleLabel}` : ''}</span>
           <h2>{question.type === 'mcq' ? 'Trắc nghiệm' : question.type === 'code' ? 'Code tay / pseudo-code' : 'Tự luận ngắn'}</h2>
         </div>
         <strong>{question.points} điểm</strong>
@@ -49,6 +50,7 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
               <button
                 key={option.key}
                 className={['option', selected ? 'selected' : '', correct ? 'correct' : '', wrong ? 'wrong' : ''].join(' ')}
+                disabled={submitted}
                 onClick={() => onAnswer({ ...answer, selected: option.key })}
               >
                 <span>{option.key}</span>
@@ -62,6 +64,7 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
           <textarea
             placeholder="Gõ câu trả lời/code/pseudo-code của bạn..."
             value={answer?.text ?? ''}
+            readOnly={submitted}
             onChange={(event) => onAnswer({ ...answer, text: event.target.value })}
           />
 
@@ -80,9 +83,9 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
         </div>
       )}
 
-      {revealMcq && isMcq && answer?.selected && (
+      {revealMcq && isMcq && (
         <section className="feedback">
-          <strong>{answer.selected === question.answer ? 'Đúng' : `Sai. Đáp án đúng là ${question.answer}.`}</strong>
+          <strong>{!answer?.selected ? `Đáp án đúng là ${question.answer}.` : answer.selected === question.answer ? 'Đúng' : `Sai. Đáp án đúng là ${question.answer}.`}</strong>
           <p>{question.explanation}</p>
         </section>
       )}
@@ -98,6 +101,8 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
         <section className="feedback model-answer-panel">
           <strong>Đáp án mẫu</strong>
           <pre><code>{openQuestion.modelAnswer}</code></pre>
+          <strong>Tiêu chí tự chấm</strong>
+          <ul>{openQuestion.rubric.map(item => <li key={item}>{item}</li>)}</ul>
           <div className="self-grade">
             <span>Tự chấm:</span>
             <button className={answer?.selfGrade === 'pass' ? 'active' : ''} onClick={() => onAnswer({ ...answer, selfGrade: 'pass' })}>Đạt</button>

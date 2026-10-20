@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { webcrypto } from 'node:crypto';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const text = value => typeof value === 'string' && value.trim().length > 0;
@@ -138,13 +139,46 @@ export function validateFinals(catalog, plan, { complete = false } = {}) {
   return { errors, published: published.length, planned: slots.size };
 }
 
+export function validateFinalVault(lock) {
+  const base64 = value => typeof value === 'string' && value.length > 0 && value.length <= 32_000_000
+    && value.length % 4 === 0 && /^[A-Za-z0-9+/]*={0,2}$/.test(value);
+  if (lock?.version !== 1 || !Number.isInteger(lock.iterations) || lock.iterations < 600_000 || lock.iterations > 2_000_000
+    || !['salt', 'iv', 'ciphertext'].every(key => base64(lock[key]))
+    || Buffer.from(lock.salt, 'base64').length !== 16 || Buffer.from(lock.iv, 'base64').length !== 12
+    || Buffer.from(lock.ciphertext, 'base64').length < 16 || lock.ciphertext.length > 32_000_000) {
+    throw new Error('Invalid encrypted final-review vault.');
+  }
+}
+
+export async function decryptFinalVault(lock, password) {
+  validateFinalVault(lock);
+  if (typeof password !== 'string' || !password.trim() || password.trim().length > 256) throw new Error('A private final-review key is required.');
+  const input = await webcrypto.subtle.importKey('raw', new TextEncoder().encode(password.trim()), 'PBKDF2', false, ['deriveKey']);
+  const key = await webcrypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: Buffer.from(lock.salt, 'base64'), iterations: lock.iterations }, input, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  const bytes = await webcrypto.subtle.decrypt({ name: 'AES-GCM', iv: Buffer.from(lock.iv, 'base64') }, key, Buffer.from(lock.ciphertext, 'base64'));
+  const payload = JSON.parse(new TextDecoder().decode(bytes));
+  if (payload?.version !== 1 || payload.marker !== 'AI_TEST_FINAL_REVIEW' || !payload.nonce || !payload.catalog) throw new Error('Vault does not contain a final-review catalog.');
+  return payload.catalog;
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    const catalog = JSON.parse(fs.readFileSync(path.join(root, 'src/finals/content.json'), 'utf8'));
+    const args = process.argv.slice(2);
+    const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined;
+    const keyPath = option('--key-file'), catalogPath = option('--catalog');
+    const password = keyPath ? fs.readFileSync(keyPath, 'utf8').trim() : process.env.FINAL_REVIEW_PASSWORD;
+    const lock = JSON.parse(fs.readFileSync(path.join(root, 'src/finals/lock.json'), 'utf8'));
+    validateFinalVault(lock);
+    if (!catalogPath && !password) {
+      if (args.includes('--complete')) throw new Error('Completion requires --catalog <private-json> or --key-file <private-key> to validate all decrypted content.');
+      console.log('Encrypted final vault: envelope valid. Content validation requires a private key or private catalog; no publication count was inferred.');
+    } else {
+    const catalog = catalogPath ? JSON.parse(fs.readFileSync(catalogPath, 'utf8')) : await decryptFinalVault(lock, password);
     const plan = JSON.parse(fs.readFileSync(path.join(root, 'src/finals/plan.json'), 'utf8'));
     const result = validateFinals(catalog, plan, { complete: process.argv.includes('--complete') });
     for (const error of result.errors) console.error(`FAIL: ${error}`);
-    console.log(`Final review: ${result.published}/${result.planned} published. Scaffold success does NOT mean content is complete.`);
+    console.log(`Final review: ${result.published}/${result.planned} published. The earlier 20-exam plan is not a completion claim.`);
     if (result.errors.length) process.exitCode = 1;
-  } catch (error) { console.error(error.message); process.exitCode = 1; }
+    }
+  } catch { console.error('Final-review validation failed. Check the vault, private key/catalog, and content schema.'); process.exitCode = 1; }
 }

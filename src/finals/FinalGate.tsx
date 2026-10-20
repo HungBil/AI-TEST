@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { FINAL_ATTEMPTS_KEY, finalUnlocked, rememberFinalUnlock, verifyFinalPassword } from './access';
+import { FINAL_ATTEMPTS_KEY, decryptFinalCatalog, finalUnlocked, rememberFinalUnlock } from './access';
+import { setFinalCatalog } from './catalog';
 import './finals.css';
 
 type Attempts = { failures: number; until: number };
@@ -48,7 +49,9 @@ export function FinalGate({ onUnlock }: { onUnlock: () => void }) {
     if (!password.trim()) { setError('Nhập key của khu ôn cuối kỳ.'); return; }
     busy.current = true; setChecking(true); setError('');
     try {
-      if (await verifyFinalPassword(password)) {
+      const catalog = await decryptFinalCatalog(password);
+      if (catalog) {
+        setFinalCatalog(catalog);
         saveAttempts({ failures: 0, until: 0 });
         setAttempts({ failures: 0, until: 0 });
         rememberFinalUnlock(); setPassword(''); setOpen(false); onUnlock();
