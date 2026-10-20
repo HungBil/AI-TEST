@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "vinuni-vlearn/AI20k-data",
+  "sourceAccess": "unverified",
+  "format": {
+    "status": "provisional",
+    "durationMinutes": 90,
+    "totalQuestions": 85,
+    "mcqCount": 60,
+    "openCount": 25,
+    "codeCount": 0,
+    "totalPoints": 100,
+    "note": "Giả định biên soạn từ phản hồi học viên ngày 04/09/2026, chưa được nhà trường xác nhận. Không suy ra đề ngày sau giống đề đã thi. Không có code tay; câu mở là trả lời ngắn, system prompt hoặc lập luận giải quyết tình huống."
+  },
+  "phase1Count": 10,
+  "phase2Count": 10,
+  "trackSlots": [
+    {"id": "track-1", "label": "Track 1 — chờ đối chiếu tên trong nguồn", "examCount": 3},
+    {"id": "track-2", "label": "Track 2 — chờ đối chiếu tên trong nguồn", "examCount": 3},
+    {"id": "track-3", "label": "Track 3 — chờ đối chiếu tên trong nguồn", "examCount": 2},
+    {"id": "track-4", "label": "Track 4 — chờ đối chiếu tên trong nguồn", "examCount": 2}
+  ],
+  "allocationNote": "20 đề tổng: Phase 1 có 10, Phase 2 có 10 chia tạm 3/3/2/2 cho bốn track. Tên track và việc gán suất chỉ xác nhận sau khi đọc syllabus; đây không phải 10 đề mỗi track.",
+  "publicationPolicy": "Không hiện nút làm bài cho đề chưa biên soạn hoặc chưa kiểm tra nguồn. Dữ liệu mẫu chỉ dùng trong tests. Không dùng bộ đầu vào làm nguồn thay slide cuối kỳ."
+}
