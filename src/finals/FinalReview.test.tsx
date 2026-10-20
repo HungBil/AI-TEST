@@ -7,6 +7,8 @@ import { FinalGate } from './FinalGate';
 import { FINAL_SESSION_KEY, FINAL_ATTEMPTS_KEY, decryptFinalCatalog, finalUnlocked } from './access';
 import { finalCatalog, setFinalCatalog, type FinalCatalog, type FinalExam } from './catalog';
 import type { QuizMode } from '../types/exam';
+import { saveFinalRun } from './progress';
+import { saveProgress } from '../utils/storage';
 vi.mock('../components/QuizRunner', () => ({ QuizRunner: ({ exam, mode, timerEnabled }: { exam: FinalExam; mode: QuizMode; timerEnabled: boolean }) =>
   <div data-testid="test-runner">{exam.title} · {exam.questions.length} câu · {mode} · timer:{String(timerEnabled)}</div> }));
 vi.mock('./access', async importOriginal => ({
@@ -25,13 +27,13 @@ function fixture(): FinalCatalog {
   };
   const sheet = {
     id: 'sheet-p1', phase: 'phase1' as const, status: 'published' as const, title: 'Published Phase 1 sheet',
-    pages: [{ title: 'Synthetic page', sections: [{ title: 'Synthetic section', keywords: ['synthetic'], explanation: 'Synthetic explanation', example: 'Synthetic example', commonMistake: 'Synthetic mistake', sourceRefs }] }]
+    pages: [{ title: 'Synthetic page', sections: [{ title: 'Đánh giá synthetic', keywords: ['synthetic'], explanation: 'Synthetic explanation', example: 'Synthetic example', commonMistake: 'Synthetic mistake', sourceRefs }] }]
   };
   return {
     schemaVersion: 1,
     sources: [{ id: 'synthetic-source', repo: 'test-only', path: 'synthetic-source.md', revision: 'a'.repeat(40), phase: 'phase1', reviewed: true }],
     trackDefinitions: [],
-    exams: [published, { ...published, id: 'final-p1-02', status: 'draft', title: 'Hidden draft fixture' }, { ...published, id: 'final-p2-t1-01', phase: 'phase2', title: 'Hidden Phase 2 fixture' }],
+    exams: [...Array.from({ length: 10 }, (_, index) => ({ ...published, id: `final-p1-${String(index + 1).padStart(2, '0')}`, title: `${published.title} ${String(index + 1).padStart(2, '0')}` })), { ...published, id: 'final-p1-draft', status: 'draft', title: 'Hidden draft fixture' }, { ...published, id: 'final-p2-t1-01', phase: 'phase2', title: 'Hidden Phase 2 fixture' }],
     cheatSheets: [sheet, { ...sheet, id: 'sheet-draft', status: 'draft', title: 'Hidden draft sheet' }, { ...sheet, id: 'sheet-p2', phase: 'phase2', title: 'Hidden Phase 2 sheet' }]
   };
 }
@@ -64,9 +66,9 @@ describe('Final review workspace', () => {
   });
   it('shows only published Phase 1 exams and cheat sheets', async () => {
     await renderPage();
-    expect(container.querySelectorAll('.finals-exam')).toHaveLength(1);
+    expect(container.querySelectorAll('.finals-exam')).toHaveLength(10);
+    await act(async () => button('Sổ tay kiến thức').click());
     expect(container.querySelectorAll('.finals-sheet')).toHaveLength(1);
-    expect(container.textContent).toContain('Published Phase 1 fixture');
     expect(container.textContent).toContain('Published Phase 1 sheet');
     expect(container.textContent).toContain('synthetic-source.md');
     expect(container.textContent).not.toContain('Hidden');
@@ -75,24 +77,54 @@ describe('Final review workspace', () => {
   it('starts a published 85-question exam with the selected mode and timer', async () => {
     await renderPage();
     await act(async () => {
-      const select = container.querySelector<HTMLSelectElement>('select')!;
-      select.value = 'exam'; select.dispatchEvent(new Event('change', { bubbles: true }));
+      container.querySelector<HTMLInputElement>('input[value="exam"]')!.click();
       container.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click();
     });
+    await act(async () => button('Published Phase 1 fixture 10').click());
+    await act(async () => { container.querySelector<HTMLInputElement>('input[value="exam"]')!.click(); container.querySelector<HTMLInputElement>('input[type="checkbox"]')!.click(); });
     await act(async () => button('Bắt đầu làm bài').click());
-    expect(container.querySelector('[data-testid="test-runner"]')?.textContent).toBe('Published Phase 1 fixture · 85 câu · exam · timer:false');
+    expect(container.querySelector('[data-testid="test-runner"]')?.textContent).toBe('Published Phase 1 fixture 10 · 85 câu · exam · timer:false');
   });
   it('locking clears the catalog without logging out Crown', async () => {
     sessionStorage.setItem(FINAL_SESSION_KEY, 'true');
     sessionStorage.setItem('ai-test:crown-unlocked', 'true');
     const onExit = await renderPage();
-    await act(async () => button('Khóa khu này').click());
+    await act(async () => button('Khóa khu ôn').click());
     expect(onExit).toHaveBeenCalledOnce();
     expect(finalUnlocked()).toBe(false);
     expect(finalCatalog.exams).toEqual([]);
     expect(finalCatalog.cheatSheets).toEqual([]);
     expect(sessionStorage.getItem(FINAL_SESSION_KEY)).toBeNull();
     expect(sessionStorage.getItem('ai-test:crown-unlocked')).toBe('true');
+  });
+  it('shows saved progress and restores the selected mode before resuming', async () => {
+    const exam = fixture().exams[0];
+    saveProgress(exam.id, { [exam.questions[0].id]: { selected: 'A' } });
+    saveFinalRun(exam.id, { mode: 'exam', timerEnabled: false, current: 20, secondsLeft: 4000, submitted: false, flagged: [] });
+    await renderPage();
+    expect(container.querySelector<HTMLInputElement>('input[value="exam"]')?.checked).toBe(true);
+    expect(container.textContent).toContain('Tiếp tục từ câu 21');
+    await act(async () => container.querySelector<HTMLInputElement>('input[value="practice"]')!.click());
+    expect(container.textContent).toContain('Tiếp tục từ câu 21');
+    await act(async () => button('Tiếp tục làm bài').click());
+    expect(container.querySelector('[data-testid="test-runner"]')?.textContent).toContain('practice · timer:false');
+  });
+  it('supports keyboard tabs and filters the knowledge notebook', async () => {
+    await renderPage();
+    await act(async () => container.querySelector('#finals-exams-tab')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })));
+    expect(document.activeElement?.id).toBe('finals-sheets-tab');
+    const input = container.querySelector<HTMLInputElement>('input[type="search"]')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, 'missing-keyword');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    expect(container.textContent).toContain('Không tìm thấy nội dung phù hợp');
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, 'danh gia');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    expect(container.querySelectorAll('.finals-sheet')).toHaveLength(1);
+    expect(container.textContent).toContain('Đánh giá synthetic');
   });
 });
 describe('Independent final gate', () => {

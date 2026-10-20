@@ -51,3 +51,18 @@ test('Crown IDs cannot leak into final-review storage namespace', () => {
   const c = fixture(); c.exams[0].questions[0].id = 'N26E01-A01';
   assert.ok(validateFinals(c, plan).errors.some(e => e.includes('non-namespaced')));
 });
+
+test('Phase 1 completion requires all ten source-checked exams and a published sheet', () => {
+  const catalog = fixture();
+  assert.ok(validateFinals(catalog, plan, { phase1Complete: true }).errors.some(error => error.includes('ten published')));
+  const prototype = catalog.exams[0];
+  catalog.exams = Array.from({ length: 10 }, (_, index) => {
+    const exam = structuredClone(prototype); exam.id = `final-p1-${String(index + 1).padStart(2, '0')}`;
+    exam.questions.forEach((question, n) => { question.id = `${exam.id}-${n}`; question.intentId = `synthetic-${index}-${n}`; question.prompt = `Synthetic completion fixture ${index} question ${n}`; });
+    return exam;
+  });
+  const section = { title: 'Synthetic only', keywords: ['fixture'], explanation: 'Synthetic', example: 'Synthetic', commonMistake: 'Synthetic', sourceRefs: [{ sourceId: 'test-only', locator: 'Fixture heading' }] };
+  catalog.cheatSheets.push({ id: 'final-fixture-sheet', phase: 'phase1', status: 'published', title: 'Synthetic sheet', pages: [1, 2].map(n => ({ title: `Fixture ${n}`, sections: [section] })) });
+  assert.deepEqual(validateFinals(catalog, plan, { phase1Complete: true }).errors, []);
+  assert.ok(validateFinals(catalog, plan, { complete: true }).errors.length > 0);
+});

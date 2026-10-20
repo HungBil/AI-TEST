@@ -33,7 +33,7 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
       <header className="question-header">
         <div>
           <span className="eyebrow">Câu {index + 1}/{total} · Module {question.module}{moduleLabel ? ` · ${moduleLabel}` : ''}</span>
-          <h2>{question.type === 'mcq' ? 'Trắc nghiệm' : question.type === 'code' ? 'Code tay / pseudo-code' : 'Tự luận ngắn'}</h2>
+          <h2>{question.type === 'mcq' ? 'Trắc nghiệm' : question.type === 'code' ? 'Code tay / pseudo-code' : question.responseKind === 'scenario' ? 'Tình huống' : question.responseKind === 'system-prompt' ? 'Viết system prompt' : question.responseKind === 'short-answer' ? 'Trả lời ngắn' : 'Tự luận'}</h2>
         </div>
         <strong>{question.points} điểm</strong>
       </header>
@@ -51,6 +51,7 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
                 key={option.key}
                 className={['option', selected ? 'selected' : '', correct ? 'correct' : '', wrong ? 'wrong' : ''].join(' ')}
                 disabled={submitted}
+                aria-pressed={selected}
                 onClick={() => onAnswer({ ...answer, selected: option.key })}
               >
                 <span>{option.key}</span>
@@ -62,7 +63,8 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
       ) : (
         <div className="open-answer">
           <textarea
-            placeholder="Gõ câu trả lời/code/pseudo-code của bạn..."
+            aria-label="Câu trả lời của bạn"
+            placeholder={question.type === 'code' ? 'Gõ câu trả lời/code/pseudo-code của bạn...' : 'Viết câu trả lời của bạn…'}
             value={answer?.text ?? ''}
             readOnly={submitted}
             onChange={(event) => onAnswer({ ...answer, text: event.target.value })}
@@ -100,7 +102,7 @@ export function QuestionCard({ question, index, total, answer, mode, submitted, 
       {canUseOpenHelp && showModelAnswer && openQuestion && (
         <section className="feedback model-answer-panel">
           <strong>Đáp án mẫu</strong>
-          <pre><code>{openQuestion.modelAnswer}</code></pre>
+          {openQuestion.type === 'code' ? <pre><code>{openQuestion.modelAnswer}</code></pre> : <RichText text={openQuestion.modelAnswer} />}
           <strong>Tiêu chí tự chấm</strong>
           <ul>{openQuestion.rubric.map(item => <li key={item}>{item}</li>)}</ul>
           <div className="self-grade">

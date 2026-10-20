@@ -8,6 +8,11 @@ export interface ModuleScore {
   totalQuestions: number;
 }
 
+export function isQuestionAnswered(question: Question, answer?: AnswerState): boolean {
+  return question.type === 'mcq' ? question.options.some(option => option.key === answer?.selected)
+    : Boolean(typeof answer?.text === 'string' && answer.text.trim());
+}
+
 export function isQuestionCorrect(question: Question, answer?: AnswerState): boolean {
   if (!answer) return false;
   if (question.type === 'mcq') return answer.selected === question.answer;

@@ -10,7 +10,7 @@
     "openCount": 25,
     "codeCount": 0,
     "totalPoints": 100,
-    "note": "Giả định biên soạn từ phản hồi học viên ngày 04/09/2026, chưa được nhà trường xác nhận. Không suy ra đề ngày sau giống đề đã thi. Không có code tay; câu mở là trả lời ngắn, system prompt hoặc lập luận giải quyết tình huống."
+    "note": "Mô phỏng từ phản hồi học viên do chủ repo cung cấp, chưa phải cấu trúc thi được nhà trường xác nhận. Câu mở gồm điền từ, sắp xếp quy trình, system prompt, sửa hàm ngắn và lập luận tình huống; tự đối chiếu theo rubric, không chạy hoặc chấm code tự động."
   },
   "phase1Count": 10,
   "phase2Count": 10,

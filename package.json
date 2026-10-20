@@ -18,6 +18,7 @@
     "validate": "node scripts/validate-expanded.mjs && npm run validate:finals && node --test scripts/validate-finals.test.mjs scripts/final-vault.test.mjs && npm run test:crown",
     "validate:finals": "node scripts/validate-finals.mjs",
     "validate:finals:complete": "node scripts/validate-finals.mjs --complete",
+    "validate:finals:phase1": "node scripts/validate-finals.mjs --phase1-complete",
     "test:crown": "node --test scripts/generate-crown-lock.test.mjs && vitest run src"
   },
   "dependencies": {

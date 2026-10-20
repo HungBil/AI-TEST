@@ -14,6 +14,7 @@ export interface BaseQuestion {
   points: number;
   prompt: string;
   tags?: string[];
+  responseKind?: 'short-answer' | 'system-prompt' | 'scenario';
 }
 
 export interface McqQuestion extends BaseQuestion {

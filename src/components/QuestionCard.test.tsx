@@ -37,6 +37,12 @@ afterEach(async () => {
 });
 
 describe('QuestionCard open answers', () => {
+  it('preserves indentation in legacy unfenced code answers', async () => {
+    const code: Question = { ...essayQuestion, type: 'code', modelAnswer: 'def answer():\n    return 4\n' };
+    await act(async () => root.render(<QuestionCard question={code} index={0} total={1} mode="practice" submitted={false} onAnswer={vi.fn()} />));
+    await act(async () => [...container.querySelectorAll<HTMLButtonElement>('button')].find(item => item.textContent === 'Xem đáp án mẫu')!.click());
+    expect(container.querySelector('.model-answer-panel pre code')?.textContent).toBe(code.modelAnswer);
+  });
   it('does not reveal hints or the model answer just because the learner starts typing', async () => {
     const onAnswer = vi.fn();
     await act(async () => {

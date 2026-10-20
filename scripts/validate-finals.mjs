@@ -8,7 +8,7 @@ const text = value => typeof value === 'string' && value.trim().length > 0;
 const list = value => Array.isArray(value) ? value : [];
 const normalize = value => String(value ?? '').normalize('NFC').replace(/\s+/g, ' ').trim().toLowerCase();
 
-export function validateFinals(catalog, plan, { complete = false } = {}) {
+export function validateFinals(catalog, plan, { complete = false, phase1Complete = false } = {}) {
   const errors = [];
   const check = (ok, message) => { if (!ok) errors.push(message); };
   check(catalog?.schemaVersion === 1, 'content.schemaVersion must be 1');
@@ -136,6 +136,11 @@ export function validateFinals(catalog, plan, { complete = false } = {}) {
     check(readySheets.some(s => s.phase === 'phase1'), 'Missing Phase 1 cheat sheet');
     for (const id of trackIds) check(readySheets.some(s => s.phase === 'phase2' && s.trackId === id), `Missing cheat sheet for ${id}`);
   }
+  if (phase1Complete) {
+    check(published.filter(exam => exam.phase === 'phase1').length === 10, 'Phase 1 completion requires ten published exams');
+    for (let i = 1; i <= 10; i++) check(published.some(exam => exam.id === `final-p1-${String(i).padStart(2, '0')}`), `Missing Phase 1 exam ${i}`);
+    check(sheets.some(sheet => sheet.phase === 'phase1' && sheet.status === 'published'), 'Missing published Phase 1 cheat sheet');
+  }
   return { errors, published: published.length, planned: slots.size };
 }
 
@@ -170,12 +175,12 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const lock = JSON.parse(fs.readFileSync(path.join(root, 'src/finals/lock.json'), 'utf8'));
     validateFinalVault(lock);
     if (!catalogPath && !password) {
-      if (args.includes('--complete')) throw new Error('Completion requires --catalog <private-json> or --key-file <private-key> to validate all decrypted content.');
+      if (args.includes('--complete') || args.includes('--phase1-complete')) throw new Error('Completion requires --catalog <private-json> or --key-file <private-key> to validate all decrypted content.');
       console.log('Encrypted final vault: envelope valid. Content validation requires a private key or private catalog; no publication count was inferred.');
     } else {
     const catalog = catalogPath ? JSON.parse(fs.readFileSync(catalogPath, 'utf8')) : await decryptFinalVault(lock, password);
     const plan = JSON.parse(fs.readFileSync(path.join(root, 'src/finals/plan.json'), 'utf8'));
-    const result = validateFinals(catalog, plan, { complete: process.argv.includes('--complete') });
+    const result = validateFinals(catalog, plan, { complete: args.includes('--complete'), phase1Complete: args.includes('--phase1-complete') });
     for (const error of result.errors) console.error(`FAIL: ${error}`);
     console.log(`Final review: ${result.published}/${result.planned} published. The earlier 20-exam plan is not a completion claim.`);
     if (result.errors.length) process.exitCode = 1;

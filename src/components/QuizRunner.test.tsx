@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Exam } from '../types/exam';
 import { loadProgress } from '../utils/storage';
 import { QuizRunner } from './QuizRunner';
+import { loadFinalRun, saveFinalRun } from '../finals/progress';
 
 const questions: Exam['questions'] = [{
   id: 'MCQ', module: 'A', type: 'mcq', points: 1,
@@ -40,9 +41,66 @@ afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
   vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 describe('QuizRunner submitted review', () => {
+  it('keeps saved position, time, flags and submission when changing mode or timer', async () => {
+    const exam: Exam = { id: 'final-p1-settings', title: 'Settings', description: '', disclaimer: '', durationMinutes: 1, totalPoints: 2, questions };
+    saveFinalRun(exam.id, { mode: 'exam', timerEnabled: true, current: 1, secondsLeft: 32, submitted: false, flagged: ['ESSAY'] });
+    await act(async () => root.render(<QuizRunner exam={exam} mode="practice" timerEnabled={false} persistSession onHome={vi.fn()} />));
+    expect(container.querySelector('.eyebrow')?.textContent).toContain('Câu 2/2');
+    expect(container.textContent).toContain('★ Đã đánh dấu');
+    expect(loadFinalRun(exam)).toMatchObject({ mode: 'practice', timerEnabled: false, current: 1, secondsLeft: 32, flagged: ['ESSAY'] });
+    await act(async () => button('Nộp bài').click());
+    await act(async () => root.unmount()); root = createRoot(container);
+    await act(async () => root.render(<QuizRunner exam={exam} mode="exam" timerEnabled persistSession onHome={vi.fn()} />));
+    expect(container.textContent).toContain('Kết quả');
+    expect(loadFinalRun(exam)).toMatchObject({ submitted: true, current: 1, secondsLeft: 32 });
+  });
+
+  it('retains storage failure warnings after submission and guards leaving', async () => {
+    const exam: Exam = { id: 'final-p1-full-storage', title: 'Storage', description: '', disclaimer: '', durationMinutes: 1, totalPoints: 2, questions };
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new DOMException('Full', 'QuotaExceededError'); });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false), onHome = vi.fn();
+    await act(async () => root.render(<QuizRunner exam={exam} mode="exam" timerEnabled={false} persistSession onHome={onHome} />));
+    await act(async () => container.querySelector<HTMLButtonElement>('.option')!.click());
+    await act(async () => button('← Đổi đề').click());
+    expect(onHome).not.toHaveBeenCalled();
+    const unload = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(unload);
+    expect(unload.defaultPrevented).toBe(true);
+    await act(async () => button('Nộp bài').click());
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('Chưa lưu được bài làm');
+    await act(async () => button('Về trang chọn đề').click());
+    expect(onHome).not.toHaveBeenCalled();
+    confirm.mockReturnValue(true);
+    await act(async () => button('Về trang chọn đề').click());
+    expect(onHome).toHaveBeenCalledOnce();
+  });
+  it('resumes a final run at the saved question, time, flags and submitted state', async () => {
+    const exam: Exam = { id: 'final-p1-session', title: 'Saved session', description: '', disclaimer: '', durationMinutes: 1, totalPoints: 2, questions };
+    const render = () => root.render(<QuizRunner exam={exam} mode="exam" timerEnabled persistSession onHome={vi.fn()} />);
+    await act(async () => render());
+    await act(async () => button('Câu sau').click());
+    await act(async () => button('☆ Đánh dấu câu này').click());
+    await act(async () => vi.advanceTimersByTime(5000));
+    expect(loadFinalRun(exam)).toMatchObject({ current: 1, secondsLeft: 55, flagged: ['ESSAY'] });
+    await act(async () => root.unmount()); root = createRoot(container);
+    await act(async () => render());
+    expect(container.querySelector('.eyebrow')?.textContent).toContain('Câu 2/2');
+    expect(container.querySelector('.timer')?.textContent).toBe('00:55');
+    expect(container.textContent).toContain('★ Đã đánh dấu');
+    await act(async () => button('Nộp bài').click());
+    await act(async () => root.unmount()); root = createRoot(container);
+    await act(async () => render());
+    expect(container.textContent).toContain('Điểm tạm tính');
+    expect(loadFinalRun(exam)?.submitted).toBe(true);
+    await act(async () => button('Chờ tự chấm (1)').click());
+    expect(container.querySelectorAll('.review-list button')).toHaveLength(1);
+    await act(async () => button('Tất cả câu (2)').click());
+    expect(container.querySelectorAll('.review-list button')).toHaveLength(2);
+  });
   it.each(['final-p1-01', 'exam-01', 'new-2026-17'])('keeps exam review submitted for %s', async (id) => {
     const exam: Exam = {
       id, title: 'Đề kiểm tra', description: 'Test', durationMinutes: 1,

@@ -1,4 +1,3 @@
-import finalLock from './lock.json';
 import { hasFinalCatalog, setFinalCatalog, type FinalCatalog } from './catalog';
 
 export interface FinalLock {
@@ -30,12 +29,12 @@ async function decryptPayload(password: string, lock: FinalLock): Promise<FinalP
   } catch { return null; }
 }
 
-export async function verifyFinalPassword(password: string, lock: FinalLock = finalLock): Promise<boolean> {
-  return (await decryptPayload(password, lock)) !== null;
+export async function verifyFinalPassword(password: string, lock?: FinalLock): Promise<boolean> {
+  return (await decryptPayload(password, lock ?? (await import('./lock.json')).default)) !== null;
 }
 
-export async function decryptFinalCatalog(password: string, lock: FinalLock = finalLock): Promise<FinalCatalog | null> {
-  const payload = await decryptPayload(password, lock);
+export async function decryptFinalCatalog(password: string, lock?: FinalLock): Promise<FinalCatalog | null> {
+  const payload = await decryptPayload(password, lock ?? (await import('./lock.json')).default);
   const catalog = payload?.catalog;
   if (!catalog || typeof catalog !== 'object') return null;
   const value = catalog as Partial<FinalCatalog>;

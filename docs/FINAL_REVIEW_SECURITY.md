@@ -4,7 +4,7 @@ The final-review entry uses its own password, separate from Crown. The public `s
 
 PBKDF2-SHA-256 (600,000 iterations, random 16-byte salt) derives an AES-GCM 256-bit key. Each publication uses a fresh 12-byte IV. Authenticated decryption must succeed and the payload must contain the final-review marker and catalog. A sessionStorage flag alone cannot open the space.
 
-The decrypted catalog stays in memory. Refresh requires the password again; “Khóa khu này” clears the in-memory catalog. The password and catalog are never written to browser storage. Answers and self-grades continue to use the existing local progress storage. Users on a shared device should clear that browser data after studying.
+The decrypted catalog stays in memory. Refresh requires the password again; “Khóa khu ôn” clears the in-memory catalog. The password and catalog are never written to browser storage. Answers, self-grades and per-exam run state (position, timer, flags and submission) use local progress storage. A storage failure warns before leaving, including from results. Users on a shared device should clear that browser data after studying.
 
 ## Intended boundary
 
@@ -21,7 +21,7 @@ Keep the authoring catalog, extracted source files and password **outside the pu
 Validate private authored material:
 
 ```powershell
-node scripts/validate-finals.mjs --catalog <private-catalog.json>
+node scripts/validate-finals.mjs --catalog <private-catalog.json> --phase1-complete
 ```
 
 Encrypt and replace the public vault atomically:
@@ -35,9 +35,9 @@ Alternatively provide `FINAL_REVIEW_PASSWORD` privately in the shell and omit th
 Validate the actual encrypted content locally:
 
 ```powershell
-node scripts/validate-finals.mjs --key-file <private-key-file>
+node scripts/validate-finals.mjs --key-file <private-key-file> --phase1-complete
 ```
 
 Ordinary CI without the private key checks the encrypted envelope plus synthetic encryption, schema, gate and review tests. It cannot certify the actual encrypted content. Run the private-content validation before committing a new vault. An ordinary build never changes the final-review password or vault.
 
-`validate:finals:complete` retains the earlier 20-exam completion contract. The current Phase 1 publication does not fulfill that earlier plan; passing ordinary validation is not a claim that all 20 exams exist.
+`validate:finals:phase1` checks all ten Phase 1 exam IDs and a published Phase 1 sheet using private input. `validate:finals:complete` retains the earlier 20-exam completion contract. The current Phase 1 publication does not fulfill that earlier plan; passing ordinary validation is not a claim that all 20 exams exist.
