@@ -34,7 +34,7 @@ function fixture(): FinalCatalog {
     sources: [{ id: 'synthetic-source', repo: 'test-only', path: 'synthetic-source.md', revision: 'a'.repeat(40), phase: 'phase1', reviewed: true }],
     trackDefinitions: [],
     exams: [...Array.from({ length: 10 }, (_, index) => ({ ...published, id: `final-p1-${String(index + 1).padStart(2, '0')}`, title: `${published.title} ${String(index + 1).padStart(2, '0')}` })), { ...published, id: 'final-p1-draft', status: 'draft', title: 'Hidden draft fixture' }, { ...published, id: 'final-p2-t1-01', phase: 'phase2', title: 'Hidden Phase 2 fixture' }],
-    cheatSheets: [sheet, { ...sheet, id: 'sheet-draft', status: 'draft', title: 'Hidden draft sheet' }, { ...sheet, id: 'sheet-p2', phase: 'phase2', title: 'Hidden Phase 2 sheet' }]
+    cheatSheets: [...Array.from({ length: 15 }, (_, index) => ({ ...sheet, id: `sheet-p1-day${index + 1}`, day: index + 1, title: `Ngày ${String(index + 1).padStart(2, '0')} · Published Phase 1 sheet`, pages: [{ title: 'Synthetic page', sections: sheet.pages[0].sections.map(section => ({ ...section, title: index === 0 ? section.title : `Kiến thức synthetic ${index + 1}` })) }] })), { ...sheet, id: 'sheet-draft', status: 'draft', title: 'Hidden draft sheet' }, { ...sheet, id: 'sheet-p2', phase: 'phase2', title: 'Hidden Phase 2 sheet' }]
   };
 }
 let container: HTMLDivElement, root: Root;
@@ -68,7 +68,8 @@ describe('Final review workspace', () => {
     await renderPage();
     expect(container.querySelectorAll('.finals-exam')).toHaveLength(10);
     await act(async () => button('Sổ tay kiến thức').click());
-    expect(container.querySelectorAll('.finals-sheet')).toHaveLength(1);
+    expect(container.querySelectorAll('.finals-sheet')).toHaveLength(15);
+    expect(container.textContent).toContain('15 ngày học · 15 chủ đề');
     expect(container.textContent).toContain('Published Phase 1 sheet');
     expect(container.textContent).toContain('synthetic-source.md');
     expect(container.textContent).not.toContain('Hidden');
@@ -125,6 +126,24 @@ describe('Final review workspace', () => {
     });
     expect(container.querySelectorAll('.finals-sheet')).toHaveLength(1);
     expect(container.textContent).toContain('Đánh giá synthetic');
+  });
+  it('selects one day, searches within that day and searches daily titles without accents', async () => {
+    await renderPage();
+    await act(async () => button('Sổ tay kiến thức').click());
+    const select = container.querySelector<HTMLSelectElement>('select')!;
+    await act(async () => { select.value = '14'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    expect(container.querySelectorAll('.finals-sheet')).toHaveLength(1);
+    expect(container.querySelector('.finals-sheet')?.hasAttribute('open')).toBe(true);
+    expect(container.querySelector('.finals-sheet summary')?.textContent).toContain('Ngày 14');
+    const input = container.querySelector<HTMLInputElement>('input[type="search"]')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, 'ngay 15');
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    expect(container.textContent).toContain('Không tìm thấy nội dung phù hợp');
+    await act(async () => { select.value = 'all'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+    expect(container.querySelectorAll('.finals-sheet')).toHaveLength(1);
+    expect(container.querySelector('.finals-sheet summary')?.textContent).toContain('Ngày 15');
   });
 });
 describe('Independent final gate', () => {

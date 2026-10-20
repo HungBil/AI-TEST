@@ -40,4 +40,4 @@ node scripts/validate-finals.mjs --key-file <private-key-file> --phase1-complete
 
 Ordinary CI without the private key checks the encrypted envelope plus synthetic encryption, schema, gate and review tests. It cannot certify the actual encrypted content. Run the private-content validation before committing a new vault. An ordinary build never changes the final-review password or vault.
 
-`validate:finals:phase1` checks all ten Phase 1 exam IDs and a published Phase 1 sheet using private input. `validate:finals:complete` retains the earlier 20-exam completion contract. The current Phase 1 publication does not fulfill that earlier plan; passing ordinary validation is not a claim that all 20 exams exist.
+`validate:finals:phase1` checks all ten Phase 1 exam IDs and all fifteen published handbook days using private input. Handbook text has the same encryption boundary as questions and answers; do not add an unencrypted handbook import to the frontend. `validate:finals:complete` retains the earlier 20-exam completion contract. The current Phase 1 publication does not fulfill that earlier plan; passing ordinary validation is not a claim that all 20 exams exist.

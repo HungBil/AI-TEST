@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from 'react';
 import type { QuizMode } from '../types/exam';
 import { QuizRunner } from '../components/QuizRunner';
+import { RichText } from '../components/RichText';
 import { loadProgress } from '../utils/storage';
 import { isQuestionAnswered } from '../utils/scoring';
 import { finalCatalog, publishedExam, type FinalExam, type SourceRef } from './catalog';
@@ -27,6 +28,7 @@ export default function FinalReview({ onExit }: { onExit: () => void }) {
   const [startedId, setStartedId] = useState<string | null>(null);
   const [view, setView] = useState<'exams' | 'sheets'>('exams');
   const [query, setQuery] = useState('');
+  const [day, setDay] = useState('all');
   const moveTab = (event: KeyboardEvent<HTMLElement>) => {
     const destinations: Record<string, 'exams' | 'sheets'> = { ArrowLeft: view === 'exams' ? 'sheets' : 'exams', ArrowRight: view === 'exams' ? 'sheets' : 'exams', Home: 'exams', End: 'sheets' };
     const next = destinations[event.key];
@@ -44,8 +46,8 @@ export default function FinalReview({ onExit }: { onExit: () => void }) {
     const previous = loadFinalRun(item);
     setMode(previous?.mode ?? 'practice'); setTimer(previous?.timerEnabled ?? true);
   };
-  const results = sheets.map(sheet => ({ ...sheet, pages: sheet.pages.map(page => ({ ...page,
-    sections: page.sections.filter(section => searchable([section.title, ...section.keywords, section.explanation, section.example, section.commonMistake].join(' ')).includes(searchable(query.trim())))
+  const results = sheets.filter(sheet => day === 'all' || String(sheet.day) === day).map(sheet => ({ ...sheet, pages: sheet.pages.map(page => ({ ...page,
+    sections: page.sections.filter(section => searchable([sheet.title, page.title, section.title, ...section.keywords, section.explanation, section.example, section.commonMistake].join(' ')).includes(searchable(query.trim())))
   })).filter(page => page.sections.length) })).filter(sheet => sheet.pages.length);
 
   return <main className="finals-page">
@@ -88,13 +90,16 @@ export default function FinalReview({ onExit }: { onExit: () => void }) {
         <p className="finals-disclaimer">60 trắc nghiệm + 25 câu mở. Đây là đề luyện tự biên soạn, chưa phải cấu trúc thi chính thức.</p>
       </section>}
     </section> : <section id="finals-sheets-panel" role="tabpanel" aria-labelledby="finals-sheets-tab" className="finals-study">
-      <div className="finals-study-heading"><div><h2>Sổ tay kiến thức</h2><p>Từ khóa → ý nghĩa → ví dụ → điểm dễ nhầm.</p></div><label className="finals-search"><span>Tìm trong sổ tay</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="RAG, ROI, ReAct, ngày hiệu lực…" /></label></div>
+      <div className="finals-study-heading"><div><h2>Sổ tay kiến thức</h2><p>Giải thích, ví dụ và điểm dễ nhầm theo từng ngày.</p><p className="finals-study-count">{sheets.filter(sheet => sheet.day).length} ngày học · {sheets.reduce((total, sheet) => total + sheet.pages.reduce((count, page) => count + page.sections.length, 0), 0)} chủ đề</p></div>
+        <div className="finals-study-controls"><label className="finals-day-picker"><span>Chọn ngày học</span><select value={day} onChange={event => setDay(event.target.value)}><option value="all">Tất cả ngày học</option>{sheets.filter(sheet => sheet.day).map(sheet => <option value={sheet.day} key={sheet.id}>{sheet.title}</option>)}</select></label>
+          <label className="finals-search"><span>Tìm trong sổ tay</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="RAG, ROI, ReAct, ngày hiệu lực…" /></label>
+        </div></div>
       {results.length === 0 && <p role="status">Không tìm thấy nội dung phù hợp. Thử một từ khóa khác.</p>}
-      {results.map(sheet => <details className="finals-sheet" key={sheet.id} open={query.trim() ? true : undefined}>
-        <summary><span>{sheet.title}</span><small>{sheet.pages.length} phần nội dung</small></summary>
+      {results.map(sheet => <details className="finals-sheet" key={`${sheet.id}-${day}`} open={query.trim() || day !== 'all' ? true : undefined}>
+        <summary><span>{sheet.title}</span><small>{sheet.pages.reduce((count, page) => count + page.sections.length, 0)} chủ đề</small></summary>
         {sheet.pages.map((page, i) => <section key={`${sheet.id}-${i}`}><h3>{page.title}</h3>{page.sections.map((section, j) => <article key={`${i}-${j}`}><h4>{section.title}</h4>
-          <p className="finals-keywords">{section.keywords.join(' · ')}</p><p>{section.explanation}</p><div className="finals-example"><strong>Ví dụ</strong><p>{section.example}</p></div>
-          <p><strong>Dễ nhầm:</strong> {section.commonMistake}</p><SourceNotes refs={section.sourceRefs} />
+          <p className="finals-keywords">{section.keywords.join(' · ')}</p><RichText text={section.explanation} /><div className="finals-example"><strong>Ví dụ</strong><RichText text={section.example} /></div>
+          <div className="finals-mistake"><strong>Dễ nhầm</strong><RichText text={section.commonMistake} /></div><SourceNotes refs={section.sourceRefs} />
         </article>)}</section>)}
       </details>)}
     </section>}

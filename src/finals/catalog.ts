@@ -21,6 +21,7 @@ export interface FinalExam extends Exam {
 }
 export interface FinalCheatSheet {
   id: string; phase: FinalPhase; trackId?: FinalTrack;
+  day?: number;
   status: 'draft' | 'published'; title: string;
   pages: Array<{ title: string; sections: Array<{
     title: string; keywords: string[]; explanation: string;

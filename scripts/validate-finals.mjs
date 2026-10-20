@@ -95,14 +95,19 @@ export function validateFinals(catalog, plan, { complete = false, phase1Complete
       }
     }
   }
-  const sheetIds = new Set();
+  const sheetIds = new Set(), publishedDays = new Set();
   for (const sheet of sheets) {
     check(text(sheet.id) && !sheetIds.has(sheet.id), 'Cheat sheet IDs must be unique'); sheetIds.add(sheet.id);
     check(['draft', 'published'].includes(sheet.status), `${sheet.id}: invalid publication status`);
     check(['phase1', 'phase2'].includes(sheet.phase), `${sheet.id}: invalid phase`);
     check(sheet.phase !== 'phase1' || !sheet.trackId, `${sheet.id}: Phase 1 cannot have track`);
     check(sheet.phase !== 'phase2' || trackIds.has(sheet.trackId), `${sheet.id}: Phase 2 track required`);
+    if (sheet.day !== undefined) check(sheet.phase === 'phase1' && Number.isInteger(sheet.day) && sheet.day >= 1 && sheet.day <= 15, `${sheet.id}: invalid Phase 1 handbook day`);
     if (sheet.status !== 'published') continue;
+    if (sheet.day !== undefined) {
+      check(!publishedDays.has(sheet.day), `${sheet.id}: duplicate published handbook day`);
+      publishedDays.add(sheet.day);
+    }
     check(sheet.phase !== 'phase2' || definedTracks.has(sheet.trackId), `${sheet.id}: track not confirmed`);
     check(text(sheet.title), `${sheet.id}: title required`);
     check(list(sheet.pages).length >= 2 && sheet.pages.length <= 3, `${sheet.id}: expected 2–3 pages`);
@@ -139,7 +144,7 @@ export function validateFinals(catalog, plan, { complete = false, phase1Complete
   if (phase1Complete) {
     check(published.filter(exam => exam.phase === 'phase1').length === 10, 'Phase 1 completion requires ten published exams');
     for (let i = 1; i <= 10; i++) check(published.some(exam => exam.id === `final-p1-${String(i).padStart(2, '0')}`), `Missing Phase 1 exam ${i}`);
-    check(sheets.some(sheet => sheet.phase === 'phase1' && sheet.status === 'published'), 'Missing published Phase 1 cheat sheet');
+    for (let day = 1; day <= 15; day++) check(sheets.some(sheet => sheet.phase === 'phase1' && sheet.status === 'published' && sheet.day === day), `Missing published Phase 1 handbook day ${day}`);
   }
   return { errors, published: published.length, planned: slots.size };
 }

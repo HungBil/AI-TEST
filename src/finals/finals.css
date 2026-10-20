@@ -1,6 +1,6 @@
 .finals-access{position:fixed;right:24px;bottom:100px;z-index:40;width:58px;height:58px;display:grid;place-items:center;border:1px solid #c7d2fe;border-radius:50%;background:#312e81;color:#fff;box-shadow:0 8px 24px #312e8130}
 .finals-access:hover{background:#4338ca}
-.finals-access:focus-visible,.finals-page :is(button,input,summary):focus-visible,.final-quiz :is(button,textarea,summary):focus-visible{outline:3px solid #818cf8;outline-offset:3px}
+.finals-access:focus-visible,.finals-page :is(button,input,select,summary):focus-visible,.final-quiz :is(button,textarea,summary):focus-visible{outline:3px solid #818cf8;outline-offset:3px}
 .finals-page{max-width:1240px;min-height:100svh;margin:auto;padding:24px 28px 64px;color:#182235}
 .finals-topline{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .finals-topline .secondary{background:#fff;border:1px solid #dce1ec;font-size:.85rem;padding:10px 16px}
@@ -67,6 +67,13 @@
 .finals-study-heading p{font-size:.88rem;color:#667085;margin:0}
 .finals-search{display:grid;gap:7px;max-width:320px;width:100%;font-size:.76rem;color:#667085}
 .finals-search input{border-radius:9px;font-size:.86rem;padding:11px 13px;border-color:#dce1ec}
+.finals-study-controls{display:grid;gap:12px;width:340px;max-width:100%;flex:none}
+.finals-study-controls .finals-search{max-width:none}
+.finals-day-picker{display:grid;gap:7px;font-size:.76rem;color:#667085}
+.finals-day-picker select{width:100%;min-width:0;border:1px solid #dce1ec;border-radius:9px;background:#fff;color:#263149;font:inherit;font-size:.86rem;padding:11px 13px}
+.finals-study-heading .finals-study-count{margin-top:10px;font-size:.77rem;color:#6556a1}
+.finals-mistake{margin:16px 0;font-size:.8rem;color:#8b6326;padding:12px 16px;background:#fff8e9;border-radius:8px}
+.finals-mistake .rich-text p{margin:6px 0 0}
 .finals-sheet{background:#fff;border:1px solid #e1e4ed;border-radius:14px;margin-bottom:16px;overflow:hidden}
 .finals-sheet>summary{display:flex;justify-content:space-between;align-items:center;gap:20px;cursor:pointer;padding:21px 24px;font-weight:650;font-size:.95rem;color:#333c53;list-style:none}
 .finals-sheet>summary::after{content:'+';font-size:1.3rem;color:#8a7caf}
@@ -169,6 +176,8 @@
   .finals-start{position:sticky;bottom:12px;z-index:2;box-shadow:0 4px 18px #6250b833}
   .finals-study-heading{display:block;margin-top:0}
   .finals-search{max-width:none;margin-top:18px}
+  .finals-study-controls{width:100%;margin-top:18px}
+  .finals-study-controls .finals-search{margin-top:0}
   .finals-study-heading h2{font-size:1.25rem}
   .finals-sheet>summary{padding:18px;gap:12px;font-size:.85rem}
   .finals-sheet>summary small{display:none}
