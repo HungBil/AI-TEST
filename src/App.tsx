@@ -42,9 +42,11 @@ export default function App() {
         onExamChange={setSelectedExamId} onModeChange={setMode}
         onTimerChange={setTimerEnabled} onStart={() => setStarted(true)}
         onExitNewCollection={exitNewCollection}
+        studySpaces={<>
+          {collection === 'legacy' && <CrownGate onUnlock={enterNewCollection} />}
+          <FinalGate onUnlock={() => { setCollection('final'); setStarted(false); }} />
+        </>}
       />
-      {collection === 'legacy' && <CrownGate onUnlock={enterNewCollection} />}
-      <FinalGate onUnlock={() => { setCollection('final'); setStarted(false); }} />
     </>
   );
   return <QuizRunner exam={exam} mode={mode} timerEnabled={timerEnabled} onHome={() => setStarted(false)} />;

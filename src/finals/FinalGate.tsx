@@ -65,11 +65,14 @@ export function FinalGate({ onUnlock }: { onUnlock: () => void }) {
     finally { busy.current = false; setChecking(false); }
   };
   return <>
-    <button ref={trigger} className="finals-access" aria-label="Mở khu ôn cuối kỳ" title="Ôn cuối kỳ" type="button"
+    <button ref={trigger} className="study-space study-space-finals finals-access" aria-label="Mở ôn tập cuối kỳ Phase 1" title="Ôn cuối kỳ" type="button"
       onClick={() => { if (finalUnlocked()) onUnlock(); else { setAttempts(readAttempts()); setOpen(true); } }}>
-      <svg viewBox="0 0 32 32" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <span className="study-space-top"><span className="study-space-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="m3 12 13-6 13 6-13 6-13-6Zm6 4v7c4 4 10 4 14 0v-7M28 13v10" />
-      </svg>
+      </svg></span><span className="study-space-label">L34 · Phase 1</span></span>
+      <strong className="study-space-title">Ôn tập cuối kỳ</strong>
+      <span className="study-space-description">10 đề mô phỏng 85 câu và sổ tay kiến thức theo 15 ngày học.</span>
+      <span className="study-space-footer"><span>Mở bằng key riêng</span><span className="study-space-arrow" aria-hidden="true">↗</span></span>
     </button>
     {open && <div className="gate-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) close(); }}>
       <form className="gate-dialog card" role="dialog" aria-modal="true" aria-labelledby="finals-gate-title" onSubmit={submit} onKeyDown={handleKeys}>

@@ -154,13 +154,18 @@ export function CrownGate({ onUnlock }: Props) {
   return (
     <>
       <button
-        className="crown-access"
+        className="study-space study-space-crown crown-access"
         type="button"
-        aria-label="Mở bộ đề khóa mới"
+        aria-label="Mở ôn tập nền tảng khóa mới 2026"
         title="Bộ đề khóa mới"
         onClick={openGate}
       >
-        <span aria-hidden="true">👑</span>
+        <span className="study-space-top"><span className="study-space-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m5 10 6 5 5-8 5 8 6-5-3 14H8L5 10Zm4 18h14" /></svg>
+        </span><span className="study-space-label">Khóa mới 2026</span></span>
+        <strong className="study-space-title">Ôn tập nền tảng</strong>
+        <span className="study-space-description">Toán, Python, ML/AI và đạo đức AI. Bộ mô phỏng 60 câu mỗi đề.</span>
+        <span className="study-space-footer"><span>Mở bằng mật khẩu</span><span className="study-space-arrow" aria-hidden="true">↗</span></span>
       </button>
 
       {open && (

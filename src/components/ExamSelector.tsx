@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import type { Exam, QuizMode } from '../types/exam';
 import { Disclaimer } from './Disclaimer';
 import { CheatSheetLibrary } from './CheatSheetLibrary';
@@ -17,6 +17,7 @@ interface Props {
   onTimerChange: (enabled: boolean) => void;
   onStart: () => void;
   onExitNewCollection?: () => void;
+  studySpaces?: ReactNode;
 }
 
 const LEGACY_OVERVIEW = [
@@ -36,7 +37,8 @@ export function ExamSelector({
   onModeChange,
   onTimerChange,
   onStart,
-  onExitNewCollection
+  onExitNewCollection,
+  studySpaces
 }: Props) {
   const selected = exams.find((exam) => exam.id === selectedExamId) ?? exams[0];
   const isNewCollection = collection === 'new';
@@ -44,6 +46,7 @@ export function ExamSelector({
 
   return (
     <main className={`home page-shell ${isNewCollection ? 'new-collection' : ''}`}>
+      <div className="home-intro">
       <section className="hero card">
         {isNewCollection && (
           <button className="link collection-back" type="button" onClick={onExitNewCollection}>
@@ -76,6 +79,8 @@ export function ExamSelector({
         )}
         <Disclaimer text={selected.disclaimer} />
       </section>
+      {studySpaces && <section className="study-spaces" aria-label="Các khu ôn tập khác">{studySpaces}</section>}
+      </div>
 
       <section className="setup card">
         <label>
